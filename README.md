@@ -1,93 +1,69 @@
-# ProjectGuard AI - FrontEnd
+## CI/CD
 
-This project was created automatically using Terraform from the default template
+> **Recommendation**  
+> - Name the merge requests the same as the latest commit message in the branch being merged.
+> - Only merges from the `development` branch are allowed into the `main` branch to automatically create a release with the latest version.
+> - Only when merging from the `development` branch into the `main` branch, do not use squash commit.
 
-## Getting started
+  ### Using semantic-release
+semantic-release automates the package release workflow including: determining the next version number, generating the release notes, and publishing the package.
+This removes the immediate connection between human emotions and version numbers, strictly following the  [Semantic Versioning Specification](http://semver.org/) and communicating the impact of changes to consumers.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+####  MAJOR.MINOR.PATCH version numbering
+Increment the:
+- MAJOR version
+when  making incompatible API changes,
+- MINOR version
+when adding functionality in a backward compatible manner,
+- PATCH version
+when making backward compatible bug fixes.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+#### Rules for committing to development branch
+| commit | release | next version | sample commit message |
+|-----------|---------|--------------|-----------------------------------------------------|
+| refactor: | patch | 1.0.0->1.0.1 | refactor: implement calculation method as recursion |
+| fix: | patch | 1.0.0->1.0.1 | fix: add missing parameter to service call |
+| docs: | patch | 1.0.0->1.0.1 | docs: update readme |
+| style: | patch | 1.0.0->1.0.1 | style: update readme |
+| test: | patch | 1.0.0->1.0.1 | test: update unit tes |
+| build: | major | 1.0.0->2.0.0 | build: upated look file |
+| ci | patch | 1.0.0->1.0.1 | ci: add new stage (integration test) |
+| revert | patch | 1.0.0->1.0.1 | revert: revert to commit |
+| feat: | minor | 1.0.0->1.1.0 | feat(lang): add Polish language |
+| chore: | minor | 1.0.0->1.1.0 | chore: drop support for Node 6 |
+| perf: | minor | 1.0.0->1.1.0 | perf: -//- |
 
-## Add your files
+#### Conventional Commits
+- The Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history; which makes it easier to write automated tools on top of. This convention dovetails with SemVer, by describing the features, fixes, and breaking changes made in commit messages.
 
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+  
+
+- The commit message should be structured as follows:
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.indeema.com/outsource/projectguard-ai-frontend.git
-git branch -M development
-git push -uf origin development
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+
 ```
 
-## Integrate with your tools
+  
 
-* [Set up project integrations](https://gitlab.indeema.com/outsource/projectguard-ai-frontend/-/settings/integrations)
+- The commit contains the following structural elements, to communicate intent to the consumers of your library:
 
-## Collaborate with your team
+  
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+1. fix: a commit of the type fix patches a bug in your codebase (this correlates with PATCH in Semantic Versioning).
 
-## Test and Deploy
+2. feat: a commit of the type feat introduces a new feature to the codebase (this correlates with MINOR in Semantic Versioning).
 
-Use the built-in continuous integration in GitLab.
+3. BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking API change (correlating with MAJOR in Semantic Versioning). A BREAKING CHANGE can be part of commits of any type.
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+4. types other than fix: and feat: are allowed, for example @commitlint/config-conventional (based on the Angular convention) recommends build:, chore:, ci:, docs:, style:, refactor:, perf:, test:, and others.
 
-***
+  
+  
 
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+https://www.conventionalcommits.org/en/v1.0.0/
