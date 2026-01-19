@@ -1,0 +1,50 @@
+stages:
+  - lint
+  - release
+
+#Jobs templates
+
+.job_lint_commits: &tpl_lint_commits
+  stage: lint
+  image: node_lint_commits
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - node_modules/
+  script:
+    - "echo \"module.exports = {extends: ['@commitlint/config-conventional']};\" > commitlint.config.js"
+    - git fetch
+    - npx commitlint --from origin/development --to HEAD -V
+
+.create_release: &tpl_create_release
+  image:
+    name: node_semantic_release
+  stage: release
+  variables:
+    GITLAB_TOKEN: $GITLAB_TOKEN
+  allow_failure: false
+  script:
+    - echo $GITLAB_TOKEN
+    - semantic-release
+
+#Stages for devevelopment
+
+Create release:
+  variables:
+    GITLAB_TOKEN: $GITLAB_TOKEN
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /\[ci upload\]/
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /(refactor|feat|fix|docs|chore|perf|style|test|build|ci|revert)/ && $CI_COMMIT_BRANCH == "development"'
+  tags:
+    - docker-web
+  interruptible: true
+  <<: *tpl_create_release
+
+Lint commit messages:
+  only:
+    - merge_requests
+  tags:
+    - docker-web
+  interruptible: true
+  <<: *tpl_lint_commits
