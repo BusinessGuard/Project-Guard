@@ -1,3 +1,5 @@
+## [1.0.1](https://gitlab.indeema.com/outsource/projectguard-ai-frontend/compare/v1.0.0...v1.0.1) (2026-01-20)
+
 ## 1.0.0 (2026-01-19)
 
 ### Features
