@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthForm } from "@/components/auth/AuthForm";
-import { HeroContent } from "@/components/home/HeroContent";
+import { AuthForm } from "@/app/home/components/AuthForm";
+import { HeroContent } from "@/app/home/components/HeroContent";
 import { Button } from "@/components/ui/button";
 import { LuMoveLeft } from "react-icons/lu";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ export default function Home() {
   const handleTryNow = () => {
     setIsNavigating(true);
     setTimeout(() => {
-      router.push("/project");
+      router.push("/project/create");
     }, 700);
   };
 
@@ -59,7 +59,7 @@ export default function Home() {
       </div>
 
       <div 
-        className={`flex items-center justify-center px-12 bg-indigo-50 transition-all duration-700 ease-in-out overflow-hidden ${
+        className={`flex items-center justify-center  bg-indigo-50 transition-all duration-700 ease-in-out overflow-hidden ${
           showAuth ? "w-1/2 opacity-100" : "w-0 opacity-0"
         }`}
       >
