@@ -468,10 +468,149 @@ BEGIN ANALYSIS NOW.
 
 const OpenAIRequestSchema = z.object({
   /**
-   * Free-form user input. Replace/extend when you provide your prompt + schema.
+   * `projects.id` (UUID). We fetch the project from DB and build the prompt input from it.
    */
-  input: z.string().min(1).max(50_000),
+  projectId: z.string().uuid(),
 });
+
+// Test-only GET endpoint guard (so it can't be exposed accidentally).
+// Set `PROJECTGUARD_ENABLE_OPENAI_TEST_GET=true` to enable.
+const EnableTestGetSchema = z.literal("true");
+
+const ProjectIdSchema = z.string().uuid();
+
+function formatOptional(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return JSON.stringify(value, null, 2);
+}
+
+function projectToPromptInput(project: Record<string, unknown>): string {
+  const lines: string[] = [];
+
+  lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  lines.push("PROJECT OVERVIEW");
+  lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  lines.push(`Project ID: ${formatOptional(project.id)}`);
+  lines.push(`Name: ${formatOptional(project.name)}`);
+  if (project.industry) lines.push(`Industry: ${formatOptional(project.industry)}`);
+  if (project.stage) lines.push(`Stage: ${formatOptional(project.stage)}`);
+  if (project.description) lines.push(`Description: ${formatOptional(project.description)}`);
+
+  lines.push("");
+  lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  lines.push("BUSINESS MODEL CANVAS (DATA FROM DB)");
+  lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+  lines.push("");
+  lines.push("1️⃣ VALUE PROPOSITION");
+  if (project.value_prop_problem) lines.push(`Problem Being Solved:\n${formatOptional(project.value_prop_problem)}`);
+  if (project.value_prop_solution) lines.push(`\nSolution:\n${formatOptional(project.value_prop_solution)}`);
+  if (project.value_prop_uniqueness) lines.push(`\nUnique Differentiation:\n${formatOptional(project.value_prop_uniqueness)}`);
+  if (project.value_prop_measurable) lines.push(`\nMeasurable Value Created:\n${formatOptional(project.value_prop_measurable)}`);
+
+  lines.push("");
+  lines.push("2️⃣ CUSTOMER SEGMENTS");
+  if (project.customer_primary_segment) {
+    lines.push(`Primary Target Segment:\n${formatOptional(project.customer_primary_segment)}`);
+  }
+  if (project.customer_tam || project.customer_sam || project.customer_som) {
+    lines.push("\nMarket Size:");
+    if (project.customer_tam) lines.push(`- TAM: ${formatOptional(project.customer_tam)}`);
+    if (project.customer_sam) lines.push(`- SAM: ${formatOptional(project.customer_sam)}`);
+    if (project.customer_som) lines.push(`- SOM: ${formatOptional(project.customer_som)}`);
+  }
+  if (project.customer_geography) lines.push(`\nGeography:\n${formatOptional(project.customer_geography)}`);
+  if (project.customer_wtp) lines.push(`\nWillingness to Pay:\n${formatOptional(project.customer_wtp)}`);
+  if (project.customer_avg_check !== null && project.customer_avg_check !== undefined) {
+    lines.push(`\nAverage Deal Size (customer_avg_check): €${formatOptional(project.customer_avg_check)}/month`);
+  }
+
+  lines.push("");
+  lines.push("3️⃣ CHANNELS");
+  if (project.channels_acquisition) {
+    lines.push(`Customer Acquisition Channels (channels_acquisition):\n${formatOptional(project.channels_acquisition)}`);
+  }
+  if (project.channels_sales) lines.push(`\nPrimary Sales Channel:\n${formatOptional(project.channels_sales)}`);
+  if (project.channels_cac !== null && project.channels_cac !== undefined) {
+    lines.push(`\nCustomer Acquisition Cost (CAC): €${formatOptional(project.channels_cac)}`);
+  }
+  if (project.channels_marketing) {
+    lines.push(`\nMarketing Tools Planned (channels_marketing):\n${formatOptional(project.channels_marketing)}`);
+  }
+  if (project.channels_funnel) lines.push(`\nMarketing Funnel:\n${formatOptional(project.channels_funnel)}`);
+
+  lines.push("");
+  lines.push("4️⃣ REVENUE MODEL");
+  if (project.revenue_projected_12m !== null && project.revenue_projected_12m !== undefined) {
+    lines.push(`Projected 12-Month Revenue: €${formatOptional(project.revenue_projected_12m)}`);
+  }
+  if (project.revenue_streams) lines.push(`\nRevenue Streams (revenue_streams):\n${formatOptional(project.revenue_streams)}`);
+  if (project.revenue_pricing) lines.push(`\nPricing Structure (revenue_pricing):\n${formatOptional(project.revenue_pricing)}`);
+
+  lines.push("");
+  lines.push("5️⃣ COST STRUCTURE");
+  if (project.cost_breakdown) lines.push(`Cost Breakdown (cost_breakdown):\n${formatOptional(project.cost_breakdown)}`);
+  if (project.cost_gross_margin !== null && project.cost_gross_margin !== undefined) {
+    lines.push(`\nGross Margin: ${formatOptional(project.cost_gross_margin)}%`);
+  }
+  if (project.cost_break_even !== null && project.cost_break_even !== undefined) {
+    lines.push(`Break-Even Projection: Month ${formatOptional(project.cost_break_even)}`);
+  }
+  if (project.cost_burn_rate !== null && project.cost_burn_rate !== undefined) {
+    lines.push(`Monthly Burn Rate: €${formatOptional(project.cost_burn_rate)}/month`);
+  }
+  if (project.cost_runway !== null && project.cost_runway !== undefined) {
+    lines.push(`Current Runway: ${formatOptional(project.cost_runway)} months`);
+  }
+
+  lines.push("");
+  lines.push("6️⃣ FUNDING");
+  if (project.funding_raised !== null && project.funding_raised !== undefined) {
+    lines.push(`Amount Raised: €${formatOptional(project.funding_raised)}`);
+  }
+  if (project.funding_sought !== null && project.funding_sought !== undefined) {
+    lines.push(`Amount Seeking: €${formatOptional(project.funding_sought)}`);
+  }
+  if (project.funding_sources) lines.push(`Funding Sources (funding_sources):\n${formatOptional(project.funding_sources)}`);
+
+  lines.push("");
+  lines.push("7️⃣ TEAM");
+  if (project.team_founders) lines.push(`Founders (team_founders):\n${formatOptional(project.team_founders)}`);
+  if (project.team_key_hires) lines.push(`\nKey Hires (team_key_hires):\n${formatOptional(project.team_key_hires)}`);
+  if (project.team_advisors) lines.push(`\nAdvisors (team_advisors):\n${formatOptional(project.team_advisors)}`);
+  if (project.team_gaps) lines.push(`\nSkill Gaps (team_gaps):\n${formatOptional(project.team_gaps)}`);
+
+  lines.push("");
+  lines.push("8️⃣ KEY RESOURCES");
+  if (project.resources_physical) lines.push(`Physical Resources:\n${formatOptional(project.resources_physical)}`);
+  if (project.resources_intellectual) lines.push(`\nIntellectual Property:\n${formatOptional(project.resources_intellectual)}`);
+  if (project.resources_human) lines.push(`\nHuman Resources:\n${formatOptional(project.resources_human)}`);
+  if (project.resources_financial) lines.push(`\nFinancial Resources:\n${formatOptional(project.resources_financial)}`);
+  if (project.resources_network) lines.push(`\nNetwork/Relationships:\n${formatOptional(project.resources_network)}`);
+
+  lines.push("");
+  lines.push("9️⃣ KEY ACTIVITIES");
+  if (project.activities_production) lines.push(`Production/Delivery:\n${formatOptional(project.activities_production)}`);
+  if (project.activities_innovation) lines.push(`\nInnovation/R&D:\n${formatOptional(project.activities_innovation)}`);
+  if (project.activities_platform) lines.push(`\nPlatform/Infrastructure:\n${formatOptional(project.activities_platform)}`);
+  if (project.activities_marketing) lines.push(`\nMarketing/Sales:\n${formatOptional(project.activities_marketing)}`);
+  if (project.activities_operations) lines.push(`\nOperations:\n${formatOptional(project.activities_operations)}`);
+
+  lines.push("");
+  lines.push("🔟 KEY PARTNERS");
+  if (project.partners_strategic) lines.push(`Strategic Partnerships (partners_strategic):\n${formatOptional(project.partners_strategic)}`);
+
+  lines.push("");
+  lines.push("ADDITIONAL CONTEXT");
+  if (project.competitors) lines.push(`Competitors:\n${formatOptional(project.competitors)}`);
+  if (project.risks) lines.push(`\nKnown Risks:\n${formatOptional(project.risks)}`);
+  if (project.traction) lines.push(`\nCurrent Traction:\n${formatOptional(project.traction)}`);
+  if (project.growth_plan) lines.push(`\nGrowth Plans:\n${formatOptional(project.growth_plan)}`);
+
+  return lines.filter((l) => l !== "").join("\n");
+}
 
 /**
  * JSON Schema extracted/derived from `prompts/EXAMPLE 1.md`:
@@ -880,41 +1019,347 @@ function safeJsonParse(text: string): { ok: true; value: unknown } | { ok: false
   }
 }
 
+type AnalysisJson = {
+  overallScore: number;
+  investmentReadiness: string;
+  blockScores: {
+    valueProposition: number;
+    customerSegments: number;
+    channels: number;
+    revenue: number;
+    costs: number;
+    keyResources: number;
+    keyActivities: number;
+    keyPartners: number;
+    team: number;
+  };
+  expertInsights: unknown;
+  consensusFindings: unknown;
+  growthPlan: unknown;
+  recommendations: unknown;
+  financialForecast: unknown;
+};
+
+function isAnalysisJson(value: unknown): value is AnalysisJson {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  const bs = v.blockScores as Record<string, unknown> | undefined;
+  return (
+    typeof v.overallScore === "number" &&
+    typeof v.investmentReadiness === "string" &&
+    !!bs &&
+    typeof bs.valueProposition === "number" &&
+    typeof bs.customerSegments === "number" &&
+    typeof bs.channels === "number" &&
+    typeof bs.revenue === "number" &&
+    typeof bs.costs === "number" &&
+    typeof bs.keyResources === "number" &&
+    typeof bs.keyActivities === "number" &&
+    typeof bs.keyPartners === "number" &&
+    typeof bs.team === "number" &&
+    v.expertInsights !== undefined &&
+    v.consensusFindings !== undefined &&
+    v.growthPlan !== undefined &&
+    v.recommendations !== undefined &&
+    v.financialForecast !== undefined
+  );
+}
+
+async function saveAnalysisToDb(args: {
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  projectId: string;
+  analysis: AnalysisJson;
+  aiModel: string;
+  tokensUsed?: number | null;
+  processingTimeMs?: number | null;
+}) {
+  const { supabase, projectId, analysis, aiModel, tokensUsed, processingTimeMs } = args;
+
+  const payload = {
+    project_id: projectId,
+    overall_score: analysis.overallScore,
+    investment_readiness: analysis.investmentReadiness,
+
+    value_proposition_score: analysis.blockScores.valueProposition,
+    customer_segments_score: analysis.blockScores.customerSegments,
+    channels_score: analysis.blockScores.channels,
+    revenue_score: analysis.blockScores.revenue,
+    costs_score: analysis.blockScores.costs,
+    key_resources_score: analysis.blockScores.keyResources,
+    key_activities_score: analysis.blockScores.keyActivities,
+    key_partners_score: analysis.blockScores.keyPartners,
+    team_score: analysis.blockScores.team,
+
+    expert_insights: analysis.expertInsights,
+    consensus_findings: analysis.consensusFindings,
+    growth_plan: analysis.growthPlan,
+    recommendations: analysis.recommendations,
+    financial_forecast: analysis.financialForecast,
+
+    ai_model: aiModel,
+    tokens_used: tokensUsed ?? null,
+    processing_time: processingTimeMs ?? null,
+    status: "completed",
+  };
+
+  const { data, error } = await supabase.from("analyses").insert(payload).select("id").single();
+  return { data, error };
+}
+
+/**
+ * TESTING ONLY:
+ * GET /api/openai?projectId=<uuid>
+ *
+ * Controlled by env flag `PROJECTGUARD_ENABLE_OPENAI_TEST_GET=true`.
+ * This endpoint is intended for quick manual testing and should be removed later.
+ */
+export async function GET(request: Request) {
+  const enable = EnableTestGetSchema.safeParse(process.env.PROJECTGUARD_ENABLE_OPENAI_TEST_GET);
+  if (!enable.success) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const url = new URL(request.url);
+  const projectIdParam = url.searchParams.get("projectId");
+  const projectIdParsed = ProjectIdSchema.safeParse(projectIdParam);
+  if (!projectIdParsed.success) {
+    return NextResponse.json(
+      { error: "Missing or invalid projectId (expected UUID)" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const startedAt = Date.now();
+    const supabase = await createClient();
+
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+
+    const user = authData.user;
+    if (!user) {
+      console.error("OpenAI API (GET): Unauthorized - No user found", {
+        authError: authError?.message,
+        cookies: request.headers.get("cookie") ? "present" : "missing",
+      });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const projectQuery = supabase
+      .from("projects")
+      .select("*")
+      .eq("id", projectIdParsed.data);
+
+    // TESTING ONLY: don't scope by user_id; we only require that the caller is signed in.
+    // This helps when legacy/test data doesn't have `projects.user_id` aligned with Supabase Auth user ids.
+    const scopedQuery = projectQuery;
+
+    // Debug logging around Supabase fetch (kept minimal + focused, no prompt contents).
+    console.log("OpenAI API (GET): Loading project from Supabase", {
+      projectId: projectIdParsed.data,
+      userId: user ? user.id : null,
+      supabaseUrlPresent: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      supabaseAnonKeyPresent: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+    });
+
+    const { data: project, error: projectError } = await scopedQuery.maybeSingle();
+
+    if (projectError) {
+      console.error("OpenAI API (GET): Failed to load project", {
+        projectId: projectIdParsed.data,
+        userId: user ? user.id : null,
+        supabaseError: projectError,
+        errorMessage: projectError.message,
+      });
+      return NextResponse.json(
+        { error: "Failed to load project", details: projectError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!project) {
+      console.warn("OpenAI API (GET): Project not found (Supabase returned null)", {
+        projectId: projectIdParsed.data,
+        userId: user ? user.id : null,
+      });
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    console.log("OpenAI API (GET): Project loaded", {
+      projectId: projectIdParsed.data,
+      userId: user ? user.id : null,
+      name: (project as { name?: unknown } | null)?.name ?? null,
+    });
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "Server misconfigured: missing OPENAI_API_KEY" },
+        { status: 500 }
+      );
+    }
+
+    const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+
+    const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        temperature: 1,
+        response_format: { type: "json_schema", json_schema: PROJECT_GUARD_ANALYSIS_JSON_SCHEMA },
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          {
+            role: "user",
+            content: `${USER_PROMPT_PREFIX}\n\n${projectToPromptInput(project as unknown as Record<string, unknown>)}\n\n${USER_PROMPT_SUFFIX}`,
+          },
+        ],
+      }),
+    });
+
+    if (!upstream.ok) {
+      const text = await upstream.text().catch(() => "");
+      return NextResponse.json(
+        {
+          error: "OpenAI request failed",
+          status: upstream.status,
+          details: text || upstream.statusText,
+        },
+        { status: 502 }
+      );
+    }
+
+    const completion = (await upstream.json()) as {
+      choices?: Array<{ message?: { content?: string | null } }>;
+      usage?: { total_tokens?: number | null };
+    };
+
+    const content = completion.choices?.[0]?.message?.content ?? "";
+    const json = safeJsonParse(content);
+    if (!json.ok) {
+      return NextResponse.json(
+        {
+          error: "OpenAI did not return valid JSON",
+          parseError: json.error,
+          raw: content,
+        },
+        { status: 502 }
+      );
+    }
+
+    if (!isAnalysisJson(json.value)) {
+      return NextResponse.json(
+        { error: "OpenAI returned JSON, but it does not match the expected analysis shape" },
+        { status: 502 }
+      );
+    }
+
+    const save = await saveAnalysisToDb({
+      supabase,
+      projectId: projectIdParsed.data,
+      analysis: json.value,
+      aiModel: model,
+      tokensUsed: completion.usage?.total_tokens ?? null,
+      processingTimeMs: Date.now() - startedAt,
+    });
+
+    if (save.error || !save.data) {
+      console.error("OpenAI API (GET): Failed to save analysis", {
+        projectId: projectIdParsed.data,
+        errorMessage: save.error?.message ?? "No data returned from insert",
+        supabaseError: save.error,
+      });
+      return NextResponse.json(
+        { error: "Failed to save analysis", details: save.error?.message ?? "No data returned from insert" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ analysisId: save.data.id, data: json.value }, { status: 200 });
+  } catch (error) {
+    console.error("Error in OpenAI endpoint (GET):", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    // TODO: TEMPORARILY DISABLED FOR TESTING - RE-ENABLE AUTH BEFORE PRODUCTION
+    const startedAt = Date.now();
     // Keep this endpoint server-only and protected by auth, same as `app/api/projects/route.ts`.
-    // const supabase = await createClient();
-    // const {
-    //   data: { user },
-    //   error: authError,
-    // } = await supabase.auth.getUser();
+    const supabase = await createClient();
 
-    // if (!user) {
-    //   console.error("OpenAI API: Unauthorized - No user found", {
-    //     authError: authError?.message,
-    //     cookies: request.headers.get("cookie") ? "present" : "missing",
-    //   });
-    //   return NextResponse.json(
-    //     { 
-    //       error: "Unauthorized - Please ensure you are logged in",
-    //       hint: "Make sure you're authenticated and cookies are being sent with the request"
-    //     },
-    //     { status: 401 }
-    //   );
-    // }
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+
+    const user = authData.user;
+
+    if (!user) {
+      console.error("OpenAI API: Unauthorized - No user found", {
+        authError: authError?.message,
+        cookies: request.headers.get("cookie") ? "present" : "missing",
+      });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const body = await request.json().catch(() => null);
-    const parsed = OpenAIRequestSchema.safeParse(body);
-    if (!parsed.success) {
+    const parsedBody = OpenAIRequestSchema.safeParse(body);
+    if (!parsedBody.success) {
       return NextResponse.json(
         {
           error: "Invalid request body",
-          details: parsed.error.flatten(),
+          details: parsedBody.error.flatten(),
         },
         { status: 400 }
       );
     }
+
+    // Fetch project data by `projects.id`.
+    // When auth is enabled, scope by ownership (user_id) to prevent data leaks.
+    const projectQuery = supabase
+      .from("projects")
+      .select("*")
+      .eq("id", parsedBody.data.projectId);
+
+    const scopedQuery = projectQuery.eq("user_id", user.id);
+
+    // Debug logging around Supabase fetch (kept minimal + focused, no prompt contents).
+    console.log("OpenAI API: Loading project from Supabase", {
+      projectId: parsedBody.data.projectId,
+      userId: user ? user.id : null,
+      supabaseUrlPresent: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      supabaseAnonKeyPresent: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+    });
+
+    const { data: parsed, error: projectError } = await scopedQuery.maybeSingle();
+
+    if (projectError) {
+      console.error("OpenAI API: Failed to load project", {
+        projectId: parsedBody.data.projectId,
+        userId: user ? user.id : null,
+        supabaseError: projectError,
+        errorMessage: projectError.message,
+      });
+      return NextResponse.json(
+        { error: "Failed to load project", details: projectError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!parsed) {
+      console.warn("OpenAI API: Project not found (Supabase returned null)", {
+        projectId: parsedBody.data.projectId,
+        userId: user ? user.id : null,
+      });
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    console.log("OpenAI API: Project loaded", {
+      projectId: parsedBody.data.projectId,
+      userId: user ? user.id : null,
+      name: (parsed as { name?: unknown } | null)?.name ?? null,
+    });
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
@@ -941,7 +1386,7 @@ export async function POST(request: Request) {
           { role: "system", content: SYSTEM_PROMPT },
           {
             role: "user",
-            content: `${USER_PROMPT_PREFIX}\n\n${parsed.data.input}\n\n${USER_PROMPT_SUFFIX}`,
+            content: `${USER_PROMPT_PREFIX}\n\n${projectToPromptInput(parsed as unknown as Record<string, unknown>)}\n\n${USER_PROMPT_SUFFIX}`,
           },
         ],
       }),
@@ -961,6 +1406,7 @@ export async function POST(request: Request) {
 
     const completion = (await upstream.json()) as {
       choices?: Array<{ message?: { content?: string | null } }>;
+      usage?: { total_tokens?: number | null };
     };
 
     const content = completion.choices?.[0]?.message?.content ?? "";
@@ -976,8 +1422,38 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!isAnalysisJson(json.value)) {
+      return NextResponse.json(
+        { error: "OpenAI returned JSON, but it does not match the expected analysis shape" },
+        { status: 502 }
+      );
+    }
+
+    const save = await saveAnalysisToDb({
+      supabase,
+      projectId: parsedBody.data.projectId,
+      analysis: json.value,
+      aiModel: model,
+      tokensUsed: completion.usage?.total_tokens ?? null,
+      processingTimeMs: Date.now() - startedAt,
+    });
+
+    if (save.error || !save.data) {
+      console.error("OpenAI API: Failed to save analysis", {
+        projectId: parsedBody.data.projectId,
+        userId: user.id,
+        errorMessage: save.error?.message ?? "No data returned from insert",
+        supabaseError: save.error,
+      });
+      return NextResponse.json(
+        { error: "Failed to save analysis", details: save.error?.message ?? "No data returned from insert" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       {
+        analysisId: save.data.id,
         data: json.value,
       },
       { status: 200 }
