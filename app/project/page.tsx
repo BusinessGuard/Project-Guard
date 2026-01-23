@@ -24,7 +24,7 @@ export default async function ProjectPage() {
   const userName = user.user_metadata?.full_name || user.email?.split('@')[0];
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="w-full border-b px-8 py-4">
         <div className="max-w-4xl mx-auto flex justify-end items-center">
@@ -37,7 +37,7 @@ export default async function ProjectPage() {
       </div>
 
       {/* Main Content - Centered */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex items-center justify-center p-8 min-h-[calc(100vh-73px)]">
         <div className="max-w-2xl w-full">
           <div className="space-y-12">
             <div className="text-center space-y-4">
