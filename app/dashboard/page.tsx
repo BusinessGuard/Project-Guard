@@ -40,7 +40,7 @@ export default async function DashboardPage() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="max-w-2xl w-full">
           <div className="space-y-12">
-            <div className="text-center space-y-4">
+      <div className="text-center space-y-4">
               <h1 className="text-4xl font-bold text-black mb-4">
                 {userName ? `Welcome, ${userName}` : 'Welcome'}
               </h1>

@@ -2,6 +2,7 @@
 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
 
 export function Step8Competition() {
@@ -37,7 +38,10 @@ export function Step8Competition() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${directCompetitors ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {directCompetitors && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Name 3-5 direct competitors</p>
               <p>• What do they do well?</p>
@@ -65,7 +69,10 @@ export function Step8Competition() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${indirectCompetitors ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {indirectCompetitors && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• What else can customers use instead?</p>
               <p>• Excel templates?</p>
@@ -93,7 +100,10 @@ export function Step8Competition() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${whyChooseYou ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {whyChooseYou && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Your unique advantage?</p>
               <p>• Price/value proposition?</p>
@@ -121,7 +131,10 @@ export function Step8Competition() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${defensibility ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {defensibility && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Network effects?</p>
               <p>• Data moat?</p>

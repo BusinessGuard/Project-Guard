@@ -2,6 +2,7 @@
 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
 
 const riskFields = [
@@ -75,7 +76,10 @@ export function Step9Risks() {
             </div>
 
             <div className={`space-y-2 text-xs transition-opacity duration-300 ${risks[field.id as keyof typeof risks] ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-              <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+              <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+                Guidelines
+                {risks[field.id as keyof typeof risks] && <TbChecks className="text-green-500 text-lg" />}
+              </h4>
               <div className="text-black space-y-1">
                 {guidelines[field.id as keyof typeof guidelines].points.map((point, idx) => (
                   <p key={idx}>• {point}</p>

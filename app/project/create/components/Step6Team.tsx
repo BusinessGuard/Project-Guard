@@ -2,6 +2,7 @@
 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
 
 export function Step6Team() {
@@ -37,7 +38,10 @@ export function Step6Team() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${keyRoles ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {keyRoles && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• How many founders?</p>
               <p>• Who is CEO, CTO, etc?</p>
@@ -65,7 +69,10 @@ export function Step6Team() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${founderExperience ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {founderExperience && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Previous startups (successes/failures)?</p>
               <p>• Relevant industry experience?</p>
@@ -94,7 +101,10 @@ export function Step6Team() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${specialists ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {specialists && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Marketing/Growth expert?</p>
               <p>• Financial expert/CFO?</p>
@@ -123,7 +133,10 @@ export function Step6Team() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${gaps ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {gaps && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• What's missing in the team?</p>
               <p>• How do you plan to close the gap?</p>

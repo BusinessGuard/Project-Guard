@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { IoMdClose } from "react-icons/io";
+import { TbChecks } from "react-icons/tb";
 import { useState } from "react";
 import { useProjectStore } from "@/store/useProjectStore";
 
@@ -13,6 +14,12 @@ const problemGuidelines = [
   "How often does this problem occur?",
   "How much time/money does the customer lose?",
   "How do customers solve this problem now?",
+];
+
+const solutionGuidelines = [
+  "What exactly does your product do?",
+  "How does it solve the problem?",
+  "What is the core functionality?",
 ];
 
 const solutionUniquenessGuidelines = [
@@ -30,7 +37,7 @@ const measurableValueGuidelines = [
 
 export function Step2ValueProposition() {
   const { projectData, updateValueProposition } = useProjectStore();
-  const { problem, solutionUniqueness, advantages, measurableValue } = projectData.valueProposition;
+  const { problem, solution, solutionUniqueness, advantages, measurableValue } = projectData.valueProposition;
   const [currentAdvantage, setCurrentAdvantage] = useState("");
 
   const handleAddAdvantage = () => {
@@ -67,7 +74,10 @@ export function Step2ValueProposition() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${problem ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {problem && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               {problemGuidelines.map((guideline, idx) => (
                 <p key={idx}>• {guideline}</p>
@@ -81,8 +91,38 @@ export function Step2ValueProposition() {
 
         <div className="grid grid-cols-2 gap-8 group">
           <div className="space-y-2">
+            <Label htmlFor="solution" className="text-sm font-semibold">
+              1.2. Your solution <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              id="solution"
+              placeholder="Describe what your product does and how it solves the problem..."
+              className="min-h-[120px]"
+              value={solution}
+              onChange={(e) => updateValueProposition({ solution: e.target.value })}
+            />
+          </div>
+
+          <div className={`space-y-2 text-xs transition-opacity duration-300 ${solution ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {solution && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
+            <div className="text-black space-y-1">
+              {solutionGuidelines.map((guideline, idx) => (
+                <p key={idx}>• {guideline}</p>
+              ))}
+            </div>
+            <div className="text-slate-600 italic pt-2">
+              Example: "AI-powered platform that analyzes your business model, identifies weak points, and generates investor-ready pitch deck in 15 minutes. Includes 6 specialized AI experts for different aspects: market analysis, financials, competition, risks, etc."
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-8 group">
+          <div className="space-y-2">
             <Label htmlFor="solutionUniqueness" className="text-sm font-semibold">
-              1.2. Uniqueness of your solution <span className="text-red-500">*</span>
+              1.3. Uniqueness of your solution <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="solutionUniqueness"
@@ -94,7 +134,10 @@ export function Step2ValueProposition() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${solutionUniqueness ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {solutionUniqueness && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               {solutionUniquenessGuidelines.map((guideline, idx) => (
                 <p key={idx}>• {guideline}</p>
@@ -109,7 +152,7 @@ export function Step2ValueProposition() {
         <div className="grid grid-cols-2 gap-8 group">
           <div className="space-y-2">
             <Label className="text-sm font-semibold">
-              1.3. Key advantages over competitors <span className="text-red-500">*</span>
+              1.4. Key advantages over competitors <span className="text-red-500">*</span>
             </Label>
             <p className="text-xs text-slate-500">Add 3-5 specific advantages (minimum 3 required)</p>
             
@@ -154,8 +197,11 @@ export function Step2ValueProposition() {
             </div>
           </div>
 
-          <div className="space-y-2 text-xs opacity-10 group-focus-within:opacity-100 transition-opacity duration-300">
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+          <div className={`space-y-2 text-xs transition-opacity duration-300 ${advantages.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {advantages.length > 0 && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-slate-600 italic">
               Example: "Analysis in 30 seconds instead of 2 weeks with consultants" • "Price €99 instead of €5,000 for consulting" • "Specific growth plan with steps, not general advice"
             </div>
@@ -165,7 +211,7 @@ export function Step2ValueProposition() {
         <div className="grid grid-cols-2 gap-8 group">
           <div className="space-y-2">
             <Label htmlFor="measurableValue" className="text-sm font-semibold">
-              1.4. Measurable value for customer <span className="text-red-500">*</span>
+              1.5. Measurable value for customer <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="measurableValue"
@@ -177,7 +223,10 @@ export function Step2ValueProposition() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${measurableValue ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {measurableValue && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               {measurableValueGuidelines.map((guideline, idx) => (
                 <p key={idx}>• {guideline}</p>

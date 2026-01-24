@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
@@ -100,7 +101,10 @@ export function Step3CustomerSegments() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${primarySegment ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {primarySegment && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               {primarySegmentGuidelines.map((guideline, idx) => (
                 <p key={idx}>• {guideline}</p>
@@ -123,27 +127,28 @@ export function Step3CustomerSegments() {
                 <Label htmlFor={field.id} className="text-xs text-slate-600">
                   {field.label}
                 </Label>
-                <div className="grid grid-cols-3 gap-2">
-                  <InputGroup className="h-12">
+                <div className="grid grid-cols-[140px_1fr] gap-2">
+                  <InputGroup className="h-10">
                     <InputGroupAddon>€</InputGroupAddon>
                     <InputGroupInput
                       id={field.id}
                       type="number"
                       placeholder={field.placeholder}
                       className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      value={marketSize[field.id as keyof typeof marketSize]}
+                      value={marketSize[field.id as keyof typeof marketSize] || ""}
                       onChange={(e) => updateCustomerSegments({ 
-                        marketSize: { ...marketSize, [field.id]: e.target.value } 
+                        marketSize: { ...marketSize, [field.id]: parseFloat(e.target.value) || 0 } 
                       })}
+                      min="0"
                     />
                     <InputGroupAddon align="inline-end">M</InputGroupAddon>
                   </InputGroup>
                   <Input
-                    placeholder="Calculation method "
-                    className="h-12 col-span-2"
-                    value={marketSize[`${field.id}Calculation` as keyof typeof marketSize]}
+                    placeholder="Calculation description (e.g., 15K companies × €10K budget)"
+                    className="h-10"
+                    value={marketSize[`${field.id}Description` as keyof typeof marketSize] || ""}
                     onChange={(e) => updateCustomerSegments({ 
-                      marketSize: { ...marketSize, [`${field.id}Calculation`]: e.target.value } 
+                      marketSize: { ...marketSize, [`${field.id}Description`]: e.target.value } 
                     })}
                   />
                 </div>
@@ -152,7 +157,10 @@ export function Step3CustomerSegments() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${(marketSize.tam || marketSize.sam || marketSize.som) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {(marketSize.tam > 0 && marketSize.sam > 0 && marketSize.som > 0) && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               {marketSizeGuidelines.map((guideline, idx) => (
                 <p key={idx}>• {guideline}</p>
@@ -196,7 +204,10 @@ export function Step3CustomerSegments() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${(geography.markets?.length > 0 || geography.notes) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {(geography.markets?.length > 0 && geography.notes) && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               {geographyGuidelines.map((guideline, idx) => (
                 <p key={idx}>• {guideline}</p>
@@ -242,7 +253,10 @@ export function Step3CustomerSegments() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${(willingnessToPay.evidence || willingnessToPay.averageDealSize) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {(willingnessToPay.evidence && willingnessToPay.averageDealSize > 0) && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               {willingnessToPayGuidelines.map((guideline, idx) => (
                 <p key={idx}>• {guideline}</p>

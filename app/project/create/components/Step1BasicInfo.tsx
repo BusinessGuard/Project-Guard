@@ -3,8 +3,10 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useProjectStore } from "@/store/useProjectStore";
+import { useState } from "react";
 
 const industries = [
   { value: "saas-b2b", label: "SaaS / B2B" },
@@ -28,6 +30,18 @@ const stages = [
 export function Step1BasicInfo() {
   const { projectData, updateBasicInfo } = useProjectStore();
   const { projectName, industry, stage, description } = projectData.basicInfo;
+  
+  const [customIndustry, setCustomIndustry] = useState("");
+  const [touched, setTouched] = useState({ projectName: false, industry: false, stage: false });
+  
+  const isOtherIndustry = industry === "other" || (industry && !industries.some(i => i.value === industry));
+  
+  // Validation
+  const errors = {
+    projectName: touched.projectName && !projectName,
+    industry: touched.industry && (!industry || industry === "other"),
+    stage: touched.stage && !stage,
+  };
 
   return (
     <div className="max-w-600 gap-8">
@@ -45,36 +59,110 @@ export function Step1BasicInfo() {
             <Input
               id="projectName"
               placeholder="HRFlow - Smart HR Automation"
-              className="h-12"
+              className={`h-12 ${errors.projectName ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
               value={projectName}
               onChange={(e) => updateBasicInfo({ projectName: e.target.value })}
+              onBlur={() => setTouched({ ...touched, projectName: true })}
             />
+            {errors.projectName && (
+              <p className="text-xs text-red-500">Project name is required</p>
+            )}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="industry" className="text-sm">
-            Industry
+            Industry <span className="text-red-500">*</span>
           </Label>
-          <Select value={industry} onValueChange={(value) => updateBasicInfo({ industry: value })}>
-            <SelectTrigger className="!h-12 w-full py-0">
-              <SelectValue placeholder="Select industry" />
-            </SelectTrigger>
-            <SelectContent>
-              {industries.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          
+          {/* Show select only if no custom industry is set */}
+          {(!industry || industry === "other" || industries.some(i => i.value === industry)) && (
+            <Select 
+              value={isOtherIndustry ? "other" : industry} 
+              onValueChange={(value) => {
+                setTouched({ ...touched, industry: true });
+                if (value === "other") {
+                  updateBasicInfo({ industry: "other" });
+                } else {
+                  updateBasicInfo({ industry: value });
+                }
+              }}
+            >
+              <SelectTrigger className={`!h-12 w-full py-0 ${errors.industry ? 'border-red-500' : ''}`}>
+                <SelectValue placeholder="Select industry" />
+              </SelectTrigger>
+              <SelectContent>
+                {industries.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          
+          {/* Show input field when "Other" is selected */}
+          {industry === "other" && (
+            <div className="flex gap-2">
+              <Input
+                placeholder="Specify your industry..."
+                className="h-12 flex-1"
+                value={customIndustry}
+                onChange={(e) => setCustomIndustry(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && customIndustry.trim()) {
+                    e.preventDefault();
+                    updateBasicInfo({ industry: customIndustry.trim() });
+                    setCustomIndustry("");
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                className="h-12 px-4"
+                onClick={() => {
+                  if (customIndustry.trim()) {
+                    updateBasicInfo({ industry: customIndustry.trim() });
+                    setCustomIndustry("");
+                  }
+                }}
+                disabled={!customIndustry.trim()}
+              >
+                Add
+              </Button>
+            </div>
+          )}
+          
+          {/* Show custom industry value with delete button */}
+          {industry && industry !== "other" && !industries.some(i => i.value === industry) && (
+            <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-md border border-slate-200">
+              <span className="text-sm flex-1 font-medium">{industry}</span>
+              <button
+                type="button"
+                className="text-slate-500 hover:text-red-600 text-lg font-bold"
+                onClick={() => updateBasicInfo({ industry: "" })}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+          
+          {errors.industry && (
+            <p className="text-xs text-red-500">Please select or specify an industry</p>
+          )}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="stage" className="text-sm">
-            Current Stage
+            Current Stage <span className="text-red-500">*</span>
           </Label>
-          <Select value={stage} onValueChange={(value) => updateBasicInfo({ stage: value })}>
-            <SelectTrigger className="!h-12 w-full py-0">
+          <Select 
+            value={stage} 
+            onValueChange={(value) => {
+              setTouched({ ...touched, stage: true });
+              updateBasicInfo({ stage: value });
+            }}
+          >
+            <SelectTrigger className={`!h-12 w-full py-0 ${errors.stage ? 'border-red-500' : ''}`}>
               <SelectValue placeholder="Select stage" />
             </SelectTrigger>
             <SelectContent>
@@ -85,6 +173,9 @@ export function Step1BasicInfo() {
               ))}
             </SelectContent>
           </Select>
+          {errors.stage && (
+            <p className="text-xs text-red-500">Please select a stage</p>
+          )}
         </div>
 
         <div className="space-y-2">

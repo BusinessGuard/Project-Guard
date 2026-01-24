@@ -9,6 +9,7 @@ export interface BasicInfo {
 // Step 2: Value Proposition
 export interface ValueProposition {
   problem: string;
+  solution: string;
   solutionUniqueness: string;
   advantages: string[];
   measurableValue: string;
@@ -28,12 +29,12 @@ export interface WillingnessToPay {
 export interface CustomerSegments {
   primarySegment: string;
   marketSize: {
-    tam: string;
-    tamCalculation: string;
-    sam: string;
-    samCalculation: string;
-    som: string;
-    somCalculation: string;
+    tam: number;
+    tamDescription: string;
+    sam: number;
+    samDescription: string;
+    som: number;
+    somDescription: string;
   };
   geography: Geography;
   willingnessToPay: WillingnessToPay;
@@ -43,19 +44,43 @@ export interface CustomerSegments {
 export interface Channels {
   acquisitionChannels: string[];
   salesChannel: string;
-  cac: string;
+  cac: number;
+  cacDescription: string;
   marketingTools: string;
   marketingFunnel: string;
 }
 
 // Step 5: Economics
+export interface RevenueStream {
+  type: string;
+  description: string;
+  percentage: number;
+}
+
+export interface FundingSource {
+  type: string;
+  amount: number;
+}
+
+export interface UseOfFundsItem {
+  item: string;
+  amount: number;
+}
+
 export interface Economics {
-  projectedRevenue12Months: string;
-  revenueBreakdown: string;
+  projectedRevenue12Months: number;
+  revenueStreams: RevenueStream[];
+  revenuePricing: string;
   costBreakdown: string;
-  grossMargin: string;
-  breakEven: string;
-  funding: string;
+  grossMargin: number;
+  arpu: number;
+  customerLifetime: number;
+  contributionMargin: number;
+  fundingRaised: number;
+  fundingSources: FundingSource[];
+  amountSeeking: number;
+  useOfFunds: UseOfFundsItem[];
+  currentRunway: number;
 }
 
 // Step 6: Team
@@ -66,12 +91,28 @@ export interface Team {
   gaps: string;
 }
 
-// Step 7: Resources
+// Step 7: Resources & Activities
+export interface Activities {
+  production: string;
+  innovation: string;
+  platform: string;
+  marketing: string;
+  operations: string;
+}
+
+export interface Partner {
+  type: string;
+  name: string;
+  value: string;
+}
+
 export interface Resources {
   existing: string;
   needed: string;
   techStack: string;
   dependencies: string;
+  activities: Activities;
+  partners: Partner[];
 }
 
 // Step 8: Competition
@@ -94,13 +135,16 @@ export interface Risks {
 
 // Step 10: Growth
 export interface Growth {
+  traction: string;
   scalingPlan: string;
   newMarkets: string;
   paybackPeriod: string;
-  targets: string;
+  targets12Months: string;
+  targets24Months: string;
+  targets36Months: string;
 }
 
-// Complete Project Data
+// Complete Project Data (Form Structure)
 export interface ProjectData {
   basicInfo: BasicInfo;
   valueProposition: ValueProposition;
@@ -114,6 +158,8 @@ export interface ProjectData {
   growth: Growth;
 }
 
+
+
 // Initial state
 export const initialBasicInfo: BasicInfo = {
   projectName: "",
@@ -124,6 +170,7 @@ export const initialBasicInfo: BasicInfo = {
 
 export const initialValueProposition: ValueProposition = {
   problem: "",
+  solution: "",
   solutionUniqueness: "",
   advantages: [],
   measurableValue: "",
@@ -132,12 +179,12 @@ export const initialValueProposition: ValueProposition = {
 export const initialCustomerSegments: CustomerSegments = {
   primarySegment: "",
   marketSize: {
-    tam: "",
-    tamCalculation: "",
-    sam: "",
-    samCalculation: "",
-    som: "",
-    somCalculation: "",
+    tam: 0,
+    tamDescription: "",
+    sam: 0,
+    samDescription: "",
+    som: 0,
+    somDescription: "",
   },
   geography: {
     markets: [],
@@ -152,18 +199,26 @@ export const initialCustomerSegments: CustomerSegments = {
 export const initialChannels: Channels = {
   acquisitionChannels: [],
   salesChannel: "",
-  cac: "",
+  cac: 0,
+  cacDescription: "",
   marketingTools: "",
   marketingFunnel: "",
 };
 
 export const initialEconomics: Economics = {
-  projectedRevenue12Months: "",
-  revenueBreakdown: "",
+  projectedRevenue12Months: 0,
+  revenueStreams: [],
+  revenuePricing: "",
   costBreakdown: "",
-  grossMargin: "",
-  breakEven: "",
-  funding: "",
+  grossMargin: 0,
+  arpu: 0,
+  customerLifetime: 0,
+  contributionMargin: 0,
+  fundingRaised: 0,
+  fundingSources: [],
+  amountSeeking: 0,
+  useOfFunds: [],
+  currentRunway: 0,
 };
 
 export const initialTeam: Team = {
@@ -178,6 +233,14 @@ export const initialResources: Resources = {
   needed: "",
   techStack: "",
   dependencies: "",
+  activities: {
+    production: "",
+    innovation: "",
+    platform: "",
+    marketing: "",
+    operations: "",
+  },
+  partners: [],
 };
 
 export const initialCompetition: Competition = {
@@ -197,10 +260,13 @@ export const initialRisks: Risks = {
 };
 
 export const initialGrowth: Growth = {
+  traction: "",
   scalingPlan: "",
   newMarkets: "",
   paybackPeriod: "",
-  targets: "",
+  targets12Months: "",
+  targets24Months: "",
+  targets36Months: "",
 };
 
 export const initialProjectData: ProjectData = {
@@ -215,3 +281,94 @@ export const initialProjectData: ProjectData = {
   risks: initialRisks,
   growth: initialGrowth,
 };
+
+
+export interface DatabaseProject {
+  name: string;
+  description: string;
+  industry: string;
+  stage: string;
+
+  value_prop_problem: string;
+  value_prop_solution: string;
+  value_prop_uniqueness: string;
+  value_prop_measurable: string;
+  value_prop_advantages: string[]; 
+
+  customer_primary_segment: string;
+  customer_tam: string; 
+  customer_sam: string; 
+  customer_som: string; 
+  customer_geography: string; 
+  customer_wtp: string;
+  customer_avg_check: number;
+
+  channels_acquisition: string[]; 
+  channels_sales: string;
+  channels_cac: number;
+  channels_cac_description: string;
+  channels_marketing: string;
+  channels_funnel: string;
+
+  revenue_projected_12m: number;
+  revenue_streams: Array<{
+    type: string;
+    description: string;
+    percentage: number;
+  }>; 
+  revenue_pricing: string;
+
+  cost_breakdown: string;
+  cost_gross_margin: number;
+  arpu: number;
+  customer_lifetime: number;
+  contribution_margin: number;
+  cost_runway: number;
+
+  funding_raised: number;
+  funding_sought: number;
+  funding_sources: Array<{
+    type: string;
+    amount: number;
+  }>; 
+  use_of_funds: Array<{
+    item: string;
+    amount: number;
+  }>; 
+
+  team_founders: string;
+  team_key_hires: string;
+  team_specialists: string;
+  team_gaps: string;
+
+  resources_physical: string;
+  resources_intellectual: string;
+  resources_needed: string;
+  resources_dependencies: string;
+
+  activities_production: string;
+  activities_innovation: string;
+  activities_platform: string;
+  activities_marketing: string;
+  activities_operations: string;
+
+  partners_strategic: Array<{
+    type: string;
+    name: string;
+    value: string;
+  }>; 
+
+  competitors: string; 
+  competition_why_choose: string;
+  competition_defensibility: string;
+
+  risks: string; 
+
+  traction: string;
+  growth_plan: string;
+  growth_new_markets: string;
+  growth_payback_period: string;
+  growth_targets_12m: string;
+  growth_targets_24m: string;
+  growth_targets_36m: string;
+}

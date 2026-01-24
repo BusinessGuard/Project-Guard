@@ -2,17 +2,21 @@
 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
 
 export function Step10Growth() {
   const { projectData, updateGrowth } = useProjectStore();
   const growth = projectData.growth || {
+    traction: "",
     scalingPlan: "",
     newMarkets: "",
     paybackPeriod: "",
-    targets: "",
+    targets12Months: "",
+    targets24Months: "",
+    targets36Months: "",
   };
-  const { scalingPlan, newMarkets, paybackPeriod, targets } = growth;
+  const { traction, scalingPlan, newMarkets, paybackPeriod, targets12Months, targets24Months, targets36Months } = growth;
 
   return (
     <div className="space-y-8">
@@ -24,8 +28,45 @@ export function Step10Growth() {
       <div className="space-y-8">
         <div className="grid grid-cols-2 gap-8 group">
           <div className="space-y-2">
+            <Label htmlFor="traction" className="text-sm font-semibold">
+              9.1. Current Traction <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              id="traction"
+              placeholder="Current users/customers, revenue, growth metrics, key achievements..."
+              className="min-h-[100px]"
+              value={traction}
+              onChange={(e) => updateGrowth({ traction: e.target.value })}
+            />
+          </div>
+
+          <div className={`space-y-2 text-xs transition-opacity duration-300 ${traction ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {traction && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
+            <div className="text-black space-y-1">
+              <p>• Current users/customers and revenue</p>
+              <p>• Growth metrics (MoM, retention, churn, NPS)</p>
+              <p>• Key achievements and milestones</p>
+              <p>• For pre-revenue: signups, pilots, validation</p>
+            </div>
+            <div className="text-slate-600 italic pt-2">
+              <strong>B2B SaaS:</strong> "120 paying customers, €11.8K MRR, +25% MoM growth for last 3 months, 3.5% monthly churn, NPS 65, CAC payback 4.2 months"
+            </div>
+            <div className="text-slate-600 italic pt-2">
+              <strong>Marketplace:</strong> "€45K GMV/month, 320 active buyers, 45 active sellers, 15% take rate, 40% repeat purchase rate, 3x growth in last quarter"
+            </div>
+            <div className="text-slate-600 italic pt-2">
+              <strong>Pre-revenue:</strong> "2,500 signups, 80 customer interviews completed, 5 pilot customers using for free (3 ready to pay), 12 LOIs worth €1,200 MRR potential"
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-8 group">
+          <div className="space-y-2">
             <Label htmlFor="scalingPlan" className="text-sm font-semibold">
-              9.1. Scaling plan <span className="text-red-500">*</span>
+              9.2. Scaling plan <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="scalingPlan"
@@ -37,7 +78,10 @@ export function Step10Growth() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${scalingPlan ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {scalingPlan && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Growth strategy (product-led, sales-led, community-led)?</p>
               <p>• Which channels will you scale?</p>
@@ -53,7 +97,7 @@ export function Step10Growth() {
         <div className="grid grid-cols-2 gap-8 group">
           <div className="space-y-2">
             <Label htmlFor="newMarkets" className="text-sm font-semibold">
-              9.2. New market potential <span className="text-red-500">*</span>
+              9.3. New market potential <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="newMarkets"
@@ -65,7 +109,10 @@ export function Step10Growth() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${newMarkets ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {newMarkets && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Adjacent markets?</p>
               <p>• Different customer segments?</p>
@@ -81,7 +128,7 @@ export function Step10Growth() {
         <div className="grid grid-cols-2 gap-8 group">
           <div className="space-y-2">
             <Label htmlFor="paybackPeriod" className="text-sm font-semibold">
-              9.3. Payback period <span className="text-red-500">*</span>
+              9.4. Payback period <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="paybackPeriod"
@@ -93,7 +140,10 @@ export function Step10Growth() {
           </div>
 
           <div className={`space-y-2 text-xs transition-opacity duration-300 ${paybackPeriod ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {paybackPeriod && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• When will you reach break-even?</p>
               <p>• When will you return invested capital?</p>
@@ -106,30 +156,63 @@ export function Step10Growth() {
         </div>
 
         <div className="grid grid-cols-2 gap-8 group">
-          <div className="space-y-2">
-            <Label htmlFor="targets" className="text-sm font-semibold">
-              9.4. Targets (12/24/36 months) <span className="text-red-500">*</span>
+          <div className="space-y-4">
+            <Label className="text-sm font-semibold">
+              9.5. Targets <span className="text-red-500">*</span>
             </Label>
-            <Textarea
-              id="targets"
-              placeholder="Users, revenue, team size, market share, profitability targets..."
-              className="min-h-[140px]"
-              value={targets}
-              onChange={(e) => updateGrowth({ targets: e.target.value })}
-            />
+
+            <div className="space-y-2">
+              <Label className="text-xs text-slate-600 font-semibold">12 Months</Label>
+              <Textarea
+                placeholder="150 customers, €15K MRR, 5 team, 0.5% SAM..."
+                className="min-h-[70px]"
+                value={targets12Months}
+                onChange={(e) => updateGrowth({ targets12Months: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs text-slate-600 font-semibold">24 Months</Label>
+              <Textarea
+                placeholder="600 customers, €60K MRR, 12 team, profitable (20% margin), 2% SAM..."
+                className="min-h-[70px]"
+                value={targets24Months}
+                onChange={(e) => updateGrowth({ targets24Months: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs text-slate-600 font-semibold">36 Months</Label>
+              <Textarea
+                placeholder="2,000 customers, €200K MRR, 25 team, 30% margin, 5% SAM..."
+                className="min-h-[70px]"
+                value={targets36Months}
+                onChange={(e) => updateGrowth({ targets36Months: e.target.value })}
+              />
+            </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${targets ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black">Guidelines</h4>
+          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(targets12Months || targets24Months || targets36Months) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+              Guidelines
+              {(targets12Months && targets24Months && targets36Months) && <TbChecks className="text-green-500 text-lg" />}
+            </h4>
             <div className="text-black space-y-1">
               <p>• Users/customers</p>
-              <p>• Revenue/MRR</p>
+              <p>• Revenue/MRR (and ARR)</p>
               <p>• Team size</p>
-              <p>• Market share</p>
-              <p>• Profitability</p>
+              <p>• Market share (% of SAM)</p>
+              <p>• Profitability (break-even, margins)</p>
+              <p>• Funding milestones</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Month 12: 150 customers, €15K MRR (€180K ARR), 5 team, 0.5% SAM. Month 24: 600 customers, €60K MRR (€720K ARR), 12 team, profitable (20% margin), 2% SAM, Series A €1.5M. Month 36: 2,000 customers, €200K MRR (€2.4M ARR), 25 team, 30% margin (€720K profit/year), 5% SAM."
+              Example 12mo: "150 customers, €15K MRR (€180K ARR), 5 team, break-even: NO, 0.5% SAM"
+            </div>
+            <div className="text-slate-600 italic pt-2">
+              Example 24mo: "600 customers, €60K MRR (€720K ARR), 12 team, profitable (20% margin), 2% SAM, Series A €1.5M"
+            </div>
+            <div className="text-slate-600 italic pt-2">
+              Example 36mo: "2,000 customers, €200K MRR (€2.4M ARR), 25 team, 30% margin (€720K profit/year), 5% SAM"
             </div>
           </div>
         </div>

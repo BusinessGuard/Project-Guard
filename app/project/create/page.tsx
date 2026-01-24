@@ -14,28 +14,35 @@ import { Step9Risks } from "./components/Step9Risks";
 import { Step10Growth } from "./components/Step10Growth";
 import { useProjectStore } from "@/store/useProjectStore";
 import type { ProjectData } from "@/types/project";
+import { mapFormToDatabase } from "@/utils/mapFormToDatabase";
 
 const validateStep = (step: number, data: ProjectData): boolean => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
   
   const validations: Record<number, boolean> = {
     1: !!basicInfo.projectName,
-    2: !!(valueProposition.problem && valueProposition.solutionUniqueness && 
+    2: !!(valueProposition.problem && valueProposition.solution && valueProposition.solutionUniqueness && 
          valueProposition.advantages.length >= 3 && valueProposition.measurableValue),
-    3: !!(customerSegments?.primarySegment && customerSegments?.marketSize?.tam && 
-         customerSegments?.marketSize?.sam && customerSegments?.marketSize?.som && 
-         customerSegments?.geography?.markets?.length > 0 && customerSegments?.willingnessToPay?.evidence && customerSegments?.willingnessToPay?.averageDealSize),
+    3: !!(customerSegments?.primarySegment && 
+         customerSegments?.marketSize?.tam > 0 && customerSegments?.marketSize?.tamDescription &&
+         customerSegments?.marketSize?.sam > 0 && customerSegments?.marketSize?.samDescription &&
+         customerSegments?.marketSize?.som > 0 && customerSegments?.marketSize?.somDescription &&
+         customerSegments?.geography?.markets?.length > 0 && customerSegments?.geography?.notes &&
+         customerSegments?.willingnessToPay?.evidence && customerSegments?.willingnessToPay?.averageDealSize > 0),
     4: !!(channels?.acquisitionChannels?.length >= 3 && channels?.salesChannel && 
-         channels?.cac && channels?.marketingTools && channels?.marketingFunnel),
-    5: !!(economics?.projectedRevenue12Months && economics?.costBreakdown && 
-         economics?.grossMargin && economics?.breakEven && economics?.funding),
+         channels?.cac > 0 && channels?.cacDescription && channels?.marketingTools && channels?.marketingFunnel),
+    5: !!(economics?.projectedRevenue12Months > 0 && economics?.revenueStreams?.length > 0 && economics?.revenuePricing &&
+         economics?.costBreakdown && 
+         economics?.grossMargin > 0 && economics?.arpu > 0 && economics?.customerLifetime > 0 && 
+         economics?.contributionMargin > 0 && economics?.fundingRaised > 0 &&
+         economics?.fundingSources?.length > 0 && economics?.amountSeeking > 0 && economics?.useOfFunds?.length > 0 && economics?.currentRunway > 0),
     6: !!(team?.keyRoles && team?.founderExperience && team?.specialists && team?.gaps),
     7: !!(resources?.existing && resources?.needed && resources?.techStack && resources?.dependencies),
     8: !!(competition?.directCompetitors && competition?.indirectCompetitors && 
          competition?.whyChooseYou && competition?.defensibility),
     9: !!(risks?.technical && risks?.financial && risks?.legal && 
          risks?.market && risks?.team && risks?.mitigation),
-    10: !!(growth?.scalingPlan && growth?.newMarkets && growth?.paybackPeriod && growth?.targets),
+    10: !!(growth?.traction && growth?.scalingPlan && growth?.newMarkets && growth?.paybackPeriod && growth?.targets12Months && growth?.targets24Months && growth?.targets36Months),
   };
   
   return validations[step] ?? true;
@@ -43,7 +50,7 @@ const validateStep = (step: number, data: ProjectData): boolean => {
 
 export default function CreateProjectPage() {
   const router = useRouter();
-  const { projectData, currentStep, setCurrentStep } = useProjectStore();
+  const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
 
   const handleNext = () => {
     if (currentStep < 10) {
@@ -57,11 +64,36 @@ export default function CreateProjectPage() {
     }
   };
 
+  const handleSubmit = () => {
+    // Map form data to database schema
+    const dbData = mapFormToDatabase(projectData);
+    
+    console.log('=== FORM DATA (Original) ===');
+    console.log(JSON.stringify(projectData, null, 2));
+    console.log('\n=== DATABASE DATA (Mapped) ===');
+    console.log(JSON.stringify(dbData, null, 2));
+    console.log('==============================');
+    
+    // TODO: Send dbData to API
+    alert('Project submitted! Check console for data.');
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="w-full border-b px-8 py-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-bold text-black">Create New Project</h1>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => {
+              if (confirm('Clear all form data and start over?')) {
+                resetProject();
+              }
+            }}
+          >
+            Reset Form
+          </Button>
         </div>
       </div>
 
@@ -101,7 +133,7 @@ export default function CreateProjectPage() {
                   </Button>
                 )}
                 <Button 
-                  onClick={handleNext}
+                  onClick={currentStep === 10 ? handleSubmit : handleNext}
                   className="bg-black hover:bg-black/90 text-lg px-8 py-6"
                   disabled={!validateStep(currentStep, projectData)}
                 >
