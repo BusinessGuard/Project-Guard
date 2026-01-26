@@ -15,7 +15,6 @@ import { Step9Risks } from "./components/Step9Risks";
 import { Step10Growth } from "./components/Step10Growth";
 import { useProjectStore } from "@/store/useProjectStore";
 import type { ProjectData } from "@/types/project";
-import { mapFormToDatabase } from "@/utils/mapFormToDatabase";
 
 const getStepFieldsCount = (step: number, data: ProjectData): { filled: number; total: number } => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
@@ -133,6 +132,7 @@ export default function CreateProjectPage() {
 
   const createProjectMutation = useMutation({
     mutationFn: async (data: any) => {
+      console.log('Data:', data);
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -146,7 +146,7 @@ export default function CreateProjectPage() {
       // router.push('/dashboard');
     },
     onError: (error) => {
-      alert('Error creating project: ' + error.message);
+      console.log('Error creating project: ' + error.message);
     },
   });
 
@@ -163,8 +163,7 @@ export default function CreateProjectPage() {
   };
 
   const handleSubmit = () => {
-    const dbData = mapFormToDatabase(projectData);
-    createProjectMutation.mutate(dbData);
+    createProjectMutation.mutate(projectData);
   };
 
   return (

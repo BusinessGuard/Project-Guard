@@ -1,53 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { openai } from '@/lib/openai';
-import { createProjectPrompt, EXPERT_PANEL_SYSTEM_PROMPT } from '@/lib/prompts/project';
-
-async function analyzeProject(projectData: any) {
-  console.log('Project Data:', JSON.stringify(projectData, null, 2));
-
-  const prompt = createProjectPrompt(projectData);
-
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    temperature: 0.5,
-    response_format: { type: 'json_object' },
-    messages: [
-      {
-        role: 'system',
-        content: EXPERT_PANEL_SYSTEM_PROMPT,
-      },
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-  });
-
-  const content = response.choices[0].message.content;
-
-  if (!content) {
-    throw new Error('Empty AI response');
-  }
-
-  let parsed;
-  try {
-    parsed = JSON.parse(content);
-  } catch (e) {
-    console.error('AI response is not valid JSON:', content);
-    throw new Error('Invalid AI response format');
-  }
-
-  // Validate required fields
-  if (!parsed.overallScore || !parsed.expertAnalyses || !parsed.keyFindings) {
-    console.error('Missing required fields in AI response:', parsed);
-    throw new Error('Incomplete AI response');
-  }
-
-  console.log('Analysis Result:', JSON.stringify(parsed, null, 2));
-
-  return parsed;
-}
+import { mapFormToDatabase } from '@/utils/mapFormToDatabase';
+import { analyzeProject } from '@/utils/analizeProject';
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,6 +17,8 @@ export async function POST(request: NextRequest) {
     }
     
     const projectData = await request.json();
+    // Map form data to database structure
+    const dbData = mapFormToDatabase(projectData);
     
     // Save project as draft
     const { data: project, error } = await supabase
@@ -70,7 +26,7 @@ export async function POST(request: NextRequest) {
       .insert({
         user_id: user.id,
         status: 'draft',
-        ...projectData,
+        ...dbData,
       })
       .select()
       .single();
