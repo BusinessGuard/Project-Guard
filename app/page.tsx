@@ -16,9 +16,7 @@ export default function Home() {
 
   const handleTryNow = () => {
     setIsNavigating(true);
-    setTimeout(() => {
-      router.push("/project/create");
-    }, 700);
+    router.push("/project/create");
   };
 
   return (

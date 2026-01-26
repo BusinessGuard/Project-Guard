@@ -289,61 +289,79 @@ export function Step7Resources() {
               6.6. Key Partners <span className="text-slate-400">(optional)</span>
             </Label>
             
-            {partners && partners.length > 0 && (
-              <div className="space-y-1.5">
-                {partners.map((partner, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-md text-sm">
-                    <span className="font-semibold min-w-[120px]">{partner.type}</span>
-                    <span className="font-medium min-w-[140px]">{partner.name}</span>
-                    <span className="flex-1 text-slate-600">{partner.value}</span>
-                    <button
-                      type="button"
-                      className="hover:bg-slate-200 rounded-full p-0.5"
-                      onClick={() => handleRemovePartner(index)}
-                    >
-                      <IoMdClose className="h-4 w-4 text-slate-500" />
-                    </button>
-                  </div>
-                ))}
+            <div className="space-y-3 border border-slate-200 rounded-lg p-4 bg-slate-50">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-900">Partners List</span>
+                <span className="text-xs text-slate-500">
+                  {partners?.length || 0} {partners?.length === 1 ? 'partner' : 'partners'} added
+                </span>
               </div>
-            )}
+              
+              {partners && partners.length > 0 ? (
+                <div className="space-y-2 bg-white rounded-md p-3 border border-slate-200">
+                  <div className="space-y-1.5">
+                    {partners.map((partner, index) => (
+                      <div key={index} className="flex items-center gap-2 p-2 bg-purple-50 border border-purple-200 rounded-md text-sm">
+                        <span className="font-semibold min-w-[100px] text-purple-900">{partner.type}</span>
+                        <span className="font-medium min-w-[120px] text-purple-800">{partner.name}</span>
+                        <span className="flex-1 text-purple-700 text-xs">{partner.value}</span>
+                        <button
+                          type="button"
+                          className="hover:bg-purple-100 rounded-full p-0.5"
+                          onClick={() => handleRemovePartner(index)}
+                        >
+                          <IoMdClose className="h-4 w-4 text-purple-600" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-slate-100 border border-slate-200 rounded-md p-3">
+                  <p className="text-xs text-slate-600">No partners added yet. Add partners below if applicable.</p>
+                </div>
+              )}
 
-            <div className="flex gap-2">
-              <Select value={newPartnerType} onValueChange={setNewPartnerType}>
-                <SelectTrigger className="!h-10 py-0 w-[160px]">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {partnerTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Input
-                placeholder="Partner name"
-                className="h-10 w-[160px]"
-                value={newPartnerName}
-                onChange={(e) => setNewPartnerName(e.target.value)}
-              />
-              
-              <Input
-                placeholder="Value/benefit"
-                className="h-10 flex-1"
-                value={newPartnerValue}
-                onChange={(e) => setNewPartnerValue(e.target.value)}
-              />
-              
-              <Button
-                type="button"
-                className="h-10 px-3 text-sm"
-                onClick={handleAddPartner}
-                disabled={!newPartnerType || !newPartnerName || !newPartnerValue}
-              >
-                Add
-              </Button>
+              <div className="space-y-2 bg-white rounded-md p-3 border border-slate-200">
+                <p className="text-xs font-medium text-slate-600 mb-2">➕ Add New Partner:</p>
+                <div className="flex gap-2">
+                  <Select value={newPartnerType} onValueChange={setNewPartnerType}>
+                    <SelectTrigger className="!h-10 py-0 w-[140px]">
+                      <SelectValue placeholder="Type..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {partnerTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <Input
+                    placeholder="Name"
+                    className="h-10 w-[140px]"
+                    value={newPartnerName}
+                    onChange={(e) => setNewPartnerName(e.target.value)}
+                  />
+                  
+                  <Input
+                    placeholder="Value/benefit..."
+                    className="h-10 flex-1"
+                    value={newPartnerValue}
+                    onChange={(e) => setNewPartnerValue(e.target.value)}
+                  />
+                  
+                  <Button
+                    type="button"
+                    className="h-10 px-4 text-sm"
+                    onClick={handleAddPartner}
+                    disabled={!newPartnerType || !newPartnerName || !newPartnerValue}
+                  >
+                    + Add
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 

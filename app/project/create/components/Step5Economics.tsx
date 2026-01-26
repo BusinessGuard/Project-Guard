@@ -400,57 +400,22 @@ export function Step5Economics() {
             <div className="text-slate-600 italic pt-2">
               Example: "Gross Margin: 85%, ARPU: €99/month, Lifetime: 18 months, Contribution: €84. LTV: €1,505 (€99 × 18 × 0.85)."
             </div>
+        {(ltv > 0 || ltvCacRatio > 0 || paybackPeriod > 0 || monthlyBurn > 0) && (
+          <div className="text-xs text-slate-500 space-y-1">
+            <p className="font-medium text-slate-600">📊 Unit Economics (Auto-calculated):</p>
+            {ltv > 0 && <p>• LTV: €{ltv.toFixed(2)}</p>}
+            {ltvCacRatio > 0 && cac > 0 && (
+              <p>• LTV/CAC Ratio: {ltvCacRatio.toFixed(1)}x {ltvCacRatio >= 3 ? '(Excellent)' : ltvCacRatio >= 2 ? '(Acceptable)' : '(Needs improvement)'}</p>
+            )}
+            {paybackPeriod > 0 && (
+              <p>• Payback Period: {paybackPeriod.toFixed(1)} months {paybackPeriod <= 12 ? '(Excellent)' : paybackPeriod <= 18 ? '(Acceptable)' : '(Too long)'}</p>
+            )}
+            {monthlyBurn > 0 && <p>• Monthly Burn Rate: €{monthlyBurn.toFixed(0)}</p>}
+          </div>
+        )}
           </div>
         </div>
 
-        {(ltv > 0 || ltvCacRatio > 0 || paybackPeriod > 0 || monthlyBurn > 0) && (
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
-            <h4 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
-              📊 Unit Economics Summary (Auto-calculated)
-            </h4>
-            <div className="grid grid-cols-2 gap-4">
-              {ltv > 0 && (
-                <div className="bg-white rounded-lg p-4 border border-blue-100">
-                  <div className="text-sm text-slate-600 mb-1">Lifetime Value (LTV)</div>
-                  <div className="text-2xl font-bold text-blue-900">€{ltv.toFixed(2)}</div>
-                  <div className="text-xs text-slate-500 mt-1">ARPU × Lifetime × Margin</div>
-                </div>
-              )}
-              
-              {ltvCacRatio > 0 && cac > 0 && (
-                <div className="bg-white rounded-lg p-4 border border-blue-100">
-                  <div className="text-sm text-slate-600 mb-1">LTV/CAC Ratio</div>
-                  <div className={`text-2xl font-bold ${ltvCacRatio >= 3 ? 'text-green-600' : ltvCacRatio >= 2 ? 'text-orange-600' : 'text-red-600'}`}>
-                    {ltvCacRatio.toFixed(1)}x
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {ltvCacRatio >= 3 ? '✅ Excellent' : ltvCacRatio >= 2 ? '⚠️ Acceptable' : '🔴 Needs improvement'}
-                  </div>
-                </div>
-              )}
-              
-              {paybackPeriod > 0 && (
-                <div className="bg-white rounded-lg p-4 border border-blue-100">
-                  <div className="text-sm text-slate-600 mb-1">Payback Period</div>
-                  <div className={`text-2xl font-bold ${paybackPeriod <= 12 ? 'text-green-600' : paybackPeriod <= 18 ? 'text-orange-600' : 'text-red-600'}`}>
-                    {paybackPeriod.toFixed(1)} mo
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {paybackPeriod <= 12 ? '✅ Excellent' : paybackPeriod <= 18 ? '⚠️ Acceptable' : '🔴 Too long'}
-                  </div>
-                </div>
-              )}
-              
-              {monthlyBurn > 0 && (
-                <div className="bg-white rounded-lg p-4 border border-blue-100">
-                  <div className="text-sm text-slate-600 mb-1">Monthly Burn Rate</div>
-                  <div className="text-2xl font-bold text-blue-900">€{monthlyBurn.toFixed(0)}</div>
-                  <div className="text-xs text-slate-500 mt-1">Funding / Runway</div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         <div className="grid grid-cols-2 gap-8 group">
           <div className="space-y-4">
@@ -473,37 +438,48 @@ export function Step5Economics() {
               </InputGroup>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Funding Sources</Label>
+            <div className="space-y-3 border border-slate-200 rounded-lg p-4 bg-slate-50">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium text-slate-900">Funding Sources <span className="text-red-500">*</span></Label>
+                <span className="text-xs text-slate-500">
+                  {fundingSources.length} {fundingSources.length === 1 ? 'source' : 'sources'} added
+                  {fundingSources.length === 0 && ' (min 1 required)'}
+                </span>
+              </div>
               
-              {fundingSources.length > 0 && (
-                <div className="space-y-1.5">
+              {fundingSources.length > 0 ? (
+                <div className="space-y-2 bg-white rounded-md p-3 border border-slate-200">
                   <div className="flex flex-wrap gap-1.5">
                     {fundingSources.map((source, index) => (
-                      <div key={index} className="inline-flex items-center gap-1.5 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full text-xs">
-                        <span className="font-medium">{source.type}</span>
-                        <span className="text-slate-600">€{source.amount.toLocaleString()}</span>
+                      <div key={index} className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full text-xs">
+                        <span className="font-medium text-green-900">{source.type}</span>
+                        <span className="text-green-700">€{source.amount.toLocaleString()}</span>
                         <button
                           type="button"
-                          className="hover:bg-slate-200 rounded-full p-0.5 ml-0.5"
+                          className="hover:bg-green-100 rounded-full p-0.5 ml-0.5"
                           onClick={() => handleRemoveSource(index)}
                         >
-                          <IoMdClose className="h-3 w-3 text-slate-500" />
+                          <IoMdClose className="h-3 w-3 text-green-600" />
                         </button>
                       </div>
                     ))}
                   </div>
-                  <div className="text-xs font-semibold text-slate-700">
-                    Total: €{totalRaised.toLocaleString()}
+                  <div className="text-xs font-semibold text-slate-700 pt-1 border-t border-slate-100">
+                    €{totalRaised.toLocaleString()}
                   </div>
+                </div>
+              ) : (
+                <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                  <p className="text-xs text-red-600">⚠️ No funding sources added yet. Add at least one below.</p>
                 </div>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-2 bg-white rounded-md p-3 border border-slate-200">
+                <p className="text-xs font-medium text-slate-600 mb-2">➕ Add New Source:</p>
                 <div className="flex gap-2">
                   <Select value={newSourceType} onValueChange={setNewSourceType}>
                     <SelectTrigger className="!h-10 flex-1 py-0">
-                      <SelectValue placeholder="Type" />
+                      <SelectValue placeholder="Select type..." />
                     </SelectTrigger>
                     <SelectContent>
                       {fundingTypes.map((type) => (
@@ -517,7 +493,7 @@ export function Step5Economics() {
                     <InputGroupAddon>€</InputGroupAddon>
                     <InputGroupInput
                       type="number"
-                      placeholder="0"
+                      placeholder="Amount"
                       className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
                       value={newSourceAmount}
                       onChange={(e) => setNewSourceAmount(e.target.value)}
@@ -526,11 +502,11 @@ export function Step5Economics() {
                   </InputGroup>
                   <Button
                     type="button"
-                    className="h-10 px-3 text-sm"
+                    className="h-10 px-4 text-sm"
                     onClick={handleAddSource}
                     disabled={(!newSourceType || (newSourceType === "Other" && !newSourceCustomType)) || !newSourceAmount}
                   >
-                    Add
+                    + Add
                   </Button>
                 </div>
                 {newSourceType === "Other" && (
@@ -559,55 +535,68 @@ export function Step5Economics() {
               </InputGroup>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Use of Funds</Label>
+            <div className="space-y-3 border border-slate-200 rounded-lg p-4 bg-slate-50">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium text-slate-900">Use of Funds <span className="text-red-500">*</span></Label>
+                <span className="text-xs text-slate-500">
+                  {useOfFunds.length} {useOfFunds.length === 1 ? 'item' : 'items'} added
+                  {useOfFunds.length === 0 && ' (min 1 required)'}
+                </span>
+              </div>
               
-              {useOfFunds.length > 0 && (
-                <div className="space-y-1.5">
+              {useOfFunds.length > 0 ? (
+                <div className="space-y-2 bg-white rounded-md p-3 border border-slate-200">
                   <div className="flex flex-wrap gap-1.5">
                     {useOfFunds.map((fund, index) => (
-                      <div key={index} className="inline-flex items-center gap-1.5 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full text-xs">
-                        <span className="font-medium">{fund.item}</span>
-                        <span className="text-slate-600">€{fund.amount.toLocaleString()}</span>
+                      <div key={index} className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full text-xs">
+                        <span className="font-medium text-blue-900">{fund.item}</span>
+                        <span className="text-blue-700">€{fund.amount.toLocaleString()}</span>
                         <button
                           type="button"
-                          className="hover:bg-slate-200 rounded-full p-0.5 ml-0.5"
+                          className="hover:bg-blue-100 rounded-full p-0.5 ml-0.5"
                           onClick={() => handleRemoveFundItem(index)}
                         >
-                          <IoMdClose className="h-3 w-3 text-slate-500" />
+                          <IoMdClose className="h-3 w-3 text-blue-600" />
                         </button>
                       </div>
                     ))}
                   </div>
                 </div>
+              ) : (
+                <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                  <p className="text-xs text-red-600">⚠️ No allocation items added yet. Add at least one below.</p>
+                </div>
               )}
 
-              <div className="flex gap-2">
-                <Input
-                  placeholder="e.g., Runway, Hiring"
-                  className="h-10 flex-1"
-                  value={newFundItem}
-                  onChange={(e) => setNewFundItem(e.target.value)}
-                />
-                <InputGroup className="h-10 w-32">
-                  <InputGroupAddon>€</InputGroupAddon>
-                  <InputGroupInput
-                    type="number"
-                    placeholder="0"
-                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
-                    value={newFundAmount}
-                    onChange={(e) => setNewFundAmount(e.target.value)}
-                    min="0"
+              <div className="space-y-2 bg-white rounded-md p-3 border border-slate-200">
+                <p className="text-xs font-medium text-slate-600 mb-2">➕ Add Allocation Item:</p>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="e.g., Runway, Hiring, Marketing..."
+                    className="h-10 flex-1"
+                    value={newFundItem}
+                    onChange={(e) => setNewFundItem(e.target.value)}
                   />
-                </InputGroup>
-                <Button
-                  type="button"
-                  className="h-10 px-3 text-sm"
-                  onClick={handleAddFundItem}
-                  disabled={!newFundItem || !newFundAmount}
-                >
-                  Add
-                </Button>
+                  <InputGroup className="h-10 w-32">
+                    <InputGroupAddon>€</InputGroupAddon>
+                    <InputGroupInput
+                      type="number"
+                      placeholder="Amount"
+                      className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
+                      value={newFundAmount}
+                      onChange={(e) => setNewFundAmount(e.target.value)}
+                      min="0"
+                    />
+                  </InputGroup>
+                  <Button
+                    type="button"
+                    className="h-10 px-4 text-sm"
+                    onClick={handleAddFundItem}
+                    disabled={!newFundItem || !newFundAmount}
+                  >
+                    + Add
+                  </Button>
+                </div>
               </div>
             </div>
 

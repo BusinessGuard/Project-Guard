@@ -32,8 +32,10 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect project routes
-  if (request.nextUrl.pathname.startsWith('/project') && !user) {
+  // Protect project routes (except /project/create)
+  if (request.nextUrl.pathname.startsWith('/project') && 
+      !request.nextUrl.pathname.startsWith('/project/create') && 
+      !user) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 

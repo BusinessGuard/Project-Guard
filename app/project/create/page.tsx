@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { Step1BasicInfo } from "./components/Step1BasicInfo";
 import { Step2ValueProposition } from "./components/Step2ValueProposition";
 import { Step3CustomerSegments } from "./components/Step3CustomerSegments";
@@ -16,41 +17,138 @@ import { useProjectStore } from "@/store/useProjectStore";
 import type { ProjectData } from "@/types/project";
 import { mapFormToDatabase } from "@/utils/mapFormToDatabase";
 
-const validateStep = (step: number, data: ProjectData): boolean => {
+const getStepFieldsCount = (step: number, data: ProjectData): { filled: number; total: number } => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
   
-  const validations: Record<number, boolean> = {
-    1: !!basicInfo.projectName,
-    2: !!(valueProposition.problem && valueProposition.solution && valueProposition.solutionUniqueness && 
-         valueProposition.advantages.length >= 3 && valueProposition.measurableValue),
-    3: !!(customerSegments?.primarySegment && 
-         customerSegments?.marketSize?.tam > 0 && customerSegments?.marketSize?.tamDescription &&
-         customerSegments?.marketSize?.sam > 0 && customerSegments?.marketSize?.samDescription &&
-         customerSegments?.marketSize?.som > 0 && customerSegments?.marketSize?.somDescription &&
-         customerSegments?.geography?.markets?.length > 0 && customerSegments?.geography?.notes &&
-         customerSegments?.willingnessToPay?.evidence && customerSegments?.willingnessToPay?.averageDealSize > 0),
-    4: !!(channels?.acquisitionChannels?.length >= 3 && channels?.salesChannel && 
-         channels?.cac > 0 && channels?.cacDescription && channels?.marketingTools && channels?.marketingFunnel),
-    5: !!(economics?.projectedRevenue12Months > 0 && economics?.revenueStreams?.length > 0 && economics?.revenuePricing &&
-         economics?.costBreakdown && 
-         economics?.grossMargin > 0 && economics?.arpu > 0 && economics?.customerLifetime > 0 && 
-         economics?.contributionMargin > 0 && economics?.fundingRaised > 0 &&
-         economics?.fundingSources?.length > 0 && economics?.amountSeeking > 0 && economics?.useOfFunds?.length > 0 && economics?.currentRunway > 0),
-    6: !!(team?.keyRoles && team?.founderExperience && team?.specialists && team?.gaps),
-    7: !!(resources?.existing && resources?.needed && resources?.techStack && resources?.dependencies),
-    8: !!(competition?.directCompetitors && competition?.indirectCompetitors && 
-         competition?.whyChooseYou && competition?.defensibility),
-    9: !!(risks?.technical && risks?.financial && risks?.legal && 
-         risks?.market && risks?.team && risks?.mitigation),
-    10: !!(growth?.traction && growth?.scalingPlan && growth?.newMarkets && growth?.paybackPeriod && growth?.targets12Months && growth?.targets24Months && growth?.targets36Months),
+  const fieldCounts: Record<number, { filled: number; total: number }> = {
+    1: {
+      total: 1,
+      filled: [!!basicInfo.projectName].filter(Boolean).length
+    },
+    2: {
+      total: 5,
+      filled: [
+        !!valueProposition.problem,
+        !!valueProposition.solution,
+        !!valueProposition.solutionUniqueness,
+        valueProposition.advantages.length >= 3,
+        !!valueProposition.measurableValue
+      ].filter(Boolean).length
+    },
+    3: {
+      total: 8,
+      filled: [
+        !!customerSegments?.primarySegment,
+        customerSegments?.marketSize?.tam > 0 && !!customerSegments?.marketSize?.tamDescription,
+        customerSegments?.marketSize?.sam > 0 && !!customerSegments?.marketSize?.samDescription,
+        customerSegments?.marketSize?.som > 0 && !!customerSegments?.marketSize?.somDescription,
+        customerSegments?.geography?.markets?.length > 0,
+        !!customerSegments?.geography?.notes,
+        !!customerSegments?.willingnessToPay?.evidence,
+        customerSegments?.willingnessToPay?.averageDealSize > 0
+      ].filter(Boolean).length
+    },
+    4: {
+      total: 6,
+      filled: [
+        channels?.acquisitionChannels?.length >= 3,
+        !!channels?.salesChannel,
+        channels?.cac > 0,
+        !!channels?.cacDescription,
+        !!channels?.marketingTools,
+        !!channels?.marketingFunnel
+      ].filter(Boolean).length
+    },
+    5: {
+      total: 13,
+      filled: [
+        economics?.projectedRevenue12Months > 0,
+        economics?.revenueStreams?.length > 0,
+        !!economics?.revenuePricing,
+        !!economics?.costBreakdown,
+        economics?.grossMargin > 0,
+        economics?.arpu > 0,
+        economics?.customerLifetime > 0,
+        economics?.contributionMargin > 0,
+        economics?.fundingRaised > 0,
+        economics?.fundingSources?.length > 0,
+        economics?.amountSeeking > 0,
+        economics?.useOfFunds?.length > 0,
+        economics?.currentRunway > 0
+      ].filter(Boolean).length
+    },
+    6: {
+      total: 4,
+      filled: [!!team?.keyRoles, !!team?.founderExperience, !!team?.specialists, !!team?.gaps].filter(Boolean).length
+    },
+    7: {
+      total: 4,
+      filled: [!!resources?.existing, !!resources?.needed, !!resources?.techStack, !!resources?.dependencies].filter(Boolean).length
+    },
+    8: {
+      total: 4,
+      filled: [
+        !!competition?.directCompetitors,
+        !!competition?.indirectCompetitors,
+        !!competition?.whyChooseYou,
+        !!competition?.defensibility
+      ].filter(Boolean).length
+    },
+    9: {
+      total: 6,
+      filled: [
+        !!risks?.technical,
+        !!risks?.financial,
+        !!risks?.legal,
+        !!risks?.market,
+        !!risks?.team,
+        !!risks?.mitigation
+      ].filter(Boolean).length
+    },
+    10: {
+      total: 7,
+      filled: [
+        !!growth?.traction,
+        !!growth?.scalingPlan,
+        !!growth?.newMarkets,
+        !!growth?.paybackPeriod,
+        !!growth?.targets12Months,
+        !!growth?.targets24Months,
+        !!growth?.targets36Months
+      ].filter(Boolean).length
+    }
   };
   
-  return validations[step] ?? true;
+  return fieldCounts[step] ?? { filled: 0, total: 0 };
+};
+
+const validateStep = (step: number, data: ProjectData): boolean => {
+  const counts = getStepFieldsCount(step, data);
+  return counts.filled === counts.total;
 };
 
 export default function CreateProjectPage() {
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
+
+  const createProjectMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Failed to create project');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log('Response:', data);
+      // router.push('/dashboard');
+    },
+    onError: (error) => {
+      alert('Error creating project: ' + error.message);
+    },
+  });
 
   const handleNext = () => {
     if (currentStep < 10) {
@@ -65,17 +163,8 @@ export default function CreateProjectPage() {
   };
 
   const handleSubmit = () => {
-    // Map form data to database schema
     const dbData = mapFormToDatabase(projectData);
-    
-    console.log('=== FORM DATA (Original) ===');
-    console.log(JSON.stringify(projectData, null, 2));
-    console.log('\n=== DATABASE DATA (Mapped) ===');
-    console.log(JSON.stringify(dbData, null, 2));
-    console.log('==============================');
-    
-    // TODO: Send dbData to API
-    alert('Project submitted! Check console for data.');
+    createProjectMutation.mutate(dbData);
   };
 
   return (
@@ -122,7 +211,14 @@ export default function CreateProjectPage() {
           {currentStep === 10 && <Step10Growth />}
           </div>
 
-          <div className="flex gap-4 justify-end">
+          <div className="space-y-3">
+            <div className="flex items-center justify-end text-sm">
+              <span className="text-slate-600">
+                Fields completed: <span className="font-semibold text-black">{getStepFieldsCount(currentStep, projectData).filled}</span> / {getStepFieldsCount(currentStep, projectData).total}
+              </span>
+            </div>
+            
+            <div className="flex gap-4 justify-end">
                 {currentStep > 1 && (
                   <Button 
                     variant="outline"
@@ -135,10 +231,11 @@ export default function CreateProjectPage() {
                 <Button 
                   onClick={currentStep === 10 ? handleSubmit : handleNext}
                   className="bg-black hover:bg-black/90 text-lg px-8 py-6"
-                  disabled={!validateStep(currentStep, projectData)}
+                  disabled={!validateStep(currentStep, projectData) || createProjectMutation.isPending}
                 >
-                  {currentStep === 10 ? "Submit Project" : "Next →"}
+                  {createProjectMutation.isPending ? "Submitting..." : currentStep === 10 ? "Submit Project" : "Next →"}
                 </Button>
+            </div>
           </div>
         </div>
       </div>
