@@ -1,0 +1,79 @@
+{
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "back": "Назад",
+    "next": "Далее",
+    "previous": "Предыдущий",
+    "submit": "Отправить",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "sort": "Сортировка",
+    "actions": "Действия"
+  },
+  "nav": {
+    "home": "Главная",
+    "dashboard": "Панель",
+    "projects": "Проекты",
+    "scoreboard": "Результаты",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "login": "Войти",
+    "signup": "Регистрация"
+  },
+  "auth": {
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "signOut": "Выйти",
+    "email": "Email",
+    "password": "Пароль",
+    "forgotPassword": "Забыли пароль?",
+    "noAccount": "Нет аккаунта?",
+    "hasAccount": "Уже есть аккаунт?",
+    "welcomeBack": "С возвращением",
+    "createAccount": "Создайте аккаунт"
+  },
+  "project": {
+    "create": "Создать проект",
+    "edit": "Редактировать проект",
+    "delete": "Удалить проект",
+    "list": "Проекты",
+    "details": "Детали проекта",
+    "name": "Название проекта",
+    "description": "Описание",
+    "status": "Статус",
+    "createdAt": "Создан",
+    "updatedAt": "Обновлен"
+  },
+  "analysis": {
+    "title": "Анализ",
+    "overallScore": "Общий балл",
+    "recommendation": "Рекомендация",
+    "summary": "Резюме",
+    "experts": "Анализ экспертов",
+    "financial": "Финансы",
+    "market": "Рынок",
+    "product": "Продукт",
+    "marketing": "Маркетинг",
+    "risk": "Риски",
+    "operations": "Операции",
+    "strengths": "Сильные стороны",
+    "weaknesses": "Слабые стороны",
+    "redFlags": "Критичные проблемы",
+    "recommendations": "Рекомендации"
+  },
+  "errors": {
+    "generic": "Что-то пошло не так",
+    "notFound": "Не найдено",
+    "unauthorized": "Не авторизован",
+    "forbidden": "Доступ запрещен",
+    "serverError": "Ошибка сервера",
+    "networkError": "Ошибка сети"
+  }
+}

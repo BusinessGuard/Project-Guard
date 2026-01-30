@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { mapFormToDatabase } from '@/utils/mapFormToDatabase';
 import { analyzeProject } from '@/utils/analizeProject';
+import { saveAnalysisToDatabase } from '@/utils/saveAnalysisToDatabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,46 +17,28 @@ export async function POST(request: NextRequest) {
     }
     
     const projectData = await request.json();
-    // Map form data to database structure
-    const dbData = mapFormToDatabase(projectData);
     
-    // Save project as draft
-    const { data: project, error } = await supabase
-      .from('projects')
-      .insert({
-        user_id: user.id,
-        status: 'draft',
-        ...dbData,
-      })
-      .select()
-      .single();
+    // Analyze project (default to Russian)
+    const analysis = await analyzeProject(projectData, 'ru');
     
-    if (error) {
-      console.error('Database error:', error);
-      return NextResponse.json(
-        { success: false, message: error.message },
-        { status: 500 }
-      );
-    }
-    
-    const analysisResult = await analyzeProject(projectData);
-    
-    // Update project status
-    await supabase
-      .from('projects')
-      .update({ status: 'analyzed' })
-      .eq('id', project.id);
+    // Save to database
+    const saveResult = await saveAnalysisToDatabase({
+      userId: user.id,
+      projectData,
+      analysis,
+    });
     
     return NextResponse.json({ 
       success: true, 
-      message: 'Project created and analyzed',
-      project,
-      analysis: analysisResult
+      message: 'Project analyzed and saved',
+      projectId: saveResult.projectId,
+      versionId: saveResult.versionId,
+      analysis
     });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to create project' },
+      { success: false, message: error instanceof Error ? error.message : 'Failed to analyze project' },
       { status: 500 }
     );
   }

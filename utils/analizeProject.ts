@@ -1,18 +1,19 @@
-import { createProjectPrompt, EXPERT_PANEL_SYSTEM_PROMPT } from '@/lib/prompts/project';
+import { createProjectPrompt, getExpertPanelSystemPrompt } from '@/lib/prompts/project';
 import { openai } from '@/lib/openai';
 
-export async function analyzeProject(projectData: any) {
-  console.log('Project Data:', JSON.stringify(projectData, null, 2));
+export async function analyzeProject(projectData: any, language: string = 'ru') {
+  const prompt = createProjectPrompt(projectData, language);
+  const systemPrompt = getExpertPanelSystemPrompt(language);
 
-  const prompt = createProjectPrompt(projectData);
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    temperature: 0.5,
+    model: 'gpt-4o',
+    max_tokens: 8000,
+    temperature: 0.7,
     response_format: { type: 'json_object' },
     messages: [
       {
         role: 'system',
-        content: EXPERT_PANEL_SYSTEM_PROMPT,
+        content: systemPrompt,
       },
       {
         role: 'user',
@@ -27,21 +28,15 @@ export async function analyzeProject(projectData: any) {
     throw new Error('Empty AI response');
   }
 
-  let parsed;
+  let analysis;
   try {
-    parsed = JSON.parse(content);
+    let cleanContent = content.trim();
+    cleanContent = cleanContent.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+    analysis = JSON.parse(cleanContent);
   } catch (e) {
-    console.error('AI response is not valid JSON:', content);
+    console.error('Failed to parse JSON:', e);
     throw new Error('Invalid AI response format');
   }
 
-  // Validate required fields
-  if (!parsed.overallScore || !parsed.expertAnalyses || !parsed.keyFindings) {
-    console.error('Missing required fields in AI response:', parsed);
-    throw new Error('Incomplete AI response');
-  }
-
-  console.log('Analysis Result:', JSON.stringify(parsed, null, 2));
-
-  return prompt;
+  return analysis;
 }
