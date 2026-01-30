@@ -1,8 +1,28 @@
 import { createProjectPrompt, getExpertPanelSystemPrompt } from '@/lib/prompts/project';
 import { openai } from '@/lib/openai';
 
-export async function analyzeProject(projectData: any, language: string = 'ru') {
-  const prompt = createProjectPrompt(projectData, language);
+export interface AnalyzeProjectResult {
+  analysis: Record<string, unknown>;
+  userPrompt: string;
+  rawResponse: {
+    id: string;
+    model: string;
+    object: string;
+    created: number;
+    choices: Array<{
+      index: number;
+      message: { role: string; content: string | null };
+      finish_reason: string;
+    }>;
+    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+  };
+}
+
+export async function analyzeProject(
+  projectData: any,
+  language: string = 'ru'
+): Promise<AnalyzeProjectResult> {
+  const userPrompt = createProjectPrompt(projectData, language);
   const systemPrompt = getExpertPanelSystemPrompt(language);
 
   const response = await openai.chat.completions.create({
@@ -11,14 +31,8 @@ export async function analyzeProject(projectData: any, language: string = 'ru') 
     temperature: 0.7,
     response_format: { type: 'json_object' },
     messages: [
-      {
-        role: 'system',
-        content: systemPrompt,
-      },
-      {
-        role: 'user',
-        content: prompt,
-      },
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
     ],
   });
 
@@ -28,15 +42,37 @@ export async function analyzeProject(projectData: any, language: string = 'ru') 
     throw new Error('Empty AI response');
   }
 
-  let analysis;
+  let analysis: Record<string, unknown>;
   try {
     let cleanContent = content.trim();
     cleanContent = cleanContent.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    analysis = JSON.parse(cleanContent);
+    analysis = JSON.parse(cleanContent) as Record<string, unknown>;
   } catch (e) {
     console.error('Failed to parse JSON:', e);
     throw new Error('Invalid AI response format');
   }
 
-  return analysis;
+  const rawResponse = {
+    id: response.id,
+    model: response.model ?? '',
+    object: response.object ?? 'chat.completion',
+    created: response.created ?? 0,
+    choices: response.choices.map((c) => ({
+      index: c.index,
+      message: {
+        role: c.message?.role ?? 'assistant',
+        content: c.message?.content ?? null,
+      },
+      finish_reason: c.finish_reason ?? 'stop',
+    })),
+    usage: response.usage
+      ? {
+          prompt_tokens: response.usage.prompt_tokens,
+          completion_tokens: response.usage.completion_tokens,
+          total_tokens: response.usage.total_tokens,
+        }
+      : undefined,
+  };
+
+  return { analysis, userPrompt, rawResponse };
 }
