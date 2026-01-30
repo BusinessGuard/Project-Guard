@@ -5,10 +5,10 @@ import { HashLoader } from 'react-spinners';
 import { useRouter } from '@/lib/navigation';
 
 interface LoadingScreenProps {
-  projectId?: string;
+  text: string;
 }
 
-export function LoadingScreen({ projectId }: LoadingScreenProps) {
+export function LoadingScreen({ text }: LoadingScreenProps) {
   const router = useRouter();
   const [seconds, setSeconds] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
@@ -45,7 +45,7 @@ export function LoadingScreen({ projectId }: LoadingScreenProps) {
       {!isComplete ? (
         <>
           <HashLoader color="#000000" size={60} />
-          <p className="mt-8 text-xl font-semibold text-black">Анализ проекта... {seconds}s</p>
+          <p className="mt-8 text-xl font-semibold text-black">{text} {seconds}s</p>
         </>
       ) : (
         <>

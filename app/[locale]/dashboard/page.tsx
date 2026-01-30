@@ -10,8 +10,8 @@ import { TabsSection } from './components/tabs/TabsSection';
 import { useAnalizeStore } from '@/store/useAnalizeStore';
 import { useScoreboardState } from '@/store/useState';
 import { loadFirstProjectWithVersions } from '@/lib/utils/loadProjectData';
+import { Error } from './components/Error'; 
 import { LoadingScreen } from '../create/components/LoadingScreen';
-
 export default function ScoreboardPage() {
   const { setProject, setVersions, setAnalysis } = useAnalizeStore();
   const { setActiveVersion, setExistingVersions, setProjectInfo, setOverallScore } = useScoreboardState();
@@ -31,10 +31,8 @@ export default function ScoreboardPage() {
           setProject(project);
           setVersions(versions);
           
-          // Set project info in scoreboard state
           setProjectInfo(project.name, project.industry, project.stage);
           
-          // Set versions in scoreboard state
           if (versionsWithDbIds.length > 0) {
             const versionList = versionsWithDbIds.map(v => ({
               id: v.dbId,
@@ -44,12 +42,9 @@ export default function ScoreboardPage() {
               date: v.date,
             }));
             setExistingVersions(versionList);
-            
-            // Set first version as active
             setActiveVersion(versionsWithDbIds[0].version);
           }
           
-          // Load and set analysis for first version
           if (firstVersionAnalysis) {
             setAnalysis(firstVersionAnalysis);
             setOverallScore(firstVersionAnalysis.scores.overall);
@@ -59,8 +54,9 @@ export default function ScoreboardPage() {
         } else {
           setError('No projects found. Create your first project to get started.');
         }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load project');
+      } catch (err: any) {
+        const errorMessage = err.message || 'Unknown error';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -69,45 +65,8 @@ export default function ScoreboardPage() {
     loadData();
   }, [setProject, setVersions, setAnalysis, setActiveVersion, setExistingVersions, setProjectInfo, setOverallScore]);
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md space-y-4">
-          <p className="text-lg text-red-600 font-semibold">Error: {error}</p>
-          {error.includes('not authenticated') && (
-            <div className="space-y-2">
-              <p className="text-sm text-slate-600">
-                Please try refreshing the page or sign in again.
-              </p>
-              <a 
-                href="/" 
-                className="inline-block text-sm text-blue-600 hover:underline"
-              >
-                Go to home page
-              </a>
-            </div>
-          )}
-          {error.includes('No projects found') && (
-            <div className="space-y-2">
-              <p className="text-sm text-slate-600">
-                Create your first project to get started.
-              </p>
-              <a 
-                href="/create" 
-                className="inline-block px-4 py-2 bg-black text-white rounded hover:bg-black/90"
-              >
-                Create Project
-              </a>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen text="Loading project..." />;
+  if (error) return <Error error={error} />;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-100">

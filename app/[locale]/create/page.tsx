@@ -167,9 +167,7 @@ export default function CreateProjectPage() {
     createProjectMutation.mutate(projectData);
   };
 
-  if (createProjectMutation.isPending || createProjectMutation.isSuccess) {
-    return <LoadingScreen projectId={createProjectMutation.data?.projectId} />;
-  }
+  if (createProjectMutation.isPending || createProjectMutation.isSuccess) return <LoadingScreen text="Analyzing project..." />;
 
   return (
     <div className="min-h-screen bg-white">

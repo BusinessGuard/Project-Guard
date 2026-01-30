@@ -6,7 +6,7 @@ import { useAnalizeStore } from '@/store/useAnalizeStore';
 import { useScoreboardState } from '@/store/useState';
 
 export function VersionHistory() {
-  const existingVersions = useAnalizeStore((state) => state.versions.list);
+  const existingVersions = useAnalizeStore((state) => state.versions);
   const { activeVersion, setActiveVersion } = useScoreboardState();
 
   // Always show 3 slots
