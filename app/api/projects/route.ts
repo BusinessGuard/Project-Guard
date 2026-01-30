@@ -28,16 +28,14 @@ export async function POST(request: NextRequest) {
       analysis,
     });
 
-    // Debug: log user prompt and OpenAI response (only for new projects, when enabled)
-    if (process.env.OPENAI_DEBUG_LOG === 'true') {
-      const { error: logError } = await supabase.from('openai_analysis_log').insert({
-        project_version_id: saveResult.versionId,
-        user_prompt: userPrompt,
-        openai_response: rawResponse,
-      });
-      if (logError) {
-        console.error('Failed to write openai_analysis_log:', logError);
-      }
+    // Log user prompt and OpenAI response for each new project
+    const { error: logError } = await supabase.from('openai_analysis_log').insert({
+      project_version_id: saveResult.versionId,
+      user_prompt: userPrompt,
+      openai_response: rawResponse,
+    });
+    if (logError) {
+      console.error('Failed to write openai_analysis_log:', logError);
     }
 
     return NextResponse.json({ 

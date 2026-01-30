@@ -764,3 +764,460 @@ CRITICAL RULES:
 
 Be brutally honest but constructive. Focus on actionable insights with specific numbers.`;
 }
+
+// -----------------------------
+// BANK PROMPT VARIANT (unused)
+// -----------------------------
+
+export function getBankCreditCommitteeSystemPrompt(language: string = 'ru'): string {
+  const langName =
+    language === 'ru' ? 'RUSSIAN (Русский)' : language === 'en' ? 'ENGLISH' : language.toUpperCase();
+
+  return `You are a senior credit analyst writing for a bank Credit Committee. Your goal is to assess creditworthiness and propose prudent lending terms for a startup/SME.
+
+CRITICAL LANGUAGE RULES - You MUST respond in ${langName}:
+1. ALL narrative text MUST be in ${langName}.
+2. EXCEPTIONS (keep in original language): technical terms (SaaS, CAC, LTV, ARPU, MRR), brand/product names, acronyms (GDPR, API), currency symbols/codes, numbers, percentages, and dates.
+
+BANKING LENS (apply throughout):
+- Focus on repayment capacity, cash flow resilience, downside scenarios, concentration risks, operational risk, legal/compliance risk.
+- Be conservative with assumptions; identify missing information explicitly.
+- If data is insufficient, state the limitation and recommend required documents/verification.
+
+OUTPUT RULES:
+- Return ONLY valid JSON (no markdown, no explanations).
+- Use consistent numeric units and mention units in labels where relevant.
+- Do NOT invent collateral or signed contracts; you may recommend what to request.`;
+}
+
+export function createBankProjectPrompt(projectData: any, language: string = 'ru') {
+  const {
+    basicInfo,
+    valueProposition,
+    customerSegments,
+    channels,
+    economics,
+    team,
+    resources,
+    competition,
+    risks,
+    growth,
+  } = projectData;
+
+  const cac = channels?.cac || 0;
+  const ltv =
+    economics?.arpu && economics?.customerLifetime && economics?.grossMargin
+      ? economics.arpu * economics.customerLifetime * (economics.grossMargin / 100)
+      : 0;
+  const ltvCacRatio = ltv && cac ? (ltv / cac).toFixed(1) : '0';
+  const paybackPeriod =
+    cac && economics?.arpu && economics?.grossMargin
+      ? (cac / (economics.arpu * (economics.grossMargin / 100))).toFixed(1)
+      : '0';
+  const monthlyBurn =
+    economics?.fundingRaised && economics?.currentRunway
+      ? (economics.fundingRaised / economics.currentRunway).toFixed(0)
+      : '0';
+
+  return `LANGUAGE: Respond in ${language === 'ru' ? 'RUSSIAN (Русский)' : 'ENGLISH'}. All text must be in this language.
+
+You are preparing a bank Credit Committee memo. Analyze the borrower/project for credit risk and propose prudent lending terms.
+
+BORROWER / PROJECT OVERVIEW:
+Name: ${basicInfo?.projectName}
+Industry: ${basicInfo?.industry}
+Stage: ${basicInfo?.stage}
+Description: ${basicInfo?.description}
+
+BUSINESS MODEL (FULL INPUT DATA):
+
+1) VALUE PROPOSITION
+Problem: ${valueProposition?.problem}
+Solution: ${valueProposition?.solution}
+Uniqueness: ${valueProposition?.solutionUniqueness}
+Key Advantages: ${(valueProposition?.advantages || []).join(', ')}
+Measurable Value: ${valueProposition?.measurableValue}
+
+2) CUSTOMER SEGMENTS & MARKET
+Primary Segment: ${customerSegments?.primarySegment}
+TAM: ${customerSegments?.marketSize?.tam} — ${customerSegments?.marketSize?.tamDescription}
+SAM: ${customerSegments?.marketSize?.sam} — ${customerSegments?.marketSize?.samDescription}
+SOM: ${customerSegments?.marketSize?.som} — ${customerSegments?.marketSize?.somDescription}
+Geography (markets): ${(customerSegments?.geography?.markets || []).join(', ')}
+Geography notes: ${customerSegments?.geography?.notes}
+Willingness to Pay evidence: ${customerSegments?.willingnessToPay?.evidence}
+Average deal size: €${customerSegments?.willingnessToPay?.averageDealSize}
+
+3) CHANNELS & GO-TO-MARKET
+Acquisition Channels: ${(channels?.acquisitionChannels || []).join(', ')}
+Sales Channel: ${channels?.salesChannel}
+CAC: €${channels?.cac}
+CAC Breakdown: ${channels?.cacDescription}
+Marketing Tools: ${channels?.marketingTools}
+Marketing Funnel: ${channels?.marketingFunnel}
+
+4) REVENUE MODEL
+Projected 12m Revenue: €${economics?.projectedRevenue12Months}
+Revenue Streams:
+${(economics?.revenueStreams || []).map((s: any) => `- ${s.type}: ${s.description} (${s.percentage}%)`).join('\n')}
+Pricing Strategy: ${economics?.revenuePricing}
+
+5) COSTS, UNIT ECONOMICS & FUNDING
+Cost Breakdown: ${economics?.costBreakdown}
+Gross Margin: ${economics?.grossMargin}%
+ARPU: €${economics?.arpu}/month
+Customer Lifetime: ${economics?.customerLifetime} months
+Contribution Margin: €${economics?.contributionMargin}
+Funding Raised: €${economics?.fundingRaised}
+Funding Sources:
+${(economics?.fundingSources || []).map((s: any) => `- ${s.type}: €${s.amount}`).join('\n')}
+Amount Seeking: €${economics?.amountSeeking}
+Use of Funds:
+${(economics?.useOfFunds || []).map((u: any) => `- ${u.item}: €${u.amount}`).join('\n')}
+Current Runway: ${economics?.currentRunway} months
+
+CALCULATED (from provided inputs; do not treat as audited):
+- LTV: €${Number(ltv).toFixed(2)}
+- LTV/CAC: ${ltvCacRatio}x
+- Payback Period: ${paybackPeriod} months
+- Implied Monthly Burn: €${monthlyBurn}
+
+6) TEAM & EXECUTION
+Founder Experience: ${team?.founderExperience}
+Key Roles: ${team?.keyRoles}
+Specialists: ${team?.specialists}
+Team Gaps: ${team?.gaps}
+
+7) RESOURCES, ACTIVITIES, PARTNERS
+Existing Resources: ${resources?.existing}
+Needed Resources: ${resources?.needed}
+Tech Stack: ${resources?.techStack}
+Dependencies: ${resources?.dependencies}
+Key Activities:
+  - Production: ${resources?.activities?.production}
+  - Innovation: ${resources?.activities?.innovation}
+  - Platform: ${resources?.activities?.platform}
+  - Marketing: ${resources?.activities?.marketing}
+  - Operations: ${resources?.activities?.operations}
+Key Partners:
+${(resources?.partners || []).map((p: any) => `- ${p.type}: ${p.name} — ${p.value}`).join('\n')}
+
+8) COMPETITION
+Direct Competitors: ${competition?.directCompetitors}
+Indirect Competitors: ${competition?.indirectCompetitors}
+Why Choose Us: ${competition?.whyChooseYou}
+Defensibility: ${competition?.defensibility}
+
+9) RISKS & MITIGATION (as provided by borrower)
+Technical: ${risks?.technical}
+Financial: ${risks?.financial}
+Legal: ${risks?.legal}
+Market: ${risks?.market}
+Team: ${risks?.team}
+Mitigation: ${risks?.mitigation}
+
+10) TRACTION & GROWTH
+Current Traction: ${growth?.traction}
+Scaling Plan: ${growth?.scalingPlan}
+New Markets: ${growth?.newMarkets}
+Payback Period Forecast: ${growth?.paybackPeriod}
+Targets 12 months: ${growth?.targets12Months}
+Targets 24 months: ${growth?.targets24Months}
+Targets 36 months: ${growth?.targets36Months}
+
+YOUR TASK:
+Return ONLY valid JSON in the structure below. Make it readable and conservative like a bank credit memo.
+
+{
+  "creditMemo": {
+    "borrowerSummary": {
+      "name": "string",
+      "industry": "string",
+      "stage": "string",
+      "businessDescription": "string"
+    },
+    "businessModelAssessment": {
+      "valueProposition": "string",
+      "customersAndMarket": "string",
+      "goToMarket": "string",
+      "competition": "string"
+    },
+    "financialAssessment": {
+      "inputsQuality": "string",
+      "revenueModel": "string",
+      "unitEconomics": {
+        "arpuEurPerMonth": 0,
+        "grossMarginPercent": 0,
+        "ltvEur": 0,
+        "cacEur": 0,
+        "ltvCacRatio": 0,
+        "paybackMonths": 0
+      },
+      "runwayAndBurn": {
+        "runwayMonths": 0,
+        "impliedMonthlyBurnEur": 0
+      }
+    },
+    "riskAssessment": {
+      "topRisks": [
+        { "category": "Market|Financial|Operational|Legal|Technical", "description": "string", "severity": "low|medium|high|critical" }
+      ],
+      "mitigants": ["string"],
+      "informationGaps": ["string"]
+    },
+    "creditRecommendation": {
+      "decision": "approve|approve_with_conditions|decline",
+      "riskRating": "1-10 (1 best)",
+      "rationale": "string",
+      "proposedFacility": {
+        "product": "working_capital_loan|term_loan|revolving_credit|decline",
+        "amountEur": 0,
+        "tenorMonths": 0,
+        "repayment": "bullet|amortizing|revolver",
+        "pricing": { "type": "fixed|floating", "spreadBps": 0, "allInAprPercent": 0 },
+        "fees": { "originationPercent": 0, "other": "string" }
+      },
+      "covenants": ["string"],
+      "conditionsPrecedent": ["string"],
+      "monitoringPlan": ["string"]
+    }
+  }
+}
+
+CRITICAL RULES:
+1) Use all provided inputs; do not ignore sections.
+2) Do NOT fabricate audited financial statements, collateral, or signed contracts.
+3) If recommending approval, include strict conditions and monitoring suitable for high-risk early-stage borrowers.
+4) Keep numbers realistic and consistent with the provided inputs.`;
+}
+
+// ---------------------------------
+// CORPORATE PROMPT VARIANT (unused)
+// ---------------------------------
+
+export function getCorporateStrategyReviewSystemPrompt(language: string = 'ru'): string {
+  const langName =
+    language === 'ru' ? 'RUSSIAN (Русский)' : language === 'en' ? 'ENGLISH' : language.toUpperCase();
+
+  return `You are a corporate strategy / innovation review committee evaluating a startup as a potential partner, supplier, or strategic investment target.
+
+CRITICAL LANGUAGE RULES - You MUST respond in ${langName}:
+1. ALL narrative text MUST be in ${langName}.
+2. EXCEPTIONS (keep in original language): technical terms (SaaS, CAC, LTV, ARPU, MRR), brand/product names, acronyms (GDPR, API), currency symbols/codes, numbers, percentages, and dates.
+
+CORPORATE LENS (apply throughout):
+- Prioritize strategic fit, synergy potential, implementation feasibility, compliance, security, vendor risk, and measurable business impact (ROI).
+- Assume real-world corporate constraints: procurement, legal review, data privacy, security, integration, stakeholder alignment, budget cycles.
+- If information is missing (e.g., security posture, SLA, certifications), explicitly list it as required for due diligence.
+
+OUTPUT RULES:
+- Return ONLY valid JSON (no markdown, no explanations).
+- Be specific, pragmatic, and action-oriented (what we should do next and how).`;
+}
+
+export function createCorporateProjectPrompt(projectData: any, language: string = 'ru') {
+  const {
+    basicInfo,
+    valueProposition,
+    customerSegments,
+    channels,
+    economics,
+    team,
+    resources,
+    competition,
+    risks,
+    growth,
+  } = projectData;
+
+  const cac = channels?.cac || 0;
+  const ltv =
+    economics?.arpu && economics?.customerLifetime && economics?.grossMargin
+      ? economics.arpu * economics.customerLifetime * (economics.grossMargin / 100)
+      : 0;
+  const ltvCacRatio = ltv && cac ? (ltv / cac).toFixed(1) : '0';
+  const paybackPeriod =
+    cac && economics?.arpu && economics?.grossMargin
+      ? (cac / (economics.arpu * (economics.grossMargin / 100))).toFixed(1)
+      : '0';
+  const monthlyBurn =
+    economics?.fundingRaised && economics?.currentRunway
+      ? (economics.fundingRaised / economics.currentRunway).toFixed(0)
+      : '0';
+
+  return `LANGUAGE: Respond in ${language === 'ru' ? 'RUSSIAN (Русский)' : 'ENGLISH'}. All text must be in this language.
+
+You are preparing an internal corporate review memo to decide whether to engage with this startup as:
+1) a strategic partner, 2) a vendor/supplier, 3) a co-development partner, or 4) a strategic investment target.
+
+STARTUP / SOLUTION OVERVIEW:
+Name: ${basicInfo?.projectName}
+Industry: ${basicInfo?.industry}
+Stage: ${basicInfo?.stage}
+Description: ${basicInfo?.description}
+
+FULL INPUT DATA (DO NOT IGNORE ANY SECTION):
+
+1) VALUE PROPOSITION
+Problem: ${valueProposition?.problem}
+Solution: ${valueProposition?.solution}
+Uniqueness: ${valueProposition?.solutionUniqueness}
+Key Advantages: ${(valueProposition?.advantages || []).join(', ')}
+Measurable Value: ${valueProposition?.measurableValue}
+
+2) CUSTOMER SEGMENTS & MARKET
+Primary Segment: ${customerSegments?.primarySegment}
+TAM: ${customerSegments?.marketSize?.tam} — ${customerSegments?.marketSize?.tamDescription}
+SAM: ${customerSegments?.marketSize?.sam} — ${customerSegments?.marketSize?.samDescription}
+SOM: ${customerSegments?.marketSize?.som} — ${customerSegments?.marketSize?.somDescription}
+Geography (markets): ${(customerSegments?.geography?.markets || []).join(', ')}
+Geography notes: ${customerSegments?.geography?.notes}
+Willingness to Pay evidence: ${customerSegments?.willingnessToPay?.evidence}
+Average deal size: €${customerSegments?.willingnessToPay?.averageDealSize}
+
+3) CHANNELS & GO-TO-MARKET
+Acquisition Channels: ${(channels?.acquisitionChannels || []).join(', ')}
+Sales Channel: ${channels?.salesChannel}
+CAC: €${channels?.cac}
+CAC Breakdown: ${channels?.cacDescription}
+Marketing Tools: ${channels?.marketingTools}
+Marketing Funnel: ${channels?.marketingFunnel}
+
+4) ECONOMICS & COMMERCIALS (as provided)
+Projected 12m Revenue: €${economics?.projectedRevenue12Months}
+Revenue Streams:
+${(economics?.revenueStreams || []).map((s: any) => `- ${s.type}: ${s.description} (${s.percentage}%)`).join('\n')}
+Pricing Strategy: ${economics?.revenuePricing}
+Cost Breakdown: ${economics?.costBreakdown}
+Gross Margin: ${economics?.grossMargin}%
+ARPU: €${economics?.arpu}/month
+Customer Lifetime: ${economics?.customerLifetime} months
+Contribution Margin: €${economics?.contributionMargin}
+Funding Raised: €${economics?.fundingRaised}
+Funding Sources:
+${(economics?.fundingSources || []).map((s: any) => `- ${s.type}: €${s.amount}`).join('\n')}
+Amount Seeking: €${economics?.amountSeeking}
+Use of Funds:
+${(economics?.useOfFunds || []).map((u: any) => `- ${u.item}: €${u.amount}`).join('\n')}
+Current Runway: ${economics?.currentRunway} months
+
+CALCULATED (from provided inputs; treat as indicative):
+- LTV: €${Number(ltv).toFixed(2)}
+- LTV/CAC: ${ltvCacRatio}x
+- Payback Period: ${paybackPeriod} months
+- Implied Monthly Burn: €${monthlyBurn}
+
+5) TEAM & EXECUTION
+Founder Experience: ${team?.founderExperience}
+Key Roles: ${team?.keyRoles}
+Specialists: ${team?.specialists}
+Team Gaps: ${team?.gaps}
+
+6) RESOURCES, ACTIVITIES, PARTNERS
+Existing Resources: ${resources?.existing}
+Needed Resources: ${resources?.needed}
+Tech Stack: ${resources?.techStack}
+Dependencies: ${resources?.dependencies}
+Key Activities:
+  - Production: ${resources?.activities?.production}
+  - Innovation: ${resources?.activities?.innovation}
+  - Platform: ${resources?.activities?.platform}
+  - Marketing: ${resources?.activities?.marketing}
+  - Operations: ${resources?.activities?.operations}
+Key Partners:
+${(resources?.partners || []).map((p: any) => `- ${p.type}: ${p.name} — ${p.value}`).join('\n')}
+
+7) COMPETITION
+Direct Competitors: ${competition?.directCompetitors}
+Indirect Competitors: ${competition?.indirectCompetitors}
+Why Choose Us: ${competition?.whyChooseYou}
+Defensibility: ${competition?.defensibility}
+
+8) RISKS & MITIGATION (as provided)
+Technical: ${risks?.technical}
+Financial: ${risks?.financial}
+Legal: ${risks?.legal}
+Market: ${risks?.market}
+Team: ${risks?.team}
+Mitigation: ${risks?.mitigation}
+
+9) TRACTION & GROWTH
+Current Traction: ${growth?.traction}
+Scaling Plan: ${growth?.scalingPlan}
+New Markets: ${growth?.newMarkets}
+Payback Period Forecast: ${growth?.paybackPeriod}
+Targets 12 months: ${growth?.targets12Months}
+Targets 24 months: ${growth?.targets24Months}
+Targets 36 months: ${growth?.targets36Months}
+
+YOUR TASK:
+Return ONLY valid JSON in the structure below. Write it like a pragmatic internal corporate memo.
+
+{
+  "corporateReview": {
+    "executiveSummary": {
+      "whatItIs": "string",
+      "whyNow": "string",
+      "recommendedEngagementType": "vendor|partnership|co_development|strategic_investment|no_go",
+      "oneLineDecision": "string"
+    },
+    "strategicFit": {
+      "targetBusinessUnits": ["string"],
+      "useCases": ["string"],
+      "synergies": ["string"],
+      "nonFitAreas": ["string"]
+    },
+    "valueAndImpact": {
+      "measurableValueHypothesis": "string",
+      "expectedKpis": ["string"],
+      "roiNarrative": "string"
+    },
+    "productAndTechnology": {
+      "solutionAssessment": "string",
+      "techStack": "string",
+      "integrationConsiderations": ["string"],
+      "dependenciesAndConstraints": ["string"]
+    },
+    "commercialAndPricing": {
+      "pricingSummary": "string",
+      "estimatedUnitEconomics": {
+        "arpuEurPerMonth": 0,
+        "grossMarginPercent": 0,
+        "ltvEur": 0,
+        "cacEur": 0,
+        "ltvCacRatio": 0,
+        "paybackMonths": 0
+      },
+      "revenueModelNotes": "string"
+    },
+    "vendorRiskAndCompliance": {
+      "topRisks": [
+        { "category": "Security|Privacy|Legal|Operational|Financial|Technical|Reputation", "description": "string", "severity": "low|medium|high|critical" }
+      ],
+      "requiredDueDiligence": ["string"],
+      "contractingNotes": ["string"]
+    },
+    "executionPlan": {
+      "pilotPlan": {
+        "durationWeeks": 0,
+        "scope": "string",
+        "successCriteria": ["string"],
+        "stakeholders": ["string"]
+      },
+      "rolloutPlan": {
+        "phases": ["string"],
+        "resourcesNeeded": ["string"]
+      }
+    },
+    "finalRecommendation": {
+      "decision": "go|go_with_conditions|no_go",
+      "conditions": ["string"],
+      "nextSteps30Days": ["string"]
+    }
+  }
+}
+
+CRITICAL RULES:
+1) Use all provided inputs; do not ignore sections.
+2) Do NOT fabricate certifications, security controls, SLAs, or signed customer contracts; instead list them under requiredDueDiligence if unknown.
+3) Keep recommendations grounded in corporate execution reality (procurement, security review, integration effort).`;
+}

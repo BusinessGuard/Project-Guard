@@ -1,40 +1,144 @@
-# AI Guard - Project Guard AI Frontend
+# ProjectGuard
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with
-[`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ProjectGuard is a Next.js (App Router) web app that lets a signed-in user fill a **10-step project canvas**, sends it to OpenAI for analysis, and stores both the raw canvas and analysis results in **Supabase**. The dashboard then shows the latest project and its versioned analyses.
 
-## Getting Started
-
-First, run the development server:
+## Quick start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the
-result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page
-auto-updates as you edit the file.
+## High-level flow
 
-This project uses
-[`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
-to automatically optimize and load [Geist](https://vercel.com/font), a new font
-family for Vercel.
+1. User completes the **10-step form** at `/<locale>/create`.
+2. App sends the full `projectData` to `POST /api/projects`.
+3. Server:
+   - verifies Supabase auth
+   - runs OpenAI analysis (JSON response)
+   - writes to Supabase: `projects` + `project_versions`
+   - logs the OpenAI prompt/response to `openai_analysis_log` (best-effort)
+4. App redirects to `/<locale>/dashboard`, which loads the **most recently created** project.
 
-## Learn More
+## Routing & pages (App Router)
 
-To learn more about Next.js, take a look at the following resources:
+- **Home / auth**: `app/[locale]/home/*`
+- **Create flow** (10-step canvas): `app/[locale]/create/page.tsx`
+- **Dashboard** (scoreboard): `app/[locale]/dashboard/page.tsx`
+- **Debug log page** (by project version): `app/[locale]/debug/log/[projectVersionId]/page.tsx`
+- **API**:
+  - `POST /api/projects`: `app/api/projects/route.ts`
+  - Supabase auth callback: `app/auth/callback/route.ts`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 10-step form architecture
+
+### Orchestration
+
+- **Entry**: `app/[locale]/create/page.tsx`
+- Renders one of `Step1BasicInfo` … `Step10Growth` based on `currentStep`.
+- Per-step completeness is enforced by `validateStep(step, projectData)`; navigation/submit is disabled until required fields are filled.
+- On completion of step 10, the create flow submits `projectData` to `/api/projects`.
+
+### State management
+
+- Store: `store/useProjectStore.ts` (Zustand + `persist`)
+  - `projectData`: typed as `ProjectData` (`types/project.ts`)
+  - `currentStep`: 1…10
+  - `updateX(...)` setters per section (basicInfo, valueProposition, …, growth)
+  - `resetProject()`
+- Persistence key: `project-storage` (browser storage), so the form survives refreshes.
+
+### Step components
+
+Located in `app/[locale]/create/components/`:
+
+- `Step1BasicInfo.tsx` … `Step10Growth.tsx`
+- Each step reads/writes only its slice of `projectData` via `useProjectStore()`.
+
+## Analysis pipeline (OpenAI)
+
+### Where analysis happens
+
+- `utils/analizeProject.ts` calls OpenAI `chat.completions.create(...)` (JSON mode).
+- Prompts come from `lib/prompts/project.ts`:
+  - **System prompt**: `getExpertPanelSystemPrompt(language)`
+  - **User prompt**: `createProjectPrompt(projectData, language)` (filled with the submitted canvas)
+
+### Prompt variants (not used)
+
+Additional prompt variants exist for future use and are **not wired anywhere**:
+
+- **Bank**: `getBankCreditCommitteeSystemPrompt`, `createBankProjectPrompt`
+- **Corporate**: `getCorporateStrategyReviewSystemPrompt`, `createCorporateProjectPrompt`
+
+## Database (Supabase)
+
+This app expects these main tables (see `supabase/migrations/*` and `database.sql` for reference).
+
+### `projects`
+
+High-level metadata:
+
+- `user_id`
+- `name`
+- `industry`
+- `stage`
+- timestamps
+
+### `project_versions`
+
+One row per analysis/version:
+
+- `project_id`
+- `version_number`, `is_current`
+- `canvas_data` (**full 10-step form** stored as JSONB)
+- analysis scores and JSON blobs (`experts`, `recommendations`, `growth_phases`, financial forecast fields, etc.)
+
+### `openai_analysis_log` (optional / best-effort)
+
+Debug logging table used by `POST /api/projects` to store:
+
+- `project_version_id` (links the log to the created version)
+- `user_prompt` (the exact user prompt string sent to OpenAI)
+- `openai_response` (raw OpenAI response object as JSONB)
+
+Important:
+- The API insert into `openai_analysis_log` is **best-effort**. If the table does not exist or RLS blocks it, the error is logged on the server, but the project save still succeeds.
+- The debug UI reads from this table (and will show an error if the row/table is missing).
+
+## “Which project does the dashboard show?”
+
+The dashboard loads the **first project** returned by:
+
+```ts
+supabase.from('projects').select('*').order('created_at', { ascending: false })
+```
+
+So `/ru/dashboard` shows the **most recently created** project for the logged-in user.
+
+## Debug tooling
+
+### OpenAI request/response viewer
+
+Web page:
+
+- `/<locale>/debug/log/<projectVersionId>`
+
+It displays:
+- **Request (user prompt)**: full prompt text
+- **Response (OpenAI)**: only `choices[0].message.content` (pretty-printed JSON if possible)
+
+## Environment variables (high level)
+
+This project uses Supabase and OpenAI. Do not commit secrets.
+
+Common variables (names may vary by setup):
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- OpenAI key used by `lib/openai.ts` (check that file for the exact env var name)
 
 ## CI/CD
 
