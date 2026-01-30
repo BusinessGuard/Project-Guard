@@ -1,8 +1,9 @@
 import { createProjectPrompt, getExpertPanelSystemPrompt } from '@/lib/prompts/project';
 import { openai } from '@/lib/openai';
+import type { AnalysisApiResponse } from '@/types/analysis-api';
 
 export interface AnalyzeProjectResult {
-  analysis: Record<string, unknown>;
+  analysis: AnalysisApiResponse;
   userPrompt: string;
   rawResponse: {
     id: string;
@@ -42,11 +43,11 @@ export async function analyzeProject(
     throw new Error('Empty AI response');
   }
 
-  let analysis: Record<string, unknown>;
+  let analysis: AnalysisApiResponse;
   try {
     let cleanContent = content.trim();
     cleanContent = cleanContent.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    analysis = JSON.parse(cleanContent) as Record<string, unknown>;
+    analysis = JSON.parse(cleanContent) as AnalysisApiResponse;
   } catch (e) {
     console.error('Failed to parse JSON:', e);
     throw new Error('Invalid AI response format');
