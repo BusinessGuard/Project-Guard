@@ -162,9 +162,7 @@ export function createProjectPrompt(projectData: any, language: string = 'ru') {
     ? (economics.fundingRaised / economics.currentRunway).toFixed(0)
     : 0;
 
-  return `LANGUAGE: Respond in ${language === 'ru' ? 'RUSSIAN (Русский)' : 'ENGLISH'}. All text must be in this language.
-
-Analyze this startup project comprehensively from all 6 expert perspectives:
+  return `Analyze this startup project comprehensively from all 6 expert perspectives:
 
 PROJECT OVERVIEW:
 Name: ${basicInfo.projectName}
@@ -276,10 +274,6 @@ Targets:
   • 36 months: ${growth.targets36Months}
 
 YOUR TASK:
-CRITICAL LANGUAGE RULES - Respond in ${language === 'ru' ? 'RUSSIAN (Русский)' : language === 'en' ? 'ENGLISH' : language.toUpperCase()}:
-- ALL text content MUST be in the specified language (summaries, findings, recommendations, growth plans, etc.)
-- EXCEPTIONS: Keep technical terms (SaaS, CAC, LTV), brand names, acronyms, and numbers in original format
-
 Return ONLY valid JSON (no markdown, no explanations) in this EXACT structure:
 
 {
@@ -762,7 +756,12 @@ CRITICAL RULES:
 7. All strings must be properly escaped for JSON
 8. Use exact field names as shown in structure above
 
-Be brutally honest but constructive. Focus on actionable insights with specific numbers.`;
+Be brutally honest but constructive. Focus on actionable insights with specific numbers.
+
+LANGUAGE REQUIREMENT:
+- Write the entire response in the same language the user used to fill in the input data (mirror the language used in the provided fields).
+- If the input data is mixed-language, use the dominant language.
+- Keep technical terms (SaaS, CAC, LTV), brand/product names, acronyms, and numbers in their original format.`;
 }
 
 // -----------------------------

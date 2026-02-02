@@ -27,7 +27,7 @@ export async function analyzeProject(
   const systemPrompt = getExpertPanelSystemPrompt(language);
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     max_tokens: 8000,
     temperature: 0.7,
     response_format: { type: 'json_object' },
