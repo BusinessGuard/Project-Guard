@@ -1,14 +1,14 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { useAnalizeStore } from '@/store/useAnalizeStore';
-import { useScoreboardState } from '@/store/useState';
+import { useVersionsStore } from '@/store/useVersionsStore';
 
 export function ScoreCard() {
-  const analysis = useAnalizeStore((state) => state.analysis);
-  const { investorProfile } = useScoreboardState();
+  const { currentProject, audienceType } = useVersionsStore();
   
-  if (!analysis) return null;
+  if (!currentProject?.analysis) return null;
+  
+  const analysis = currentProject.analysis;
   
   const { overall: overallScore, readiness: readinessStatus } = analysis.scores;
   const { percentile: benchmarkPercentile, betterThan: benchmarkBetterThan } = analysis.benchmark;
@@ -25,8 +25,8 @@ export function ScoreCard() {
   const scoreBadge = getScoreBadge(overallScore);
 
   const getProfileLabel = () => {
-    switch (investorProfile) {
-      case 'vc': return '🚀 VC Focus';
+    switch (audienceType) {
+      case 'venture': return '🚀 VC Focus';
       case 'bank': return '🏦 Bank Focus';
       case 'corporate': return '🏢 Corp Focus';
       default: return '';
@@ -34,8 +34,8 @@ export function ScoreCard() {
   };
 
   const getProfileFocus = () => {
-    switch (investorProfile) {
-      case 'vc': return 'team, valueProposition, customerSegments';
+    switch (audienceType) {
+      case 'venture': return 'team, valueProposition, customerSegments';
       case 'bank': return 'revenue, costs, keyResources';
       case 'corporate': return 'keyActivities, keyPartners, valueProposition';
       default: return '';

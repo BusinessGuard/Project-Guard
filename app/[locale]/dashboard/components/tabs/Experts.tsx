@@ -1,16 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { useAnalizeStore } from '@/store/useAnalizeStore';
+import { useVersionsStore } from '@/store/useVersionsStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertTriangle, Shield, Target, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function Experts() {
-  const analysis = useAnalizeStore((state) => state.analysis);
+  const { currentProject } = useVersionsStore();
   const [expandedExperts, setExpandedExperts] = useState<Record<string, boolean>>({});
   
-  if (!analysis) return null;
+  if (!currentProject?.analysis) return null;
+  
+  const analysis = currentProject.analysis;
   
   const toggleExpert = (expertKey: string): void => {
     setExpandedExperts(prev => ({

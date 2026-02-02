@@ -1,6 +1,6 @@
 'use client';
 
-import { useAnalizeStore } from '@/store/useAnalizeStore';
+import { useVersionsStore } from '@/store/useVersionsStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   LineChart,
@@ -14,11 +14,11 @@ import {
 } from 'recharts';
 
 export function FinancialForecast() {
-  const analysis = useAnalizeStore((state) => state.analysis);
+  const { currentProject } = useVersionsStore();
   
-  if (!analysis) return null;
+  if (!currentProject?.analysis) return null;
   
-  const { unitEconomics, breakEven, monthlyProjections } = analysis.financialForecast;
+  const { unitEconomics, breakEven, monthlyProjections } = currentProject.analysis.financialForecast;
   
   return (
     <div className="space-y-6">

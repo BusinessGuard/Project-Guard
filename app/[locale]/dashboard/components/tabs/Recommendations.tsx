@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAnalizeStore } from '@/store/useAnalizeStore';
+import { useVersionsStore } from '@/store/useVersionsStore';
 import { useScoreboardState } from '@/store/useState';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +9,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react';
 
 export function Recommendations() {
-  const analysis = useAnalizeStore((state) => state.analysis);
+  const { currentProject } = useVersionsStore();
   const { recommendationsProgress, setRecommendationsProgress } = useScoreboardState();
   const [expandedRecommendations, setExpandedRecommendations] = useState<Record<string, boolean>>({});
   const [checkedSteps, setCheckedSteps] = useState<Record<string, Set<number>>>({});
+  
+  if (!currentProject?.analysis) return null;
+  
+  const analysis = currentProject.analysis;
   
   useEffect(() => {
     const restored: Record<string, Set<number>> = {};

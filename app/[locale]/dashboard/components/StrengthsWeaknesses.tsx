@@ -1,15 +1,15 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAnalizeStore } from '@/store/useAnalizeStore';
+import { useVersionsStore } from '@/store/useVersionsStore';
 import { CheckCircle, AlertTriangle, Award, Flame } from 'lucide-react';
 
 export function StrengthsWeaknesses() {
-  const analysis = useAnalizeStore((state) => state.analysis);
+  const { currentProject } = useVersionsStore();
   
-  if (!analysis) return null;
+  if (!currentProject?.analysis) return null;
   
-  const { topStrengths, topWeaknesses } = analysis.consensus.findings;
+  const { topStrengths, topWeaknesses } = currentProject.analysis.consensus.findings;
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <Card className="shadow-none ">

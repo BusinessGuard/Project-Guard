@@ -8,14 +8,14 @@ import {
   Radar,
   ResponsiveContainer,
 } from 'recharts';
-import { useAnalizeStore } from '@/store/useAnalizeStore';
+import { useVersionsStore } from '@/store/useVersionsStore';
 
 export function RadarChartView() {
-  const analysis = useAnalizeStore((state) => state.analysis);
+  const { currentProject } = useVersionsStore();
   
-  if (!analysis) return null;
+  if (!currentProject?.analysis) return null;
   
-  const blockScores = analysis.scores.blocks;
+  const blockScores = currentProject.analysis.scores.blocks;
 
   // Transform blockScores to radar chart format
   const radarData = [

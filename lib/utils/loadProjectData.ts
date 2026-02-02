@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 import type { 
   ProjectInfoStore, 
   ProjectVersionDB, 
@@ -41,14 +42,15 @@ export async function loadUserProjects() {
   return projects || [];
 }
 
-export async function loadProjectVersions(projectId: string): Promise<Array<ProjectVersionDB & { dbId: string }>> {
-  const supabase = createClient();
+export async function loadProjectVersions(projectId: string, useServer: boolean = false): Promise<Array<ProjectVersionDB & { dbId: string; audienceType?: string }>> {
+  const supabase = useServer ? await createServerClient() : createClient();
   
   const { data: versions, error } = await supabase
     .from('project_versions')
-    .select('id, version_number, overall_score, created_at')
+    .select('id, version_number, overall_score, created_at, audience_type')
     .eq('project_id', projectId)
-    .order('version_number', { ascending: true });
+    .order('version_number', { ascending: true })
+    .order('audience_type', { ascending: true });
 
   if (error) {
     throw new Error(`Failed to load versions: ${error.message}`);
@@ -66,11 +68,12 @@ export async function loadProjectVersions(projectId: string): Promise<Array<Proj
     name: `Version ${v.version_number}`,
     date: new Date(v.created_at).toISOString().split('T')[0], // Format as YYYY-MM-DD
     dbId: v.id, // Keep database UUID for loading analysis
+    audienceType: (v as any).audience_type || 'venture',
   }));
 }
 
-export async function loadVersionAnalysis(versionId: string): Promise<Analysis | null> {
-  const supabase = createClient();
+export async function loadVersionAnalysis(versionId: string, useServer: boolean = false): Promise<Analysis | null> {
+  const supabase = useServer ? await createServerClient() : createClient();
   
   const { data: version, error } = await supabase
     .from('project_versions')
@@ -143,48 +146,3 @@ export async function loadVersionAnalysis(versionId: string): Promise<Analysis |
   return analysis;
 }
 
-export async function loadFirstProjectWithVersions(): Promise<{
-  project: ProjectInfoStore | null;
-  versions: ProjectVersionDB[];
-  firstVersionAnalysis: Analysis | null;
-  versionsWithDbIds: Array<{ id: string; version: number; score: number; name: string; date: string; dbId: string }>;
-}> {
-  const projects = await loadUserProjects();
-  
-  if (projects.length === 0) {
-    return { project: null, versions: [], firstVersionAnalysis: null, versionsWithDbIds: [] };
-  }
-
-  const firstProject = projects[0];
-  const versionsWithDbIds = await loadProjectVersions(firstProject.id);
-
-  // Extract versions without dbId for compatibility
-  const versions: ProjectVersionDB[] = versionsWithDbIds.map(({ dbId, ...v }) => v);
-
-  // Load analysis for the first version (if exists)
-  let firstVersionAnalysis: Analysis | null = null;
-
-  if (versionsWithDbIds.length > 0) {
-    const firstVersion = versionsWithDbIds[0];
-    firstVersionAnalysis = await loadVersionAnalysis(firstVersion.dbId);
-  }
-
-  return {
-    project: {
-      id: firstProject.id,
-      name: firstProject.name,
-      industry: firstProject.industry || '',
-      stage: firstProject.stage || '',
-    },
-    versions,
-    firstVersionAnalysis,
-    versionsWithDbIds: versionsWithDbIds.map(v => ({
-      id: v.dbId,
-      version: v.version,
-      score: v.score,
-      name: v.name,
-      date: v.date,
-      dbId: v.dbId,
-    })),
-  };
-}

@@ -4,13 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, RefreshCw } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-  import { useScoreboardState } from '@/store/useState';
+import { useVersionsStore } from '@/store/useVersionsStore';
+import { useRouter } from 'next/navigation';
 
 export function ScoreboardHeader() {
-  const { existingVersions, activeVersion, setActiveVersion } = useScoreboardState();
+  const router = useRouter();
+  const { versions, version, setVersion, currentProject } = useVersionsStore();
+  
+  const handleReAnalyze = () => {
+    if (currentProject?.project_id) {
+      router.push(`/create?projectId=${currentProject.project_id}`);
+    }
+  };
 
-  // Find current version by version number
-  const currentVersion = existingVersions?.find(v => v.version === activeVersion);
+  // Get all version numbers
+  const versionNumbers = Object.keys(versions).map(Number).sort((a, b) => b - a);
+  const currentVersionData = versions[version];
 
   return (
     <nav className="border-b border-gray-200 bg-white sticky top-0 z-50">
@@ -18,31 +27,30 @@ export function ScoreboardHeader() {
         
         <div className="flex items-center justify-between w-full">
           <Select 
-            value={activeVersion.toString()} 
-            onValueChange={(value) => setActiveVersion(parseInt(value, 10))}
+            value={version.toString()} 
+            onValueChange={(value) => setVersion(parseInt(value, 10))}
           >
             <SelectTrigger className="w-[240px]">
               <SelectValue>
-                {currentVersion ? `v${currentVersion.version} - ${currentVersion.name}` : 'Select version'}
+                {currentVersionData ? `v${version}` : 'Select version'}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {existingVersions?.map((v) => (
-                <SelectItem key={v.id} value={v.version.toString()}>
-                  <div className="flex flex-col gap-1 px-2">
-                    <div className="flex items-center gap-1">
-                      <span className="font-bold text-base gap-1">V{v.version}</span>
-                      <span className="text-xs text-muted-foreground">({v.score}/100)</span>
-                    </div>
-                    <span className="text-sm text-muted-foreground">{v.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
+              {versionNumbers.map((versionNum) => {
+                const versionData = versions[versionNum];
+                const ventureVersion = versionData?.venture;
+                return (
+                  <SelectItem key={versionNum} value={versionNum.toString()} className="px-2 flex items-center justify-between">
+                      <span className="font-bold text-base">V{versionNum}</span>
+                      <span className="text-xs text-muted-foreground">({ventureVersion?.overall_score}/100)</span>
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
 
           <div className="flex items-center gap-2">
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={handleReAnalyze}>
               <RefreshCw className="w-4 h-4" />
               Re-analyze
             </Button>

@@ -1,15 +1,15 @@
 'use client';
 
-import { useAnalizeStore } from '@/store/useAnalizeStore';
+import { useVersionsStore } from '@/store/useVersionsStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 export function GrowthPlan() {
-  const analysis = useAnalizeStore((state) => state.analysis);
+  const { currentProject } = useVersionsStore();
   
-  if (!analysis) return null;
+  if (!currentProject?.analysis) return null;
   
-  const phases = analysis.growthPlan.phases;
+  const phases = currentProject.analysis.growthPlan.phases;
   
   return (
     <div >

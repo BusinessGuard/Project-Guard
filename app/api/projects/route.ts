@@ -5,48 +5,74 @@ import { saveAnalysisToDatabase } from '@/utils/saveAnalysisToDatabase';
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🚀 POST /api/projects - Starting...');
+    
     const supabase = await createClient();
     
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
+      console.log('❌ Unauthorized access');
       return NextResponse.json(
         { success: false, message: 'Unauthorized' },
         { status: 401 }
       );
     }
     
-    const projectData = await request.json();
+    console.log('✅ User authenticated:', user.id);
+    
+    const body = await request.json();
+    const { projectData, projectId } = body;
+    
+    console.log('📦 Project data received:', projectData.basicInfo.projectName);
+    
+    if (projectId) {
+      console.log('🔍 Checking for existing project:', projectId);
+    }
 
-    // Analyze project (default to Russian)
-    const { analysis, userPrompt, rawResponse } = await analyzeProject(projectData, 'ru');
+    // Run 3 analyses in parallel for 3 audience types
+    const audienceTypes = ['venture', 'bank', 'corporate'] as const;
+    
+    console.log('🔵 Starting 3 AI analyses in parallel...');
+    const analysisStartTime = Date.now();
+    
+    const analysisPromises = audienceTypes.map(audienceType => 
+      analyzeProject(projectData, 'ru', audienceType)
+    );
 
-    // Save to database
+    const results = await Promise.all(analysisPromises);
+    
+    const analysisDuration = ((Date.now() - analysisStartTime) / 1000).toFixed(1);
+    console.log(`✅ All 3 AI analyses completed in ${analysisDuration}s`);
+    console.log('Results count:', results.length);
+
+    // Save all 3 analyses to database
+    console.log('💾 Saving to database...');
+    
     const saveResult = await saveAnalysisToDatabase({
       userId: user.id,
       projectData,
-      analysis,
+      projectId: projectId || undefined,
+      analyses: results.map((result, index) => ({
+        audienceType: audienceTypes[index],
+        analysis: result.analysis,
+        userPrompt: result.userPrompt,
+        rawResponse: result.rawResponse,
+      })),
     });
 
-    // Log user prompt and OpenAI response for each new project
-    const { error: logError } = await supabase.from('openai_analysis_log').insert({
-      project_version_id: saveResult.versionId,
-      user_prompt: userPrompt,
-      openai_response: rawResponse,
-    });
-    if (logError) {
-      console.error('Failed to write openai_analysis_log:', logError);
-    }
+    console.log('✅ Database save completed, Project ID:', saveResult.projectId);
+    console.log('Version:', saveResult.version);
 
     return NextResponse.json({ 
       success: true, 
       message: 'Project analyzed and saved',
       projectId: saveResult.projectId,
-      versionId: saveResult.versionId,
-      analysis
+      versionIds: saveResult.versionIds,
+      analyses: results.map(r => r.analysis)
     });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('❌ API Error:', error);
     return NextResponse.json(
       { success: false, message: error instanceof Error ? error.message : 'Failed to analyze project' },
       { status: 500 }

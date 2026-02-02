@@ -1,14 +1,14 @@
 'use client';
 
 import { Progress } from '@/components/ui/progress';
-import { useAnalizeStore } from '@/store/useAnalizeStore';
+import { useVersionsStore } from '@/store/useVersionsStore';
 
 export function BlockScores() {
-  const analysis = useAnalizeStore((state) => state.analysis);
+  const { currentProject } = useVersionsStore();
   
-  if (!analysis) return null;
+  if (!currentProject?.analysis) return null;
   
-  const blockScores = analysis.scores.blocks; 
+  const blockScores = currentProject.analysis.scores.blocks; 
 
   const getScoreColor = (score: number): string => {
     if (score >= 75) return 'text-green-600';

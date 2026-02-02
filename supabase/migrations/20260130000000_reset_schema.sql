@@ -34,6 +34,7 @@ CREATE TABLE public.project_versions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   project_id uuid NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
   version_number integer NOT NULL,
+  expert_type text NOT NULL CHECK (expert_type IN ('financial', 'marketing', 'product')),
   is_current boolean NOT NULL DEFAULT true,
   
   canvas_data jsonb NOT NULL,
@@ -124,7 +125,8 @@ CREATE INDEX idx_projects_user_id ON public.projects(user_id);
 CREATE INDEX idx_project_versions_project_id ON public.project_versions(project_id);
 CREATE INDEX idx_project_versions_is_current ON public.project_versions(is_current);
 CREATE INDEX idx_project_versions_overall_score ON public.project_versions(overall_score);
+CREATE INDEX idx_project_versions_expert_type ON public.project_versions(expert_type);
 
--- Constraint: only one current version per project
-CREATE UNIQUE INDEX idx_project_versions_current ON public.project_versions(project_id) 
+-- Constraint: only one current version per project per expert
+CREATE UNIQUE INDEX idx_project_versions_current ON public.project_versions(project_id, expert_type) 
   WHERE is_current = true;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
@@ -130,24 +131,76 @@ const validateStep = (step: number, data: ProjectData): boolean => {
 export default function CreateProjectPage() {
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
+  
+  // Check if re-analyzing existing project
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const projectId = searchParams.get('projectId');
+  const isReAnalysis = !!projectId;
+
+  // Reset to step 1 only when navigating from another page (not on reload)
+  useEffect(() => {
+    // Check if this is a navigation (not a page reload)
+    const navigationEntry = window.performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    const isNavigation = navigationEntry?.type === 'navigate';
+    
+    if (isNavigation) {
+      setCurrentStep(1);
+    }
+  }, [setCurrentStep]);
 
   const createProjectMutation = useMutation({
-    mutationFn: async (data: any) => {
-      console.log('Data:', data);
-      const response = await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error('Failed to create project');
-      const result = await response.json();
-      return result;
+    mutationFn: async (data: { projectData: any; projectId?: string }) => {
+      const startTime = Date.now();
+      console.log('🚀 Starting project creation at:', new Date().toISOString());
+      console.log('📦 Project data:', data.projectData.basicInfo.projectName);
+      if (data.projectId) {
+        console.log('🔄 Re-analyzing existing project:', data.projectId);
+      }
+      
+      try {
+        const response = await fetch('/api/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        
+        const endTime = Date.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(1);
+        console.log(`⏱️ Request completed in ${duration} seconds`);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ Server error:', response.status, errorText);
+          throw new Error(`Server error: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        console.log('✅ Response received:', result);
+        return result;
+      } catch (error) {
+        const endTime = Date.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(1);
+        console.error(`❌ Request failed after ${duration} seconds:`, error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
-      console.log('Response:', data);
+
+      
+      if (data?.projectId) {
+        console.log('🔀 Redirecting to:', `/dashboard/projects/${data.projectId}`);
+        router.push(`/dashboard/projects/${data.projectId}`);
+      } else {
+        console.log('⚠️ No projectId in response, redirecting to projects list');
+        router.push('/dashboard/projects');
+      }
     },
     onError: (error) => {
-      console.log('Error creating project: ' + error.message);
+      console.error('❌ Project creation failed');
+      console.error('Error:', error instanceof Error ? error.message : String(error));
+      if (error instanceof Error && error.stack) {
+        console.error('Stack trace:', error.stack);
+      }
     },
   });
 
@@ -164,16 +217,25 @@ export default function CreateProjectPage() {
   };
 
   const handleSubmit = () => {
-    createProjectMutation.mutate(projectData);
+    // Get projectId from URL query params if exists (for re-analysis)
+    const searchParams = new URLSearchParams(window.location.search);
+    const projectId = searchParams.get('projectId');
+    
+    createProjectMutation.mutate({
+      projectData,
+      projectId: projectId || undefined,
+    });
   };
 
-  if (createProjectMutation.isPending || createProjectMutation.isSuccess) return <LoadingScreen text="Analyzing project..." />;
+  if (createProjectMutation.isPending) return <LoadingScreen text="Analyzing project..." />;
 
   return (
     <div className="min-h-screen bg-white">
       <div className="w-full border-b px-8 py-4">
         <div className="max-w-3xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-black">Create New Project</h1>
+          <h1 className="text-xl font-bold text-black">
+            {isReAnalysis ? 'Re-analyze Project' : 'Create New Project'}
+          </h1>
           <Button 
             variant="outline" 
             size="sm"
@@ -235,7 +297,11 @@ export default function CreateProjectPage() {
                   className="bg-black hover:bg-black/90 text-lg px-8 py-6"
                   disabled={!validateStep(currentStep, projectData) || createProjectMutation.isPending}
                 >
-                  {createProjectMutation.isPending ? "Submitting..." : currentStep === 10 ? "Submit Project" : "Next →"}
+                  {createProjectMutation.isPending 
+                    ? "Submitting..." 
+                    : currentStep === 10 
+                      ? (isReAnalysis ? "Re-analyze Project" : "Submit Project")
+                      : "Next →"}
                 </Button>
             </div>
           </div>
