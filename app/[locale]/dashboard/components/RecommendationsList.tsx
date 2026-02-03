@@ -22,13 +22,15 @@ interface RecommendationsListProps {
   expandedRecommendations: Record<string, boolean>;
   onToggleRecommendation: (recId: string) => void;
   getPriorityColor: (priority: string) => string;
+  totalExperts: number; // Add total experts count
 }
 
 export function RecommendationsList({
   recommendations,
   expandedRecommendations,
   onToggleRecommendation,
-  getPriorityColor
+  getPriorityColor,
+  totalExperts
 }: RecommendationsListProps) {
   return (
     <div className="space-y-4">
@@ -81,7 +83,7 @@ export function RecommendationsList({
                     </div>
 
                     <div className="text-xs text-gray-500">
-                      Supported by {rec.expertsSupporting.length}/6 experts
+                      Supported by {rec.expertsSupporting.length}/{totalExperts} experts
                     </div>
                   </>
                 )}

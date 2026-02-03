@@ -22,22 +22,14 @@ export function Experts() {
   };
   
   const expertsList = analysis.experts.list;
-  const keyMap: Record<string, string> = {
-    financial: 'financialExpert',
-    market: 'marketAnalyst',
-    product: 'productExpert',
-    marketing: 'marketingExpert',
-    risk: 'riskManager',
-    operations: 'opsExpert',
-  };
-  const expertsMap: Record<string, typeof expertsList[0]> = {};
-  expertsList.forEach(expert => {
-    expertsMap[keyMap[expert.field]] = expert;
-  });
   
+  // Display all experts directly without filtering by field
+  // Each expert is identified by their field value (unique within analysis)
   return (
     <div className="space-y-4">
-      {Object.entries(expertsMap).map(([expertKey, expert]) => (
+      {expertsList.map((expert, index) => {
+        const expertKey = `${expert.field}-${index}`; // Unique key for each expert
+        return (
         <Card key={expertKey} className="shadow-none">
           <CardHeader>
             <div 
@@ -143,7 +135,8 @@ export function Experts() {
             </CardContent>
           )}
         </Card>
-      ))}
+        );
+      })}
     </div>
   );
 }

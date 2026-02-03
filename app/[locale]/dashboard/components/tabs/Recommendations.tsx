@@ -75,6 +75,7 @@ export function Recommendations() {
   };
   
   const recommendations = analysis.recommendations.list;
+  const totalExperts = analysis.experts.list.length; // Dynamic expert count
   
   const getProgress = (recId: string, totalSteps: number) => {
     const completed = checkedSteps[recId]?.size || 0;
@@ -145,7 +146,7 @@ export function Recommendations() {
                         </div>
 
                         <div className="text-xs text-gray-500">
-                          Supported by {rec.expertsSupporting.length}/6 experts
+                          Supported by {rec.expertsSupporting.length}/{totalExperts} experts
                         </div>
                       </div>   
                   </>

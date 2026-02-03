@@ -32,7 +32,7 @@ export async function analyzeProject(
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Дешевле в 60 раз чем gpt-4o
+      model: 'gpt-4o',
       max_completion_tokens: 8000,
       temperature: 0.7,
       response_format: { type: 'json_object' },
