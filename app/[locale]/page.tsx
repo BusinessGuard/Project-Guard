@@ -5,6 +5,7 @@ import { useRouter } from "@/lib/navigation";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LuMoveLeft } from "react-icons/lu";
+import { Sparkles, Rocket } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HeroContent } from "./home/components/HeroContent";
 
@@ -58,6 +59,31 @@ export default function Home() {
           className="object-cover"
           priority
         />
+        
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-black/50" />
+        
+        {/* Content on image */}
+        <div className="relative z-10 h-full flex flex-col items-start px-12 justify-center">
+          <div className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm font-medium">
+            <Sparkles className="size-4" />
+            AI-Powered Startup Evaluation
+          </div>
+
+          <h1 className="text-[100px] font-bold text-white">ProjectGuard AI</h1>
+          <p className="text-2xl text-white/90 mb-10">AI-Powered Startup Evaluation in 30 Seconds</p>
+
+          <div className="flex gap-4 pt-2">
+            <Button
+              onClick={handleTryNow}
+              size="lg"
+              className="gap-2 text-lg px-8 py-6 bg-white text-gray-900 hover:bg-white/90"
+            >
+              <Rocket className="w-6 h-6" />
+              Start Free Analysis
+            </Button>
+          </div>
+        </div>
       </div>
       
       <div className={`relative flex items-center justify-center px-8 bg-white transition-all duration-700 ease-in-out ${

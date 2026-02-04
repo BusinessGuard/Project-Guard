@@ -18,9 +18,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className=" h-screen grid grid-cols-2">
-     
-        <div className=" flex items-center justify-center col-span-1">
+    <div className="relative h-screen overflow-hidden">
+      <div className="flex h-screen">
+        <div className="relative flex items-center justify-between px-8 bg-white w-1/2">
           <button
             onClick={handleBack}
             className="absolute top-8 left-8 hover:scale-110 transition-all duration-300 cursor-pointer"
@@ -30,8 +30,9 @@ export default function LoginPage() {
           <HeroContent onGetStarted={() => {}} showButton={false} />
         </div>
 
-      <div className=" flex items-center justify-center bg-indigo-50 px-8">
-        <AuthForm />
+        <div className="relative flex items-center justify-center bg-indigo-50 px-8 w-1/2">
+          <AuthForm />
+        </div>
       </div>
     </div>
   );
