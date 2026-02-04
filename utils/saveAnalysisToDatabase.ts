@@ -10,7 +10,7 @@ interface AnalysisWithMeta {
 }
 
 interface SaveAnalysisParams {
-  userId: string;
+  userId: string | null;
   projectData: ProjectData;
   projectId?: string;
   analyses: AnalysisWithMeta[];
@@ -74,7 +74,6 @@ export async function saveAnalysisToDatabase({
       }
     }
     
-    // Create new project if no projectId or project not found
     if (!projectId || !project) {
       const { data: newProject, error: projectError } = await supabase
         .from('projects')

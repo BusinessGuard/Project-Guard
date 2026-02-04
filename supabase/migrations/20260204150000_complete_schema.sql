@@ -1,3 +1,6 @@
+-- Complete database schema with all features
+-- This migration consolidates all previous migrations into one clean schema
+
 -- Drop all existing tables
 DROP TABLE IF EXISTS public.exported_reports CASCADE;
 DROP TABLE IF EXISTS public.project_versions CASCADE;
@@ -19,23 +22,26 @@ CREATE TABLE public.users (
 );
 
 -- Projects table
+-- user_id can be NULL for anonymous projects
 CREATE TABLE public.projects (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   name text NOT NULL,
   industry text,
   stage text,
+  current_version integer NOT NULL DEFAULT 1,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+COMMENT ON COLUMN projects.current_version IS 'Current/latest version number of the project';
 
 -- Project versions table
 CREATE TABLE public.project_versions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   project_id uuid NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
   version_number integer NOT NULL,
-  expert_type text NOT NULL CHECK (expert_type IN ('financial', 'marketing', 'product')),
-  is_current boolean NOT NULL DEFAULT true,
+  audience_type text NOT NULL CHECK (audience_type IN ('venture', 'bank', 'corporate')),
   
   canvas_data jsonb NOT NULL,
   
@@ -89,44 +95,73 @@ CREATE POLICY "Users can update own data" ON public.users
   FOR UPDATE USING (auth.uid() = id);
 
 -- Projects policies
-CREATE POLICY "Users can view own projects" ON public.projects
-  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can view own projects or anonymous projects" ON public.projects
+  FOR SELECT
+  USING (
+    -- Own projects: only owner can view
+    (user_id IS NOT NULL AND auth.uid() = user_id) OR
+    -- Anonymous projects: anyone can view
+    user_id IS NULL
+  );
 
-CREATE POLICY "Users can create own projects" ON public.projects
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can create projects (authenticated or anonymous)" ON public.projects
+  FOR INSERT
+  WITH CHECK (
+    auth.uid() = user_id OR 
+    user_id IS NULL
+  );
 
-CREATE POLICY "Users can update own projects" ON public.projects
-  FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can update their own projects or claim anonymous projects" ON public.projects
+  FOR UPDATE
+  USING (
+    -- Own projects: only owner can update
+    (user_id IS NOT NULL AND auth.uid() = user_id) OR
+    -- Anonymous projects: anyone authenticated can claim
+    (user_id IS NULL AND auth.uid() IS NOT NULL)
+  )
+  WITH CHECK (
+    -- After update, project must belong to the user making the update
+    auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can delete own projects" ON public.projects
-  FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own projects" ON public.projects
+  FOR DELETE
+  USING (auth.uid() = user_id);
 
 -- Project versions policies
-CREATE POLICY "Users can view versions of own projects" ON public.project_versions
+CREATE POLICY "Users can view versions of own or anonymous projects" ON public.project_versions
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM public.projects
       WHERE projects.id = project_versions.project_id
-      AND projects.user_id = auth.uid()
+      AND (
+        -- Own projects: only owner can view
+        (projects.user_id IS NOT NULL AND projects.user_id = auth.uid()) OR
+        -- Anonymous projects: anyone can view
+        projects.user_id IS NULL
+      )
     )
   );
 
-CREATE POLICY "Users can create versions for own projects" ON public.project_versions
+CREATE POLICY "Users can create versions for own or anonymous projects" ON public.project_versions
   FOR INSERT WITH CHECK (
     EXISTS (
       SELECT 1 FROM public.projects
       WHERE projects.id = project_versions.project_id
-      AND projects.user_id = auth.uid()
+      AND (
+        -- Own projects: only owner can create
+        (projects.user_id IS NOT NULL AND projects.user_id = auth.uid()) OR
+        -- Anonymous projects: anyone can create
+        projects.user_id IS NULL
+      )
     )
   );
 
 -- Indexes
 CREATE INDEX idx_projects_user_id ON public.projects(user_id);
 CREATE INDEX idx_project_versions_project_id ON public.project_versions(project_id);
-CREATE INDEX idx_project_versions_is_current ON public.project_versions(is_current);
 CREATE INDEX idx_project_versions_overall_score ON public.project_versions(overall_score);
-CREATE INDEX idx_project_versions_expert_type ON public.project_versions(expert_type);
+CREATE INDEX idx_project_versions_audience_type ON public.project_versions(audience_type);
 
--- Constraint: only one current version per project per expert
-CREATE UNIQUE INDEX idx_project_versions_current ON public.project_versions(project_id, expert_type) 
-  WHERE is_current = true;
+-- Unique constraint: one version per project per audience_type
+CREATE UNIQUE INDEX idx_project_versions_unique ON public.project_versions(project_id, version_number, audience_type);

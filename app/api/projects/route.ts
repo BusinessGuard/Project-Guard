@@ -8,18 +8,10 @@ export async function POST(request: NextRequest) {
     console.log('🚀 POST /api/projects - Starting...');
     
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
     
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      console.log('❌ Unauthorized access');
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    console.log('✅ User authenticated:', user.id);
+    const isAnonymous = !user;
+    console.log(isAnonymous ? '👤 Anonymous user' : '✅ User authenticated:', user?.id);
     
     const body = await request.json();
     const { projectData, projectId } = body;
@@ -46,11 +38,10 @@ export async function POST(request: NextRequest) {
     console.log(`✅ All 3 AI analyses completed in ${analysisDuration}s`);
     console.log('Results count:', results.length);
 
-    // Save all 3 analyses to database
     console.log('💾 Saving to database...');
     
     const saveResult = await saveAnalysisToDatabase({
-      userId: user.id,
+      userId: user?.id || null,
       projectData,
       projectId: projectId || undefined,
       analyses: results.map((result, index) => ({
@@ -62,7 +53,6 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('✅ Database save completed, Project ID:', saveResult.projectId);
-    console.log('Version:', saveResult.version);
 
     return NextResponse.json({ 
       success: true, 

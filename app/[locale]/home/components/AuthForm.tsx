@@ -24,6 +24,7 @@ export function AuthForm() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setError(null);
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -70,6 +71,17 @@ export function AuthForm() {
       if (error) {
         setError(error.message);
       } else {
+        // Check for anonymous project and transfer it
+        const anonymousProjectId = localStorage.getItem('anonymous_project_id');
+        if (anonymousProjectId) {
+          await fetch('/api/transfer-project', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ projectId: anonymousProjectId }),
+          });
+          localStorage.removeItem('anonymous_project_id');
+        }
+        
         router.push('/dashboard');
         router.refresh();
       }

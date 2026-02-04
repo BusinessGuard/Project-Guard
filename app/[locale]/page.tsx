@@ -1,29 +1,49 @@
 "use client";
-
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "@/lib/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LuMoveLeft } from "react-icons/lu";
 import { cn } from "@/lib/utils";
 import { HeroContent } from "./home/components/HeroContent";
-import { AuthForm } from "./home/components/AuthForm";
 
 export default function Home() {
   const [showAuth, setShowAuth] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isFading, setIsFading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Handle OAuth callback redirect
+  useEffect(() => {
+    const code = searchParams.get('code');
+    
+    if (code) {
+      // Redirect to callback route to exchange code for session
+      window.location.href = `/auth/callback?code=${code}`;
+    }
+  }, [searchParams]);
 
   const handleTryNow = () => {
-    setIsNavigating(true);
-    router.push("/create");
+    setIsFading(true);
+    setTimeout(() => {
+      router.push("/create");
+    }, 700);
   };
 
   return (
     <div className="relative h-screen overflow-hidden">
+      {/* White overlay for Try Now button */}
+      <div 
+        className={`absolute inset-0 bg-white z-50 transition-opacity duration-700 ease-in-out ${
+          isFading ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      />
+      
       <div 
         className={`flex h-screen transition-transform duration-700 ease-in-out ${
-          isNavigating ? "translate-x-full" : "translate-x-0"
+          isNavigating ? "-translate-x-1/2" : "translate-x-0"
         }`}
       >
       <div 
@@ -48,7 +68,12 @@ export default function Home() {
         <Button 
           variant="ghost"
           className={cn("absolute top-8 right-8 hover:scale-110 transition-all duration-300 hover:bg-white cursor-pointer text-lg", showAuth ? "opacity-0" : "opacity-100")}
-          onClick={() => setShowAuth(true)}
+          onClick={() => {
+            setIsNavigating(true);
+            setTimeout(() => {
+              router.push("/login");
+            }, 700);
+          }}
         >
           Login
         </Button>
@@ -56,13 +81,7 @@ export default function Home() {
          <HeroContent onGetStarted={handleTryNow} showButton={!showAuth} />  
       </div>
 
-      <div 
-        className={`flex items-center justify-center  bg-indigo-50 transition-all duration-700 ease-in-out overflow-hidden ${
-          showAuth ? "w-1/2 opacity-100" : "w-0 opacity-0"
-        }`}
-      >
-        <AuthForm />
-      </div>
+
       </div>
     </div>
   );

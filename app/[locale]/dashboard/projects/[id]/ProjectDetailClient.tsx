@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ScoreboardHeader } from '../../components/ScoreboardHeader';
 import { ProjectHeader } from '../../components/ProjectHeader';
 import { ScoreCard } from '../../components/ScoreCard';
@@ -10,12 +10,15 @@ import { TabsSection } from '../../components/tabs/TabsSection';
 import { useVersionsStore } from '@/store/useVersionsStore';
 import { VersionsByAudience } from '@/lib/utils/getVersions';
 
-export function ProjectDetailClient({ versions }: {
+export function ProjectDetailClient({ versions, isAuthorized = false }: {
   versions: VersionsByAudience;
+  isAuthorized?: boolean;
 }) {
   const { setVersions, setVersion } = useVersionsStore();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const versionNumbers = Object.keys(versions).map(Number).sort((a, b) => b - a);
     const latestVersionNumber = versionNumbers[0];
     
@@ -26,13 +29,15 @@ export function ProjectDetailClient({ versions }: {
     }
   }, [versions, setVersions, setVersion]);
 
+  if (!mounted) return null;
+
   return (
     <div className="min-h-screen bg-gray-50 pb-100">
-      <ScoreboardHeader />
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+      <ScoreboardHeader isAuthorized={isAuthorized} />
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6 pt-10">
         <ProjectHeader />
         <ScoreCard />
-        <VersionHistory />
+        <VersionHistory isAuthorized={isAuthorized} />
         <StrengthsWeaknesses />
         <TabsSection />
       </div>

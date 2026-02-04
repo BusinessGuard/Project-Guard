@@ -118,7 +118,6 @@ export async function getVersions(projectId: string): Promise<VersionsByAudience
       groupedVersions[versionNumber] = {};
     }
     
-    // Форматируем версию с analysis и информацией о проекте
     const formattedVersion: ProjectVersionWithAudience = {
       id: version.id,
       project_id: version.project_id,

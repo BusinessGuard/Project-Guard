@@ -1,7 +1,8 @@
 'use client';
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
 import { useVersionsStore } from '@/store/useVersionsStore';
+import { cn } from '@/lib/utils';
 
 export function ProjectHeader() {
   const { currentProject, audienceType, setAudienceType, version } = useVersionsStore();
@@ -10,29 +11,55 @@ export function ProjectHeader() {
   
   const { name, industry, stage } = currentProject;
 
+  const audienceTypes = [
+    {
+      value: 'venture' as const,
+      emoji: '🚀',
+      title: 'Venture Capital',
+      description: 'Growth & scalability focus',
+    },
+    {
+      value: 'bank' as const,
+      emoji: '🏦',
+      title: 'Bank Loan',
+      description: 'Financial stability focus',
+    },
+    {
+      value: 'corporate' as const,
+      emoji: '🏢',
+      title: 'Corporate',
+      description: 'Partnership & synergy focus',
+    },
+  ];
+
   return (
-    <div className="flex items-center justify-between">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">{name || 'Project'}</h1>
-        <div className="flex items-center text-sm">{industry || 'N/A'} | {stage || 'N/A'}</div>
+    <div className="flex flex-col gap-4">
+      <div className=" flex gap-2  flex-col">
+        <h1 className="text-6xl font-bold text-gray-900">{name || 'Project'}</h1>
+        <div className="flex items-end text-sm">{industry || 'N/A'} | {stage || 'N/A'}</div>
       </div>
 
-      <Tabs value={audienceType} onValueChange={(value) => setAudienceType(value as 'venture' | 'bank' | 'corporate')}>
-        <TabsList className="!h-auto border">
-          <TabsTrigger value="venture" className="flex flex-col items-start px-8 py-2 gap-1">
-            <span className="text-base font-semibold">🚀 Venture Capital</span>
-            <span className="text-xs text-muted-foreground font-normal">Growth & scalability focus</span>
-          </TabsTrigger>
-          <TabsTrigger value="bank" className="flex flex-col items-start px-8 py-2 gap-1">
-            <span className="text-base font-semibold">🏦 Bank Loan</span>
-            <span className="text-xs text-muted-foreground font-normal">Financial stability focus</span>
-          </TabsTrigger>
-          <TabsTrigger value="corporate" className="flex flex-col items-start px-8 py-2 gap-1">
-            <span className="text-base font-semibold">🏢 Corporate</span>
-            <span className="text-xs text-muted-foreground font-normal">Partnership & synergy focus</span>
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <div className="grid grid-cols-3 gap-10 py-6">
+        {audienceTypes.map((type) => (
+          <div
+            key={type.value}
+            onClick={() => setAudienceType(type.value)}
+            className={cn(
+              'p-6 border rounded-xl bg-white cursor-pointer transition-all hover:shadow-lg', audienceType === type.value && 'scale-110 border-black bg-black/80 text-white opacity-100' )}
+          >
+            <div className="flex flex-col gap-1">
+              <span className="text-lg font-semibold">
+                {type.emoji} {type.title}
+              </span>
+              <span className={cn(
+                'text-xs font-normal '
+              )}>
+                {type.description}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

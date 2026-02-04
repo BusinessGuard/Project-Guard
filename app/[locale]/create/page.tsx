@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
@@ -17,6 +17,9 @@ import { Step10Growth } from "./components/Step10Growth";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { useProjectStore } from "@/store/useProjectStore";
 import type { ProjectData } from "@/types/project";
+import { hasDemoLimit } from "@/lib/utils/demoLimit";
+import { createClient } from "@/lib/supabase/client";
+import { setAnonymousProjectId } from "@/lib/utils/anonymousProject";
 
 const getStepFieldsCount = (step: number, data: ProjectData): { filled: number; total: number } => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
@@ -131,22 +134,30 @@ const validateStep = (step: number, data: ProjectData): boolean => {
 export default function CreateProjectPage() {
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
+  const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
   
-  // Check if re-analyzing existing project
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
 
-  // Reset to step 1 only when navigating from another page (not on reload)
   useEffect(() => {
-    // Check if this is a navigation (not a page reload)
-    const navigationEntry = window.performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-    const isNavigation = navigationEntry?.type === 'navigate';
+    const checkDemoLimit = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Don't show limit modal if user is re-analyzing (has projectId in URL)
+      if (!user && !isReAnalysis && hasDemoLimit()) {
+        setShowDemoLimitModal(true);
+      }
+    };
     
-    if (isNavigation) {
+    checkDemoLimit();
+    
+    const navigationEntry = window.performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    if (navigationEntry?.type === 'navigate') {
       setCurrentStep(1);
     }
-  }, [setCurrentStep]);
+  }, [setCurrentStep, isReAnalysis]);
 
   const createProjectMutation = useMutation({
     mutationFn: async (data: { projectData: any; projectId?: string }) => {
@@ -184,10 +195,16 @@ export default function CreateProjectPage() {
         throw error;
       }
     },
-    onSuccess: (data) => {
-
-      
+    onSuccess: async (data) => {
       if (data?.projectId) {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          console.log('💾 Saving anonymous project ID to localStorage:', data.projectId);
+          setAnonymousProjectId(data.projectId);
+        }
+        
         console.log('🔀 Redirecting to:', `/dashboard/projects/${data.projectId}`);
         router.push(`/dashboard/projects/${data.projectId}`);
       } else {
@@ -283,15 +300,13 @@ export default function CreateProjectPage() {
             </div>
             
             <div className="flex gap-4 justify-end">
-                {currentStep > 1 && (
-                  <Button 
-                    variant="outline"
-                    onClick={handleBack}
-                    className="text-lg px-8 py-6"
-                  >
-                    ← Back
-                  </Button>
-                )}
+                <Button 
+                  variant="outline"
+                  onClick={currentStep === 1 ? () => router.back() : handleBack}
+                  className="text-lg px-8 py-6"
+                >
+                  ← Back
+                </Button>
                 <Button 
                   onClick={currentStep === 10 ? handleSubmit : handleNext}
                   className="bg-black hover:bg-black/90 text-lg px-8 py-6"
@@ -307,6 +322,25 @@ export default function CreateProjectPage() {
           </div>
         </div>
       </div>
+      
+      {showDemoLimitModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg max-w-md space-y-4">
+            <h2 className="text-2xl font-bold">Demo Limit Reached</h2>
+            <p className="text-slate-600">
+              You've already tried our demo. Sign up to create unlimited projects and access all features.
+            </p>
+            <div className="flex gap-3">
+              <Button onClick={() => router.push('/login')} className="flex-1">
+                Sign Up
+              </Button>
+              <Button variant="outline" onClick={() => router.push('/')} className="flex-1">
+                Go Home
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
