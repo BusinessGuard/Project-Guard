@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Download, RefreshCw } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useVersionsStore } from '@/store/useVersionsStore';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/lib/navigation';
 import { AuthPromptModal } from '@/components/AuthPromptModal';
 
 interface ScoreboardHeaderProps {
@@ -16,7 +16,7 @@ interface ScoreboardHeaderProps {
 
 export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProps) {
   const router = useRouter();
-  const { versions, version, setVersion, currentProject } = useVersionsStore();
+  const { versions, version, setVersion, currentProject, audienceType } = useVersionsStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   
   const handleReAnalyze = () => {
@@ -26,6 +26,14 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
     }
     if (currentProject?.project_id) {
       router.push(`/create?projectId=${currentProject.project_id}`);
+    }
+  };
+  
+  const handleOpenPDFPreview = () => {
+    if (currentProject?.project_id) {
+      // Open PDF preview in new tab (outside dashboard layout)
+      const pdfUrl = `/pdf/${currentProject.project_id}?version=${version}&audience=${audienceType}`;
+      window.open(pdfUrl, '_blank');
     }
   };
 
@@ -71,7 +79,11 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
                 Re-analyze
               </Button>
               <LanguageSwitcher />
-              <Button variant="outline" className="gap-2">
+              <Button 
+                variant="outline" 
+                className="gap-2" 
+                onClick={handleOpenPDFPreview}
+              >
                 <Download className="w-4 h-4" />
                 PDF
               </Button>
