@@ -1,5 +1,9 @@
 "use client";
 import { FcGoogle } from "react-icons/fc";
+import { Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,15 +15,45 @@ import { useRouter } from "@/lib/navigation";
 
 type AuthMode = "signin" | "signup";
 
+// Validation schema for sign in
+const signInSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+// Validation schema for sign up
+const signUpSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type SignInFormData = z.infer<typeof signInSchema>;
+type SignUpFormData = z.infer<typeof signUpSchema>;
+
 export function AuthForm() {
   const [mode, setMode] = useState<AuthMode>("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  // Form for sign in
+  const signInForm = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
+    mode: "onBlur",
+  });
+
+  // Form for sign up
+  const signUpForm = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    mode: "onBlur",
+  });
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -37,56 +71,66 @@ export function AuthForm() {
     }
   };
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSignIn = async (data: SignInFormData) => {
     setLoading(true);
     setError(null);
 
-    if (mode === "signup") {
-      if (password !== confirmPassword) {
-        setError("Passwords don't match");
-        setLoading(false);
-        return;
-      }
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) {
-        setError(error.message);
-      } else {
-        setMode("signin");
-        setPassword("");
-        setConfirmPassword("");
-        setError(null);
-      }
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
+    
+    if (error) {
+      setError(error.message);
+      setLoading(false);
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
-        setError(error.message);
-      } else {
-        // Check for anonymous project and transfer it
-        const anonymousProjectId = localStorage.getItem('anonymous_project_id');
-        if (anonymousProjectId) {
-          await fetch('/api/transfer-project', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ projectId: anonymousProjectId }),
-          });
-          localStorage.removeItem('anonymous_project_id');
-        }
-        
-        router.push('/dashboard');
-        router.refresh();
+      // Check for anonymous project and transfer it
+      const anonymousProjectId = localStorage.getItem('anonymous_project_id');
+      if (anonymousProjectId) {
+        await fetch('/api/transfer-project', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ projectId: anonymousProjectId }),
+        });
+        localStorage.removeItem('anonymous_project_id');
       }
+      
+      router.push('/dashboard');
+      router.refresh();
     }
-    setLoading(false);
+  };
+
+  const onSignUp = async (data: SignUpFormData) => {
+    setLoading(true);
+    setError(null);
+
+    const { error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      // Reset form and switch to sign in
+      signUpForm.reset();
+      setMode("signin");
+      setError(null);
+      setLoading(false);
+    }
+  };
+
+  const handleModeSwitch = () => {
+    setMode(mode === "signin" ? "signup" : "signin");
+    setError(null);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+    signInForm.reset();
+    signUpForm.reset();
   };
 
   return (
@@ -115,64 +159,168 @@ export function AuthForm() {
 
         <Separator />
 
-        <form onSubmit={handleEmailAuth} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm">Email</Label>
-            <Input 
-              id="email" 
-              type="email" 
-              placeholder="your@email.com" 
-              className="h-12 text-base"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm">Password</Label>
-            <Input 
-              id="password" 
-              type="password" 
-              placeholder="••••••••" 
-              className="h-12 text-base"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-          </div>
+        {mode === "signin" ? (
+          <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="your@email.com" 
+                className={`h-12 text-base ${
+                  signInForm.formState.errors.email ? 'border-red-500 focus-visible:border-red-500' : ''
+                }`}
+                {...signInForm.register("email")}
+              />
+              {signInForm.formState.errors.email && (
+                <p className="text-sm text-red-600">
+                  {signInForm.formState.errors.email.message}
+                </p>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm">Password</Label>
+              <div className="relative">
+                <Input 
+                  id="password" 
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password" 
+                  className={`h-12 text-base pr-10 ${
+                    signInForm.formState.errors.password ? 'border-red-500 focus-visible:border-red-500' : ''
+                  }`}
+                  {...signInForm.register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {signInForm.formState.errors.password && (
+                <p className="text-sm text-red-600">
+                  {signInForm.formState.errors.password.message}
+                </p>
+              )}
+            </div>
 
-          {mode === "signup" && (
+            {error && (
+              <p className="text-sm text-red-600">
+                {error}
+              </p>
+            )}
+
+            <Button 
+              type="submit"
+              className="w-full bg-black hover:bg-black/90 text-lg px-8 py-6"
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Sign In"}
+            </Button>
+          </form>
+        ) : (
+          <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="signup-email" className="text-sm">Email</Label>
+              <Input 
+                id="signup-email" 
+                type="email" 
+                placeholder="your@email.com" 
+                className={`h-12 text-base ${
+                  signUpForm.formState.errors.email ? 'border-red-500 focus-visible:border-red-500' : ''
+                }`}
+                {...signUpForm.register("email")}
+              />
+              {signUpForm.formState.errors.email && (
+                <p className="text-sm text-red-600">
+                  {signUpForm.formState.errors.email.message}
+                </p>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="signup-password" className="text-sm">Password</Label>
+              <div className="relative">
+                <Input 
+                  id="signup-password" 
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password" 
+                  className={`h-12 text-base pr-10 ${
+                    signUpForm.formState.errors.password ? 'border-red-500 focus-visible:border-red-500' : ''
+                  }`}
+                  {...signUpForm.register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {signUpForm.formState.errors.password && (
+                <p className="text-sm text-red-600">
+                  {signUpForm.formState.errors.password.message}
+                </p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" className="text-sm">Confirm Password</Label>
-              <Input 
-                id="confirmPassword" 
-                type="password" 
-                placeholder="••••••••" 
-                className="h-12 text-base"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                minLength={6}
-              />
+              <div className="relative">
+                <Input 
+                  id="confirmPassword" 
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm your password" 
+                  className={`h-12 text-base pr-10 ${
+                    signUpForm.formState.errors.confirmPassword ? 'border-red-500 focus-visible:border-red-500' : ''
+                  }`}
+                  {...signUpForm.register("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {signUpForm.formState.errors.confirmPassword && (
+                <p className="text-sm text-red-600">
+                  {signUpForm.formState.errors.confirmPassword.message}
+                </p>
+              )}
             </div>
-          )}
 
-          {error && (
-            <p className="text-sm text-red-600">
-              {error}
-            </p>
-          )}
+            {error && (
+              <p className="text-sm text-red-600">
+                {error}
+              </p>
+            )}
 
-          <Button 
-            type="submit"
-            className="w-full bg-black hover:bg-black/90 text-lg px-8 py-6"
-            disabled={loading}
-          >
-            {loading ? "Loading..." : mode === "signin" ? "Sign In" : "Sign Up"}
-          </Button>
-        </form>
+            <Button 
+              type="submit"
+              className="w-full bg-black hover:bg-black/90 text-lg px-8 py-6"
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Sign Up"}
+            </Button>
+          </form>
+        )}
 
         <p className="text-center text-sm text-slate-500">
           {mode === "signin" ? (
@@ -180,7 +328,7 @@ export function AuthForm() {
               Don't have an account?{" "}
               <button 
                 className="text-black font-medium hover:underline"
-                onClick={() => setMode("signup")}
+                onClick={handleModeSwitch}
               >
                 Sign up
               </button>
@@ -190,7 +338,7 @@ export function AuthForm() {
               Already have an account?{" "}
               <button 
                 className="text-black font-medium hover:underline"
-                onClick={() => setMode("signin")}
+                onClick={handleModeSwitch}
               >
                 Sign in
               </button>
