@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useVersionsStore } from '@/store/useVersionsStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, AlertTriangle, Shield, Target, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle, AlertTriangle, AlertOctagon, Target, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function Experts() {
   const { currentProject } = useVersionsStore();
@@ -74,7 +74,7 @@ export function Experts() {
               {expert.criticalRisks && expert.criticalRisks.length > 0 && (
                 <div>
                   <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-red-600" />
+                    <AlertOctagon className="w-4 h-4 text-red-600" />
                     Critical Risks
                   </h4>
                   <div className="space-y-2">
