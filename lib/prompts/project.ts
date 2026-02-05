@@ -611,6 +611,21 @@ function buildUniversalSystemPrompt(audienceInstructions: string, scoringCriteri
 
   ${langInstruction}
 
+  DATA INTEGRITY & UNCERTAINTY RULES (MANDATORY):
+  1. Use ONLY the data explicitly provided by the user/project input. Do NOT invent, assume, estimate, or "fill in" missing details.
+     - If a metric/claim is not provided (e.g., revenue, CAC, churn, margins, funnel conversion), treat it as UNKNOWN.
+     - Never fabricate numbers, customer counts, benchmarks, partnerships, traction, or timelines.
+
+  2. If the user indicates uncertainty / missing info / "don't know" / "decide later" / "TBD":
+     - You MUST explicitly highlight this as an information gap.
+     - You MUST pessimize the relevant scores (conservative/worst-case within reason).
+     - You MUST carry this uncertainty through the analysis (expert concerns, risks, consensus weaknesses, recommendations).
+     - Prefer stating "Not enough information to assess X" over making up a plausible answer.
+
+  3. Evidence standard:
+     - When you mention numbers, they must be directly supported by user input.
+     - When user input is qualitative only, keep outputs qualitative; do not convert into precise quantitative claims.
+
   ANALYSIS APPROACH:
   1. Each expert analyzes relevant aspects of the business model
   2. Experts provide independent assessments with confidence levels (0-100)
