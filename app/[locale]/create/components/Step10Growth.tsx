@@ -206,13 +206,13 @@ export function Step10Growth() {
               <p>• Funding milestones</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example 12mo: "150 customers, €15K MRR (€180K ARR), 5 team, break-even: NO, 0.5% SAM"
+              Example 12 mo: "150 customers, €15K MRR (€180K ARR), 5 team, break-even: NO, 0.5% SAM"
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example 24mo: "600 customers, €60K MRR (€720K ARR), 12 team, profitable (20% margin), 2% SAM, Series A €1.5M"
+              Example 24 mo: "600 customers, €60K MRR (€720K ARR), 12 team, profitable (20% margin), 2% SAM, Series A €1.5M"
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example 36mo: "2,000 customers, €200K MRR (€2.4M ARR), 25 team, 30% margin (€720K profit/year), 5% SAM"
+              Example 36 mo: "2,000 customers, €200K MRR (€2.4M ARR), 25 team, 30% margin (€720K profit/year), 5% SAM"
             </div>
           </div>
         </div>
