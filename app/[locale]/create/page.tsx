@@ -136,6 +136,7 @@ export default function CreateProjectPage() {
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const projectId = searchParams.get('projectId');
@@ -261,11 +262,7 @@ export default function CreateProjectPage() {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => {
-              if (confirm('Clear all form data and start over?')) {
-                resetProject();
-              }
-            }}
+            onClick={() => setShowResetConfirm(true)}
           >
             Reset Form
           </Button>
@@ -328,6 +325,28 @@ export default function CreateProjectPage() {
         </div>
       </div>
       
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg max-w-md space-y-4 shadow-lg">
+            <h2 className="text-lg font-semibold text-slate-800">ProjectGuard AI says</h2>
+            <p className="text-slate-600">Clear all form data and start over?</p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowResetConfirm(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  resetProject();
+                  setShowResetConfirm(false);
+                }}
+              >
+                Clear & Start Over
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showDemoLimitModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg max-w-md space-y-4">
