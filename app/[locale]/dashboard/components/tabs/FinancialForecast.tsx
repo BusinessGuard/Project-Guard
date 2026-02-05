@@ -19,6 +19,7 @@ export function FinancialForecast() {
   if (!currentProject?.analysis) return null;
   
   const { unitEconomics, breakEven, monthlyProjections } = currentProject.analysis.financialForecast;
+  const formatNumber = (value: number) => new Intl.NumberFormat('en-US').format(value);
   
   return (
     <div className="space-y-6">
@@ -129,7 +130,7 @@ export function FinancialForecast() {
             </div>
             <div className="text-center p-6 bg-purple-50 rounded-lg">
               <div className="text-sm text-gray-600 mb-2">MRR at Break-Even</div>
-              <div className="text-5xl font-bold text-purple-600">€{breakEven.mrr}</div>
+              <div className="text-5xl font-bold text-purple-600">€{formatNumber(breakEven.mrr)}</div>
             </div>
           </div>
         </CardContent>
