@@ -30,7 +30,7 @@ export function FinancialForecast() {
             <CardContent className="pt-4">
               <div className="text-sm text-gray-600 mb-1">LTV</div>
               <div className="text-3xl font-bold text-green-600">
-                €{unitEconomics.ltv}
+                €{formatNumber(unitEconomics.ltv)}
               </div>
             </CardContent>
           </Card>
@@ -38,7 +38,7 @@ export function FinancialForecast() {
             <CardContent className="pt-4">
               <div className="text-sm text-gray-600 mb-1">CAC</div>
               <div className="text-3xl font-bold">
-                €{unitEconomics.cac}
+                €{formatNumber(unitEconomics.cac)}
               </div>
             </CardContent>
           </Card>
