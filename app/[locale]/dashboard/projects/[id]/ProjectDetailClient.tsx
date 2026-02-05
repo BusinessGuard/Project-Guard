@@ -32,7 +32,7 @@ export function ProjectDetailClient({ versions, isAuthorized = false }: {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-100">
+    <div className="min-h-screen bg-gray-50">
       <ScoreboardHeader isAuthorized={isAuthorized} />
       <div className="max-w-7xl mx-auto px-6 py-6 space-y-6 pt-10">
         <ProjectHeader />
