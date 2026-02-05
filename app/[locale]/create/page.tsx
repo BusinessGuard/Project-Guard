@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Step1BasicInfo } from "./components/Step1BasicInfo";
 import { Step2ValueProposition } from "./components/Step2ValueProposition";
@@ -138,7 +138,7 @@ export default function CreateProjectPage() {
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   
-  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
   const { data: existingProject } = useProject(projectId ?? "");
@@ -238,10 +238,6 @@ export default function CreateProjectPage() {
   };
 
   const handleSubmit = () => {
-    // Get projectId from URL query params if exists (for re-analysis)
-    const searchParams = new URLSearchParams(window.location.search);
-    const projectId = searchParams.get('projectId');
-    
     createProjectMutation.mutate({
       projectData,
       projectId: projectId || undefined,

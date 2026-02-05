@@ -138,7 +138,7 @@ export function Step1BasicInfo() {
               <span className="text-sm flex-1 font-medium">{industry}</span>
               <button
                 type="button"
-                className="text-slate-500 hover:text-red-600 text-lg font-bold"
+                className="text-blue-600 hover:text-red-600 text-lg font-bold"
                 onClick={() => updateBasicInfo({ industry: "" })}
               >
                 ✕

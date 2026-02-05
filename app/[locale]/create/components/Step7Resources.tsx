@@ -341,10 +341,10 @@ export function Step7Resources() {
                       <span className="text-sm text-slate-700 flex-1">{partner.value}</span>
                       <button
                         type="button"
-                        className="ml-4 hover:bg-red-50 rounded-full p-1.5 transition-colors"
+                        className="group/btn ml-4 hover:bg-red-50 rounded-full p-1.5 transition-colors"
                         onClick={() => handleRemovePartner(index)}
                       >
-                        <IoMdClose className="h-4 w-4 text-red-600" />
+                        <IoMdClose className="h-4 w-4 text-blue-600 group-hover/btn:text-red-600" />
                       </button>
                     </div>
                   ))}
