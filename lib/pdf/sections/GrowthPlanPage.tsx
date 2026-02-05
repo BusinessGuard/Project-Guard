@@ -83,7 +83,7 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>ProjectGuard AI</Text>
         <Text>Page 5</Text>
       </View>
     </View>

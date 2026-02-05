@@ -55,7 +55,7 @@ export default function DashboardLayout({
               href="/dashboard" 
               className="text-2xl font-bold text-black cursor-pointer"
             >
-              AI Guard
+              ProjectGuard AI
             </Link>
           </div>
           <nav className="flex-1  space-y-2">

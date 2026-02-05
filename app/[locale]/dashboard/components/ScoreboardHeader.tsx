@@ -69,7 +69,7 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
               </Select>
             ) : (
               <Link href="/" className="text-2xl w-30 font-bold text-black hover:opacity-80 transition-opacity">
-                AI Guard
+                ProjectGuard AI
               </Link>
             )}
 

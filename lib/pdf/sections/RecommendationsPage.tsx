@@ -26,7 +26,7 @@ export function RecommendationsPage({ data }: RecommendationsPageProps) {
           </Text>
         </View>
         <View style={pdfStyles.footer}>
-          <Text>AI Guard</Text>
+          <Text>ProjectGuard AI</Text>
           <Text>Page 4</Text>
         </View>
       </View>
@@ -107,7 +107,7 @@ export function RecommendationsPage({ data }: RecommendationsPageProps) {
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>ProjectGuard AI</Text>
         <Text>Page 4</Text>
       </View>
     </View>

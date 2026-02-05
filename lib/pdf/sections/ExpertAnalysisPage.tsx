@@ -98,7 +98,7 @@ export function ExpertAnalysisPage({ data }: ExpertAnalysisPageProps) {
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>ProjectGuard AI</Text>
         <Text>Page 6</Text>
       </View>
     </View>

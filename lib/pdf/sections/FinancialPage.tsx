@@ -22,7 +22,7 @@ export function FinancialPage({ data }: FinancialPageProps) {
           </Text>
         </View>
         <View style={pdfStyles.footer}>
-          <Text>AI Guard</Text>
+          <Text>ProjectGuard AI</Text>
           <Text>Page 3</Text>
         </View>
       </View>
@@ -150,7 +150,7 @@ export function FinancialPage({ data }: FinancialPageProps) {
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>ProjectGuard AI</Text>
         <Text>Page 3</Text>
       </View>
     </View>
