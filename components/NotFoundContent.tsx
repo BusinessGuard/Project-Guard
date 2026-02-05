@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import styles from './NotFoundContent.module.css';
 
 interface NotFoundContentProps {
   onBack: () => void;
@@ -8,17 +9,22 @@ interface NotFoundContentProps {
 
 export function NotFoundContent({ onBack }: NotFoundContentProps) {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center max-w-md space-y-6">
-        <h1 className="text-4xl font-bold text-gray-900">Страница не найдена</h1>
-        <p className="text-gray-600 text-lg">Запрашиваемая страница не существует</p>
-        <Button 
-          onClick={onBack}
-          size="lg"
-        >
-          Назад
-        </Button>
-      </div>
-    </div>
+    <main className={styles.page}>
+      <section className={styles.card}>
+        <p className={styles.eyebrow}>ERROR 404</p>
+        <h1 className={styles.title}>Page not found</h1>
+        <p className={styles.subtitle}>
+          Sorry, the page you are looking for does not exist or has been moved.
+        </p>
+        <div className={styles.actions}>
+          <Button onClick={onBack} size="lg">
+            Go back
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <a href="/dashboard/projects">Go to dashboard</a>
+          </Button>
+        </div>
+      </section>
+    </main>
   );
 }
