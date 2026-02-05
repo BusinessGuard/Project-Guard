@@ -20,6 +20,7 @@ import type { ProjectData } from "@/types/project";
 import { hasDemoLimit } from "@/lib/utils/demoLimit";
 import { createClient } from "@/lib/supabase/client";
 import { setAnonymousProjectId } from "@/lib/utils/anonymousProject";
+import { useProject } from "@/lib/hooks/useProjects";
 
 const getStepFieldsCount = (step: number, data: ProjectData): { filled: number; total: number } => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
@@ -139,6 +140,8 @@ export default function CreateProjectPage() {
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
+  const { data: existingProject } = useProject(projectId ?? "");
+  const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
 
   useEffect(() => {
     const checkDemoLimit = async () => {
@@ -251,7 +254,9 @@ export default function CreateProjectPage() {
       <div className="w-full border-b px-8 py-4">
         <div className="max-w-3xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-bold text-black">
-            {isReAnalysis ? 'Re-analyze Project' : 'Create New Project'}
+            {isReAnalysis
+              ? `Re-analyze Project${projectName ? `: ${projectName}` : ""}`
+              : 'Create New Project'}
           </h1>
           <Button 
             variant="outline" 
