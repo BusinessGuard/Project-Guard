@@ -300,7 +300,7 @@ export default function CreateProjectPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-end text-sm">
               <span className="text-slate-600">
-                Fields completed: <span className="font-semibold text-black">{getStepFieldsCount(currentStep, projectData).filled}</span> / {getStepFieldsCount(currentStep, projectData).total}
+                Fields completed: {getStepFieldsCount(currentStep, projectData).filled} / {getStepFieldsCount(currentStep, projectData).total}
               </span>
             </div>
             
