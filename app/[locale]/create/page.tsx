@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Link } from "@/lib/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Step1BasicInfo } from "./components/Step1BasicInfo";
 import { Step2ValueProposition } from "./components/Step2ValueProposition";
@@ -137,6 +138,7 @@ export default function CreateProjectPage() {
   const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
@@ -148,6 +150,8 @@ export default function CreateProjectPage() {
     const checkDemoLimit = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
+      
+      setIsLoggedIn(!!user);
       
       // Don't show limit modal if user is re-analyzing (has projectId in URL)
       if (!user && !isReAnalysis && hasDemoLimit()) {
@@ -249,8 +253,13 @@ export default function CreateProjectPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="w-full border-b px-8 py-4">
-        <div className="max-w-3xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-black">
+        <div className="max-w-3xl mx-auto flex items-center gap-4">
+          <Button variant="outline" size="sm" className="shrink-0" asChild>
+            <Link href={isLoggedIn ? "/dashboard" : "/"}>
+              {isLoggedIn === null ? "…" : isLoggedIn ? "← Dashboard" : "← Home"}
+            </Link>
+          </Button>
+          <h1 className="flex-1 text-center text-xl font-bold text-black">
             {isReAnalysis
               ? `Re-analyze Project${projectName ? `: ${projectName}` : ""}`
               : 'Create New Project'}
@@ -258,6 +267,7 @@ export default function CreateProjectPage() {
           <Button 
             variant="outline" 
             size="sm"
+            className="shrink-0"
             onClick={() => setShowResetConfirm(true)}
           >
             Reset Form
