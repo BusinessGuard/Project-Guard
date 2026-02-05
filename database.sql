@@ -1,11 +1,20 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
 
+CREATE TABLE public.openai_analysis_log (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  project_version_id uuid NOT NULL,
+  user_prompt text NOT NULL,
+  openai_response jsonb NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  system_prompt text,
+  CONSTRAINT openai_analysis_log_pkey PRIMARY KEY (id),
+  CONSTRAINT openai_analysis_log_project_version_id_fkey FOREIGN KEY (project_version_id) REFERENCES public.project_versions(id)
+);
 CREATE TABLE public.project_versions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   project_id uuid NOT NULL,
   version_number integer NOT NULL,
-  is_current boolean NOT NULL DEFAULT true,
   canvas_data jsonb NOT NULL,
   overall_score double precision,
   readiness_status text,
@@ -36,17 +45,19 @@ CREATE TABLE public.project_versions (
   fin_break_even_mrr double precision,
   fin_monthly_projections jsonb,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
+  audience_type text NOT NULL CHECK (audience_type = ANY (ARRAY['venture'::text, 'bank'::text, 'corporate'::text])),
   CONSTRAINT project_versions_pkey PRIMARY KEY (id),
   CONSTRAINT project_versions_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id)
 );
 CREATE TABLE public.projects (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
+  user_id uuid,
   name text NOT NULL,
   industry text,
   stage text,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  current_version integer NOT NULL DEFAULT 1,
   CONSTRAINT projects_pkey PRIMARY KEY (id),
   CONSTRAINT projects_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
@@ -60,15 +71,3 @@ CREATE TABLE public.users (
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
-
--- Logs user prompt and raw OpenAI response per analysis run (one row per project_version).
-CREATE TABLE public.openai_analysis_log (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  project_version_id uuid NOT NULL,
-  user_prompt text NOT NULL,
-  openai_response jsonb NOT NULL,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT openai_analysis_log_pkey PRIMARY KEY (id),
-  CONSTRAINT openai_analysis_log_project_version_id_fkey FOREIGN KEY (project_version_id) REFERENCES public.project_versions(id) ON DELETE CASCADE
-);
-CREATE UNIQUE INDEX idx_openai_analysis_log_project_version_id ON public.openai_analysis_log(project_version_id);

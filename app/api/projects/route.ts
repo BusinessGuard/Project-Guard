@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
         analysis: result.analysis,
         userPrompt: result.userPrompt,
         rawResponse: result.rawResponse,
+        systemPrompt: result.systemPrompt,
       })),
     });
 

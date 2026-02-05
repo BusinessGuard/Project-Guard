@@ -87,7 +87,7 @@ export async function analyzeProject(
     };
 
     console.log(`✅ Analysis result ready for ${audienceType}`);
-    return { analysis, userPrompt, rawResponse };
+    return { analysis, userPrompt, rawResponse, systemPrompt };
   } catch (error) {
     const duration = ((Date.now() - startTime) / 1000).toFixed(1);
     console.error(`❌ AI analysis failed for ${audienceType} after ${duration}s:`, error);
