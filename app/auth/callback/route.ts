@@ -10,13 +10,10 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // Get the origin from the request
       const origin = requestUrl.origin
-      
-      console.log('✅ OAuth success, redirecting to:', `${origin}/en/dashboard/projects`)
-      
-      // Redirect to dashboard/projects
-      return NextResponse.redirect(`${origin}/en/dashboard/projects`)
+      const next = requestUrl.searchParams.get('next')
+      const redirectUrl = next ? `${origin}${next}` : `${origin}/en/dashboard/projects`
+      return NextResponse.redirect(redirectUrl)
     } else {
       console.error('❌ OAuth error:', error)
     }
