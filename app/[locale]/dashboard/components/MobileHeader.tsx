@@ -23,6 +23,7 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) {
   const tAuth = useTranslations('auth');
+  const tNav = useTranslations('nav');
   const { isSheetOpen, setIsSheetOpen } = useScoreboardState();
 
   return (
@@ -31,7 +32,7 @@ export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) 
         href="/dashboard" 
         className="text-xl font-bold text-black"
       >
-        AI Guard
+        {tNav('appName')}
       </Link>
       
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -43,7 +44,7 @@ export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) 
         <SheetContent side="left" className="w-64 p-0 flex flex-col">
           <SheetHeader className="p-6 border-b border-gray-200">
             <SheetTitle className="text-2xl font-bold text-black text-left">
-              AI Guard
+              {tNav('appName')}
             </SheetTitle>
           </SheetHeader>
           

@@ -16,7 +16,7 @@ export function NavigationMenu({ isAuthenticated, onItemClick }: NavigationMenuP
     { href: '/dashboard/projects', label: t('projects'), icon: '📁', authRequired: false },
     // Temporarily hidden
     // { href: '/dashboard/settings', label: t('settings'), icon: '⚙️', authRequired: true },
-    // { href: '/dashboard/billing', label: 'Billing', icon: '💳', authRequired: true },
+    // { href: '/dashboard/billing', label: t('billing'), icon: '💳', authRequired: true },
   ];
 
   const isActive = (href: string) => {

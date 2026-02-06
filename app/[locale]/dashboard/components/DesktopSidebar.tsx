@@ -14,6 +14,7 @@ interface DesktopSidebarProps {
 
 export function DesktopSidebar({ isAuthenticated, onSignOut }: DesktopSidebarProps) {
   const tAuth = useTranslations('auth');
+  const tNav = useTranslations('nav');
   
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 flex-col p-4 z-10">
@@ -22,7 +23,7 @@ export function DesktopSidebar({ isAuthenticated, onSignOut }: DesktopSidebarPro
           href="/dashboard" 
           className="text-2xl font-bold text-black cursor-pointer"
         >
-          AI Guard
+          {tNav('appName')}
         </Link>
       </div>
       

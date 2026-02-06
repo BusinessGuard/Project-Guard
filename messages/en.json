@@ -26,9 +26,11 @@
     "projects": "Projects",
     "scoreboard": "Scoreboard",
     "settings": "Settings",
+    "billing": "Billing",
     "logout": "Logout",
     "login": "Login",
-    "signup": "Sign Up"
+    "signup": "Sign Up",
+    "appName": "AI Guard"
   },
   "auth": {
     "signIn": "Sign In",

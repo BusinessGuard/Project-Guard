@@ -26,9 +26,11 @@
     "projects": "Проекты",
     "scoreboard": "Результаты",
     "settings": "Настройки",
+    "billing": "Оплата",
     "logout": "Выйти",
     "login": "Войти",
-    "signup": "Регистрация"
+    "signup": "Регистрация",
+    "appName": "AI Guard"
   },
   "auth": {
     "signIn": "Войти",
