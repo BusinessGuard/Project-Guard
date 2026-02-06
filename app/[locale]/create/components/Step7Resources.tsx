@@ -68,7 +68,7 @@ export function Step7Resources() {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="existing" className="text-sm font-semibold">
               6.1. Existing resources <span className="text-red-500">*</span>
@@ -82,8 +82,8 @@ export function Step7Resources() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${existing ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${existing ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {existing && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -99,7 +99,7 @@ export function Step7Resources() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="needed" className="text-sm font-semibold">
               6.2. Resources needed <span className="text-red-500">*</span>
@@ -113,8 +113,8 @@ export function Step7Resources() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${needed ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${needed ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {needed && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -129,7 +129,7 @@ export function Step7Resources() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="techStack" className="text-sm font-semibold">
               6.3. Technology stack <span className="text-red-500">*</span>
@@ -143,8 +143,8 @@ export function Step7Resources() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${techStack ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${techStack ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {techStack && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -161,7 +161,7 @@ export function Step7Resources() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="dependencies" className="text-sm font-semibold">
               6.4. Vendor dependencies <span className="text-red-500">*</span>
@@ -175,8 +175,8 @@ export function Step7Resources() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${dependencies ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${dependencies ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {dependencies && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -191,7 +191,7 @@ export function Step7Resources() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               6.5. Key Activities <span className="text-slate-400">(optional)</span>
@@ -253,8 +253,8 @@ export function Step7Resources() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(production || innovation || platform || marketing || operations) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(production || innovation || platform || marketing || operations) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(production || innovation || platform || marketing || operations) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -283,7 +283,7 @@ export function Step7Resources() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label className="text-sm font-semibold">
               6.6. Key Partners <span className="text-slate-400">(optional)</span>
@@ -292,59 +292,65 @@ export function Step7Resources() {
             
             <div className="border border-slate-200 overflow-hidden rounded-md">
               <div className="p-2 bg-white border-b border-slate-200">
-                <div className="flex gap-2">
-                  <Select value={newPartnerType} onValueChange={setNewPartnerType}>
-                    <SelectTrigger className="!h-10 py-0 w-[140px]">
-                      <SelectValue placeholder="Type..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {partnerTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="flex flex-col md:flex-row gap-2">
+                  <div className="flex gap-2 flex-1">
+                    <Select value={newPartnerType} onValueChange={setNewPartnerType}>
+                      <SelectTrigger className="h-10 flex-1 md:w-[140px]">
+                        <SelectValue placeholder="Type..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {partnerTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
+                    <Input
+                      placeholder="Name"
+                      className="!h-10 flex-1 md:w-[140px]"
+                      value={newPartnerName}
+                      onChange={(e) => setNewPartnerName(e.target.value)}
+                    />
+                  </div>
                   
-                  <Input
-                    placeholder="Name"
-                    className="h-10 w-[140px]"
-                    value={newPartnerName}
-                    onChange={(e) => setNewPartnerName(e.target.value)}
-                  />
-                  
-                  <Input
-                    placeholder="Value/benefit..."
-                    className="h-10 flex-1"
-                    value={newPartnerValue}
-                    onChange={(e) => setNewPartnerValue(e.target.value)}
-                  />
-                  
-                  <Button
-                    type="button"
-                    className="h-10 px-4 text-sm"
-                    onClick={handleAddPartner}
-                    disabled={!newPartnerType || !newPartnerName || !newPartnerValue}
-                  >
-                    Add
-                  </Button>
+                  <div className="flex gap-2 w-full md:w-auto md:flex-1">
+                    <Input
+                      placeholder="Value/benefit..."
+                      className="!h-10 flex-1"
+                      value={newPartnerValue}
+                      onChange={(e) => setNewPartnerValue(e.target.value)}
+                    />
+                    
+                    <Button
+                      type="button"
+                      className="h-10 px-4 text-sm whitespace-nowrap"
+                      onClick={handleAddPartner}
+                      disabled={!newPartnerType || !newPartnerName || !newPartnerValue}
+                    >
+                      Add
+                    </Button>
+                  </div>
                 </div>
               </div>
 
               {partners && partners.length > 0 && (
                 <div className="divide-y divide-slate-200">
                   {partners.map((partner, index) => (
-                    <div key={index} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">
-                      <span className="text-xs font-semibold text-slate-500 min-w-[24px]">{index + 1}.</span>
-                      <span className="text-sm font-medium text-slate-900 min-w-[100px]">{partner.type}</span>
-                      <span className="text-sm font-medium text-slate-800 min-w-[120px]">{partner.name}</span>
-                      <span className="text-sm text-slate-700 flex-1">{partner.value}</span>
+                    <div key={index} className="relative flex flex-col md:flex-row md:items-center gap-2 md:gap-3 px-4 py-3 hover:bg-slate-50 transition-colors pr-12">
+                      <span className="text-xs font-semibold text-slate-500 md:min-w-[24px]">{index + 1}.</span>
+                      <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 flex-1">
+                        <span className="text-sm font-medium text-slate-900 md:min-w-[100px]">{partner.type}</span>
+                        <span className="text-sm font-medium text-slate-800 md:min-w-[120px]">{partner.name}</span>
+                        <span className="text-sm text-slate-700 flex-1">{partner.value}</span>
+                      </div>
                       <button
                         type="button"
-                        className="ml-4 hover:bg-red-50 rounded-full p-1.5 transition-colors"
+                        className="absolute top-1/2 -translate-y-1/2 right-2 hover:bg-red-50 rounded-full p-1.5 transition-colors"
                         onClick={() => handleRemovePartner(index)}
                       >
-                        <IoMdClose className="h-4 w-4 text-red-600" />
+                        <IoMdClose className="size-6 " />
                       </button>
                     </div>
                   ))}
@@ -353,8 +359,8 @@ export function Step7Resources() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${partners && partners.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${partners && partners.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {partners && partners.length > 0 && <TbChecks className="text-green-500 text-lg" />}
             </h4>

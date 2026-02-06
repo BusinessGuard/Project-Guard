@@ -19,14 +19,14 @@ export function BlockScores() {
   return (
     <div>
       <h3 className="text-lg font-semibold mb-4">Detailed Block Scores</h3>
-      <div className="space-y-3">
+      <div className="md:space-y-3">
         {Object.entries(blockScores).map(([block, score]) => (
           <div key={block} className="p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium capitalize">
                 {block.replace(/([A-Z])/g, ' $1').trim()}
               </span>
-              <span className={`text-2xl font-bold ${getScoreColor(score)}`}>
+              <span className={`text-lg md:text-2xl font-bold ${getScoreColor(score)}`}>
                 {score}
               </span>
             </div>

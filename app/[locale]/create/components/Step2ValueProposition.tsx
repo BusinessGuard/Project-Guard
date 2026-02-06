@@ -59,7 +59,7 @@ export function Step2ValueProposition() {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="problem" className="text-sm font-semibold">
               1.1. Main customer problem <span className="text-red-500">*</span>
@@ -73,8 +73,8 @@ export function Step2ValueProposition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${problem ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${problem ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {problem && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -89,7 +89,7 @@ export function Step2ValueProposition() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="solution" className="text-sm font-semibold">
               1.2. Your solution <span className="text-red-500">*</span>
@@ -103,8 +103,8 @@ export function Step2ValueProposition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${solution ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${solution ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {solution && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -119,7 +119,7 @@ export function Step2ValueProposition() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="solutionUniqueness" className="text-sm font-semibold">
               1.3. Uniqueness of your solution <span className="text-red-500">*</span>
@@ -133,8 +133,8 @@ export function Step2ValueProposition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${solutionUniqueness ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${solutionUniqueness ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {solutionUniqueness && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -149,7 +149,7 @@ export function Step2ValueProposition() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label className="text-sm font-semibold">
               1.4. Key advantages over competitors <span className="text-red-500">*</span>
@@ -204,8 +204,8 @@ export function Step2ValueProposition() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${advantages.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${advantages.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {advantages.length > 0 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -215,7 +215,7 @@ export function Step2ValueProposition() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="measurableValue" className="text-sm font-semibold">
               1.5. Measurable value for customer <span className="text-red-500">*</span>
@@ -229,8 +229,8 @@ export function Step2ValueProposition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${measurableValue ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${measurableValue ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {measurableValue && <TbChecks className="text-green-500 text-lg" />}
             </h4>

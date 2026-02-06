@@ -125,7 +125,7 @@ export function Step5Economics() {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="projectedRevenue12Months" className="text-sm font-semibold">
               4.1. Projected revenue for 12 months <span className="text-red-500">*</span>
@@ -144,8 +144,8 @@ export function Step5Economics() {
             </InputGroup>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${projectedRevenue12Months ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${projectedRevenue12Months ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {projectedRevenue12Months > 0 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -159,7 +159,7 @@ export function Step5Economics() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               4.2. Revenue Streams <span className="text-red-500">*</span>
@@ -168,16 +168,18 @@ export function Step5Economics() {
             {revenueStreams.length > 0 && (
               <div className="space-y-1.5">
                 {revenueStreams.map((stream, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-md text-sm">
+                  <div key={index} className="relative flex flex-col lg:flex-row lg:items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-md text-sm pr-10">
                     <span className="font-semibold min-w-[140px]">{stream.type}</span>
-                    <span className="flex-1 text-slate-600">{stream.description}</span>
-                    <span className="text-slate-600 min-w-[40px] text-right">{stream.percentage}%</span>
+                    <div className='flex items-center gap-2'>
+                      <span className="flex-1 text-slate-600">{stream.description}</span>
+                      <span className="text-slate-600 min-w-[40px] text-right">{stream.percentage}%</span>
+                    </div>
                     <button
                       type="button"
-                      className="hover:bg-slate-200 rounded-full p-0.5"
+                      className="hover:bg-slate-200 rounded-full p-0.5 absolute top-1/2 -translate-y-1/2 right-2"
                       onClick={() => handleRemoveStream(index)}
                     >
-                      <IoMdClose className="h-4 w-4 text-slate-500" />
+                      <IoMdClose className="size-6 text-slate-500" />
                     </button>
                   </div>
                 ))}
@@ -187,53 +189,57 @@ export function Step5Economics() {
               </div>
             )}
 
-            <div className="flex gap-2">
-              <Select value={newStreamType} onValueChange={setNewStreamType}>
-                <SelectTrigger className="!h-10 py-0 w-[180px]">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {revenueStreamTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Input
-                placeholder="Description (e.g., €99/mo subscription)"
-                className="h-10 flex-1"
-                value={newStreamDescription}
-                onChange={(e) => setNewStreamDescription(e.target.value)}
-              />
-              
-              <InputGroup className="h-10 w-[90px]">
-                <InputGroupInput
-                  type="number"
-                  placeholder="0"
-                  className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
-                  value={newStreamPercentage}
-                  onChange={(e) => setNewStreamPercentage(e.target.value)}
-                  min="0"
-                  max="100"
+            <div className="flex flex-col md:flex-row gap-2">
+              <div className="flex gap-2 flex-1">
+                <Select value={newStreamType} onValueChange={setNewStreamType}>
+                  <SelectTrigger className="h-10 flex-1 md:w-[180px]">
+                    <SelectValue placeholder="Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {revenueStreamTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <Input
+                  placeholder="Description"
+                  className="!h-10 flex-1"
+                  value={newStreamDescription}
+                  onChange={(e) => setNewStreamDescription(e.target.value)}
                 />
-                <InputGroupAddon align="inline-end">%</InputGroupAddon>
-              </InputGroup>
+              </div>
               
-              <Button
-                type="button"
-                className="h-10 px-3 text-sm"
-                onClick={handleAddStream}
-                disabled={!newStreamType || !newStreamDescription || !newStreamPercentage}
-              >
-                Add
-              </Button>
+              <div className="flex gap-2 w-full md:w-auto">
+                <InputGroup className="h-10 flex-1 md:w-[90px]">
+                  <InputGroupInput
+                    type="number"
+                    placeholder="0"
+                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
+                    value={newStreamPercentage}
+                    onChange={(e) => setNewStreamPercentage(e.target.value)}
+                    min="0"
+                    max="100"
+                  />
+                  <InputGroupAddon align="inline-end">%</InputGroupAddon>
+                </InputGroup>
+                
+                <Button
+                  type="button"
+                  className="h-10 px-3 text-sm whitespace-nowrap"
+                  onClick={handleAddStream}
+                  disabled={!newStreamType || !newStreamDescription || !newStreamPercentage}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${revenueStreams.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${revenueStreams.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {revenueStreams.length > 0 && totalPercentage === 100 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -249,7 +255,7 @@ export function Step5Economics() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="revenuePricing" className="text-sm font-semibold">
               4.3. Pricing Strategy <span className="text-red-500">*</span>
@@ -263,8 +269,8 @@ export function Step5Economics() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${revenuePricing ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${revenuePricing ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {revenuePricing && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -280,7 +286,7 @@ export function Step5Economics() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="costBreakdown" className="text-sm font-semibold">
               4.4. Main cost categories <span className="text-red-500">*</span>
@@ -294,8 +300,8 @@ export function Step5Economics() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${costBreakdown ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${costBreakdown ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {costBreakdown && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -314,7 +320,7 @@ export function Step5Economics() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               4.5. Key unit economics <span className="text-red-500">*</span>
@@ -384,8 +390,8 @@ export function Step5Economics() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(grossMargin || arpu || customerLifetime || contributionMargin) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(grossMargin || arpu || customerLifetime || contributionMargin) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(grossMargin > 0 && arpu > 0 && customerLifetime > 0 && contributionMargin > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -417,7 +423,7 @@ export function Step5Economics() {
         </div>
 
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               4.6. Funding & runway <span className="text-red-500">*</span>
@@ -444,9 +450,9 @@ export function Step5Economics() {
               
               <div className="border border-slate-200 overflow-hidden rounded-md">
                 <div className="p-2 bg-white border-b border-slate-200">
-                  <div className="flex gap-2">
+                  <div className="flex flex-col md:flex-row gap-2">
                     <Select value={newSourceType} onValueChange={setNewSourceType}>
-                      <SelectTrigger className="!h-10 flex-1 py-0">
+                      <SelectTrigger className="h-10 flex-1">
                         <SelectValue placeholder="Select type..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -457,30 +463,32 @@ export function Step5Economics() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <InputGroup className="h-10 w-32">
-                      <InputGroupAddon>€</InputGroupAddon>
-                      <InputGroupInput
-                        type="number"
-                        placeholder="Amount"
-                        className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
-                        value={newSourceAmount}
-                        onChange={(e) => setNewSourceAmount(e.target.value)}
-                        min="0"
-                      />
-                    </InputGroup>
-                    <Button
-                      type="button"
-                      className="h-10 px-4 text-sm"
-                      onClick={handleAddSource}
-                      disabled={(!newSourceType || (newSourceType === "Other" && !newSourceCustomType)) || !newSourceAmount}
-                    >
-                      Add
-                    </Button>
+                    <div className="flex gap-2 w-full md:w-auto">
+                      <InputGroup className="h-10 flex-1 md:w-32">
+                        <InputGroupAddon>€</InputGroupAddon>
+                        <InputGroupInput
+                          type="number"
+                          placeholder="Amount"
+                          className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
+                          value={newSourceAmount}
+                          onChange={(e) => setNewSourceAmount(e.target.value)}
+                          min="0"
+                        />
+                      </InputGroup>
+                      <Button
+                        type="button"
+                        className="h-10 px-4 text-sm whitespace-nowrap"
+                        onClick={handleAddSource}
+                        disabled={(!newSourceType || (newSourceType === "Other" && !newSourceCustomType)) || !newSourceAmount}
+                      >
+                        Add
+                      </Button>
+                    </div>
                   </div>
                   {newSourceType === "Other" && (
                     <Input
                       placeholder="Specify source type..."
-                      className="h-10 mt-2"
+                      className="!h-10 mt-2"
                       value={newSourceCustomType}
                       onChange={(e) => setNewSourceCustomType(e.target.value)}
                     />
@@ -532,32 +540,34 @@ export function Step5Economics() {
               
               <div className="border border-slate-200 overflow-hidden rounded-md">
                 <div className="p-2 bg-white border-b border-slate-200">
-                  <div className="flex gap-2">
+                  <div className="flex flex-col md:flex-row gap-2">
                     <Input
                       placeholder="e.g., Runway, Hiring, Marketing..."
-                      className="h-10 flex-1"
+                      className="!min-h-10 flex-1"
                       value={newFundItem}
                       onChange={(e) => setNewFundItem(e.target.value)}
                     />
-                    <InputGroup className="h-10 w-32">
-                      <InputGroupAddon>€</InputGroupAddon>
-                      <InputGroupInput
-                        type="number"
-                        placeholder="Amount"
-                        className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
-                        value={newFundAmount}
-                        onChange={(e) => setNewFundAmount(e.target.value)}
-                        min="0"
-                      />
-                    </InputGroup>
-                    <Button
-                      type="button"
-                      className="h-10 px-4 text-sm"
-                      onClick={handleAddFundItem}
-                      disabled={!newFundItem || !newFundAmount}
-                    >
-                      Add
-                    </Button>
+                    <div className="flex gap-2 w-full md:w-auto">
+                      <InputGroup className="h-10 flex-1 md:w-32">
+                        <InputGroupAddon>€</InputGroupAddon>
+                        <InputGroupInput
+                          type="number"
+                          placeholder="Amount"
+                          className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
+                          value={newFundAmount}
+                          onChange={(e) => setNewFundAmount(e.target.value)}
+                          min="0"
+                        />
+                      </InputGroup>
+                      <Button
+                        type="button"
+                        className="h-10 px-4 text-sm whitespace-nowrap"
+                        onClick={handleAddFundItem}
+                        disabled={!newFundItem || !newFundAmount}
+                      >
+                        Add
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
@@ -598,8 +608,8 @@ export function Step5Economics() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(fundingRaised > 0 || fundingSources.length > 0 || amountSeeking || useOfFunds.length > 0) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(fundingRaised > 0 || fundingSources.length > 0 || amountSeeking || useOfFunds.length > 0) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(fundingRaised > 0 && fundingSources.length > 0 && amountSeeking > 0 && useOfFunds.length > 0 && currentRunway > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>

@@ -70,7 +70,7 @@ export function Step4Channels() {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label className="text-sm font-semibold">
               3.1. Main customer acquisition channels <span className="text-red-500">*</span>
@@ -161,8 +161,8 @@ export function Step4Channels() {
             )}
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${acquisitionChannels.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${acquisitionChannels.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {acquisitionChannels.length >= 3 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -180,7 +180,7 @@ export function Step4Channels() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="salesChannel" className="text-sm font-semibold">
               3.2. Main sales channel <span className="text-red-500">*</span>
@@ -194,8 +194,8 @@ export function Step4Channels() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${salesChannel ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${salesChannel ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {salesChannel && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -212,7 +212,7 @@ export function Step4Channels() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               3.3. Customer Acquisition Cost (CAC) <span className="text-red-500">*</span>
@@ -246,8 +246,8 @@ export function Step4Channels() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(cac || cacDescription) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(cac || cacDescription) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(cac > 0 && cacDescription) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -264,7 +264,7 @@ export function Step4Channels() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="marketingTools" className="text-sm font-semibold">
               3.4. Marketing tools <span className="text-red-500">*</span>
@@ -278,8 +278,8 @@ export function Step4Channels() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${marketingTools ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${marketingTools ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {marketingTools && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -297,7 +297,7 @@ export function Step4Channels() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="marketingFunnel" className="text-sm font-semibold">
               3.5. Marketing funnel <span className="text-red-500">*</span>
@@ -311,8 +311,8 @@ export function Step4Channels() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${marketingFunnel ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${marketingFunnel ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {marketingFunnel && <TbChecks className="text-green-500 text-lg" />}
             </h4>

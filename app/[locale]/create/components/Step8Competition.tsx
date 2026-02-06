@@ -23,7 +23,7 @@ export function Step8Competition() {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="directCompetitors" className="text-sm font-semibold">
               7.1. Direct competitors <span className="text-red-500">*</span>
@@ -37,8 +37,8 @@ export function Step8Competition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${directCompetitors ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${directCompetitors ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {directCompetitors && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -54,7 +54,7 @@ export function Step8Competition() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="indirectCompetitors" className="text-sm font-semibold">
               7.2. Indirect competitors/alternatives <span className="text-red-500">*</span>
@@ -68,8 +68,8 @@ export function Step8Competition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${indirectCompetitors ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${indirectCompetitors ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {indirectCompetitors && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -85,7 +85,7 @@ export function Step8Competition() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="whyChooseYou" className="text-sm font-semibold">
               7.3. Why choose you over competitors <span className="text-red-500">*</span>
@@ -99,8 +99,8 @@ export function Step8Competition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${whyChooseYou ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${whyChooseYou ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {whyChooseYou && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -116,7 +116,7 @@ export function Step8Competition() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="defensibility" className="text-sm font-semibold">
               7.4. Competitive defensibility <span className="text-red-500">*</span>
@@ -130,8 +130,8 @@ export function Step8Competition() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${defensibility ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${defensibility ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {defensibility && <TbChecks className="text-green-500 text-lg" />}
             </h4>

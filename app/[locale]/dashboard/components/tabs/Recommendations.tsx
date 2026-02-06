@@ -84,78 +84,75 @@ export function Recommendations() {
   
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-6 text-xs text-gray-500">
-        {recommendations.map((rec) => {
-          const progress = getProgress(rec.id, rec.actionSteps.length);
-          return (
-            <span key={rec.id}>
-              {rec.title}: {progress.completed}/{progress.total}
-            </span>
-          );
-        })}
-      </div>
-      
-      {recommendations.map((rec) => (
-        <Card key={rec.id} className={`border-l-8 relative shadow-none ${getPriorityBorderColor(rec.priority)}`}>
-          <CardContent className="">
-            <Badge className={`${getPriorityColor(rec.priority)} text-white !text-xs flex-shrink-0 absolute -top-[1px] rounded-none rounded-tr-lg rounded-bl-lg -right-0 `}>
-              {rec.priority}
-            </Badge>
-            <div className="flex items-start gap-4">
-              <div className="flex-1 space-y-3">
-                <div 
-                  className="cursor-pointer"
-                  onClick={() => toggleRecommendation(rec.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-lg">{rec.title}</h3>
-                    {expandedRecommendations[rec.id] ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">{rec.description}</p>
-                </div>
-
-                {expandedRecommendations[rec.id] && (
-                  <>
-                    <div>
-                      <h4 className="font-medium text-sm mb-2">Action Steps:</h4>
-                      <div className=" pl-10 py-4 pb-8">
-                        {rec.actionSteps.map((step, idx) => (
-                          <label key={idx} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-gray-50 p-4 rounded ">
-                            <Checkbox
-                              className="size-5"
-                              checked={checkedSteps[rec.id]?.has(idx) || false}
-                              onCheckedChange={() => toggleStep(rec.id, idx)}
-                            />
-                            <span className="font-[500] text-base">{step}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                     <div className="flex flex-col gap-2 bg-gray-100 p-4 rounded-lg">
-                        <div className="flex flex-wrap gap-4 text-sm ">
-                          {[
-                            { label: 'Expected Impact', value: rec.expectedImpact },
-                            { label: 'Effort', value: rec.effort },
-                            { label: 'Timeline', value: rec.timeline },
-                          ].map((item, idx) => (
-                            <div key={idx}>
-                              <span className="font-medium">{item.label}:</span>
-                              <span className="text-gray-600 ml-2">{item.value}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="text-xs text-gray-500">
-                          Supported by {rec.expertsSupporting.length}/{totalExperts} experts
-                        </div>
-                      </div>   
-                  </>
-                )}
-              </div>
+      {recommendations.map((rec) => {
+        const progress = getProgress(rec.id, rec.actionSteps.length);
+        return (
+          <div key={rec.id} className="space-y-2">
+            <div className="text-xs md:text-sm text-gray-500 px-2">
+              Progress: {progress.completed}/{progress.total} completed
             </div>
-          </CardContent>
-        </Card>
-      ))}
+            <Card className={`border-l-4 md:border-l-8 relative shadow-none ${getPriorityBorderColor(rec.priority)}`}>
+              <CardContent className="p-3 md:p-6">
+                <Badge className={`${getPriorityColor(rec.priority)} text-white !text-[10px] md:!text-xs flex-shrink-0 absolute -top-[1px] rounded-none rounded-tr-lg rounded-bl-lg -right-0`}>
+                  {rec.priority}
+                </Badge>
+                <div className="flex items-start gap-2 md:gap-4">
+                  <div className="flex-1 space-y-2 md:space-y-3">
+                    <div 
+                      className="cursor-pointer"
+                      onClick={() => toggleRecommendation(rec.id)}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-semibold text-sm md:text-lg pr-2">{rec.title}</h3>
+                        {expandedRecommendations[rec.id] ? <ChevronUp className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />}
+                      </div>
+                      <p className="text-xs md:text-sm text-gray-600 mt-1">{rec.description}</p>
+                    </div>
+
+                    {expandedRecommendations[rec.id] && (
+                      <>
+                        <div>
+                          <h4 className="font-medium text-xs md:text-sm mb-2">Action Steps:</h4>
+                          <div className=" md:pl-10 py-2 md:py-4 pb-4 md:pb-8">
+                            {rec.actionSteps.map((step, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-xs md:text-sm cursor-pointer hover:bg-gray-50 p-2 md:p-4 rounded">
+                                <Checkbox
+                                  className="size-4 md:size-5 flex-shrink-0"
+                                  checked={checkedSteps[rec.id]?.has(idx) || false}
+                                  onCheckedChange={() => toggleStep(rec.id, idx)}
+                                />
+                                <span className="font-[500] text-xs md:text-base">{step}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                         <div className="flex flex-col gap-2 bg-gray-100 p-2 md:p-4 rounded-lg">
+                            <div className="flex flex-wrap gap-2 md:gap-4 text-xs md:text-sm">
+                              {[
+                                { label: 'Expected Impact', value: rec.expectedImpact },
+                                { label: 'Effort', value: rec.effort },
+                                { label: 'Timeline', value: rec.timeline },
+                              ].map((item, idx) => (
+                                <div key={idx}>
+                                  <span className="font-medium">{item.label}:</span>
+                                  <span className="text-gray-600 ml-1 md:ml-2">{item.value}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="text-[10px] md:text-xs text-gray-500">
+                              Supported by {rec.expertsSupporting.length}/{totalExperts} experts
+                            </div>
+                          </div>   
+                      </>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      })}
     </div>
   );
 }

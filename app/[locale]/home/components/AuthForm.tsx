@@ -134,7 +134,7 @@ export function AuthForm() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-8 px-12 ">
+    <div className="w-full max-w-lg space-y-8">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-black">
           {mode === "signin" ? "Welcome Back" : "Create Account"}

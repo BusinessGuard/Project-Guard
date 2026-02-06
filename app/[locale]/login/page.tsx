@@ -1,36 +1,48 @@
 "use client";
-
-import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "@/lib/navigation";
 import { LuMoveLeft } from "react-icons/lu";
 import { HeroContent } from "../home/components/HeroContent";
 import { AuthForm } from "../home/components/AuthForm";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const handleBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back();
-    } else {
-      router.push('/');
-    }
+    setIsNavigating(true);
+    setTimeout(() => {
+      if (typeof window !== 'undefined' && window.history.length > 1) {
+        router.back();
+      } else {
+        router.push('/');
+      }
+    }, 700);
   };
 
   return (
-    <div className="relative h-screen overflow-hidden">
-      <div className="flex h-screen">
-        <div className="relative flex items-center justify-between px-8 bg-white w-1/2">
-          <button
+    <div className="relative h-screen xl:overflow-hidden">
+      <div className={`grid grid-cols-1 xl:grid-cols-2 h-screen transition-transform duration-700 ease-in-out ${isNavigating ? "translate-x-full xl:translate-x-1/2" : "translate-x-0"}`}>
+        <div className="relative hidden xl:flex items-center justify-between px-8 bg-white">
+          <Button 
+            variant="ghost"
             onClick={handleBack}
             className="absolute top-8 left-8 hover:scale-110 transition-all duration-300 cursor-pointer"
           >
             <LuMoveLeft className="size-10" />
-          </button>
-          <HeroContent onGetStarted={() => {}} showButton={false} />
+          </Button>
+          <HeroContent />
         </div>
 
-        <div className="relative flex items-center justify-center bg-indigo-50 px-8 w-1/2">
+        <div className="relative flex items-center justify-center bg-indigo-50 px-8 ">
+          <Button
+            variant="ghost"
+            onClick={handleBack}
+            className="absolute xl:hidden top-8 left-8 hover:scale-110 transition-all duration-300 cursor-pointer"
+          >
+            <LuMoveLeft className="size-10" />
+          </Button>
           <AuthForm />
         </div>
       </div>

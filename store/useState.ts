@@ -18,6 +18,9 @@ interface ScoreboardState {
   // Recommendations progress
   recommendationsProgress: Record<string, number[]>;
   
+  // Mobile Sheet state
+  isSheetOpen: boolean;
+  
   // Actions
   setExistingVersions: (versions: Array<{ id: string; version: number; score: number; name: string; date: string }>) => void;
   setActiveVersion: (versionNumber: number) => void;
@@ -25,6 +28,8 @@ interface ScoreboardState {
   setInvestorProfile: (profile: 'vc' | 'bank' | 'corporate') => void;
   setOverallScore: (score: number) => void;
   setRecommendationsProgress: (progress: Record<string, number[]>) => void;
+  setIsSheetOpen: (isOpen: boolean) => void;
+  toggleSheet: () => void;
 }
 
 export const useScoreboardState = create<ScoreboardState>((set) => ({
@@ -45,6 +50,7 @@ export const useScoreboardState = create<ScoreboardState>((set) => ({
   investorProfile: 'vc',
   overallScore: 0,
   recommendationsProgress: {},
+  isSheetOpen: false,
   
   // Actions
   setExistingVersions: (versions) => set({ 
@@ -64,4 +70,8 @@ export const useScoreboardState = create<ScoreboardState>((set) => ({
   setOverallScore: (score) => set({ overallScore: score }),
   
   setRecommendationsProgress: (progress) => set({ recommendationsProgress: progress }),
+  
+  setIsSheetOpen: (isOpen) => set({ isSheetOpen: isOpen }),
+  
+  toggleSheet: () => set((state) => ({ isSheetOpen: !state.isSheetOpen })),
 }));

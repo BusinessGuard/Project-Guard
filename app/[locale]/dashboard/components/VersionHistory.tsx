@@ -46,8 +46,8 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex  justify-between relative">
-            <div className="absolute top-8 left-0 right-0 h-0.5 bg-gray-200" />
+          <div className="flex justify-between md:justify-around relative">
+            <div className="absolute top-[26px] md:top-8 left-0 right-0 h-0.5 bg-gray-200 " />
             {Array.from({ length: totalSlots }, (_, idx) => {
               const versionNumber = idx + 1; // 1-based version number
               const versionData = getVersionByNumber(versionNumber);
@@ -57,11 +57,11 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
               const isNextAvailable = nextVersion !== null;
 
               return (
-                <div key={versionData?.id || `locked-${idx}`} className="relative flex flex-col items-center flex-1 ">
+                <div key={versionData?.id || `locked-${idx}`} className="relative flex flex-col items-center ">
                   {isAvailable ? (
                     <button
                       onClick={() => setVersion(versionNumber)}
-                      className={`size-16 rounded-full border-4 flex items-center justify-center font-bold text-lg mb-3 transition-all cursor-pointer ${
+                      className={`size-12 md:size-16 rounded-full border-4 flex items-center justify-center font-bold text-lg mb-3 transition-all cursor-pointer ${
                         isSelected
                           ? 'bg-blue-600 border-blue-600 text-white scale-110 shadow-lg'
                           : 'bg-white border-gray-300 text-gray-700 hover:scale-105'
@@ -77,13 +77,16 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
                     >
                       <button
                         onClick={handleReAnalyze}
-                        className="size-18 rounded-full  cursor-pointer bg-gray-100 flex items-center justify-center mb-3 transition-all hover:bg-gray-200 hover:scale-105"
+                        className="size-14 md:size-18 rounded-full  cursor-pointer bg-gray-100 flex items-center justify-center mb-3 transition-all hover:bg-gray-200 hover:scale-105"
                         title="Re-analyze project"
                       >
                         {hoveredSlot === idx ? (
                           <Plus className="size-8 text-gray-600" />
                         ) : (
-                          <Lock className="size-6 text-gray-400" />
+                          <>
+                            <Lock className="md:block hidden size-6 text-gray-400" />
+                            <Plus className="md:hidden size-8 text-gray-600" />
+                          </>
                         )}
                       </button>
                       {hoveredSlot === idx && (
@@ -111,6 +114,7 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
                 </div>
               );
             })}
+            
           </div>
         </CardContent>
       </Card>

@@ -26,7 +26,7 @@ export function Step10Growth() {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="traction" className="text-sm font-semibold">
               9.1. Current Traction <span className="text-red-500">*</span>
@@ -40,8 +40,8 @@ export function Step10Growth() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${traction ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${traction ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {traction && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -63,7 +63,7 @@ export function Step10Growth() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="scalingPlan" className="text-sm font-semibold">
               9.2. Scaling plan <span className="text-red-500">*</span>
@@ -77,8 +77,8 @@ export function Step10Growth() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${scalingPlan ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${scalingPlan ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {scalingPlan && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -94,7 +94,7 @@ export function Step10Growth() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="newMarkets" className="text-sm font-semibold">
               9.3. New market potential <span className="text-red-500">*</span>
@@ -108,8 +108,8 @@ export function Step10Growth() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${newMarkets ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${newMarkets ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {newMarkets && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -125,7 +125,7 @@ export function Step10Growth() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="paybackPeriod" className="text-sm font-semibold">
               9.4. Payback period <span className="text-red-500">*</span>
@@ -139,8 +139,8 @@ export function Step10Growth() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${paybackPeriod ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${paybackPeriod ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {paybackPeriod && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -155,7 +155,7 @@ export function Step10Growth() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               9.5. Targets <span className="text-red-500">*</span>
@@ -192,8 +192,8 @@ export function Step10Growth() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(targets12Months || targets24Months || targets36Months) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(targets12Months || targets24Months || targets36Months) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(targets12Months && targets24Months && targets36Months) && <TbChecks className="text-green-500 text-lg" />}
             </h4>

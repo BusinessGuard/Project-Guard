@@ -44,50 +44,79 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
   return (
     <>
       <nav className="border-b border-gray-200 bg-white sticky top-0 z-50 py-4">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          
-          <div className="flex items-center justify-between w-full">
-            {isAuthorized ? (
-              <Select value={version.toString()} onValueChange={(value) => setVersion(parseInt(value, 10))}>
-                <SelectTrigger className="w-[240px]">
-                  <SelectValue>
-                    {currentVersionData ? `v${version}` : 'Select version'}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent >
-                  {versionNumbers.map((versionNum) => {
-                    const versionData = versions[versionNum];
-                    const ventureVersion = versionData?.venture;
-                    return (
-                      <SelectItem key={versionNum} value={versionNum.toString()} className="px-2 flex items-center justify-between">
-                          <span className="font-bold text-base">V{versionNum}</span>
-                          <span className="text-xs text-muted-foreground">({ventureVersion?.overall_score}/100)</span>
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            ) : (
-              <Link href="/" className="text-2xl w-30 font-bold text-black hover:opacity-80 transition-opacity">
-                AI Guard
-              </Link>
-            )}
+        <div className="max-w-7xl mx-auto px-6 py-3">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full">
+            {/* First row: Logo/Select and buttons */}
+            <div className="flex items-center justify-between w-full">
+              {isAuthorized ? (
+                <div className="hidden md:block">
+                  <Select value={version.toString()} onValueChange={(value) => setVersion(parseInt(value, 10))}>
+                    <SelectTrigger className="w-[240px]">
+                      <SelectValue>
+                        {currentVersionData ? `v${version}` : 'Select version'}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent >
+                      {versionNumbers.map((versionNum) => {
+                        const versionData = versions[versionNum];
+                        const ventureVersion = versionData?.venture;
+                        return (
+                          <SelectItem key={versionNum} value={versionNum.toString()} className="px-2 flex items-center justify-between">
+                              <span className="font-bold text-base">V{versionNum}</span>
+                              <span className="text-xs text-muted-foreground">({ventureVersion?.overall_score}/100)</span>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <Link href="/" className="text-2xl w-30 font-bold text-black hover:opacity-80 transition-opacity">
+                  AI Guard
+                </Link>
+              )}
 
-            <div className={`flex items-center gap-2 ${!isAuthorized ? 'w-full justify-end' : ''}`}>
-              <Button className="gap-2" onClick={handleReAnalyze}>
-                <RefreshCw className="w-4 h-4" />
-                Re-analyze
-              </Button>
-              <LanguageSwitcher />
-              <Button 
-                variant="outline" 
-                className="gap-2" 
-                onClick={handleOpenPDFPreview}
-              >
-                <Download className="w-4 h-4" />
-                PDF
-              </Button>
+              <div className="flex items-center gap-2 w-full md:w-auto ml-auto">
+                <Button className="gap-2 mr-auto md:mr-0" onClick={handleReAnalyze}>
+                  <RefreshCw className="w-4 h-4" />
+                  Re-analyze
+                </Button>
+                <LanguageSwitcher />
+                <Button 
+                  variant="outline" 
+                  className="gap-2" 
+                  onClick={handleOpenPDFPreview}
+                >
+                  <Download className="w-4 h-4" />
+                  PDF
+                </Button>
+              </div>
             </div>
+
+            {/* Second row: Select (mobile only) */}
+            {isAuthorized && (
+              <div className="md:hidden w-full">
+                <Select value={version.toString()} onValueChange={(value) => setVersion(parseInt(value, 10))}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue>
+                      {currentVersionData ? `v${version}` : 'Select version'}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent >
+                    {versionNumbers.map((versionNum) => {
+                      const versionData = versions[versionNum];
+                      const ventureVersion = versionData?.venture;
+                      return (
+                        <SelectItem key={versionNum} value={versionNum.toString()} className="px-2 flex items-center justify-between">
+                            <span className="font-bold text-base">V{versionNum}</span>
+                            <span className="text-xs text-muted-foreground">({ventureVersion?.overall_score}/100)</span>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         </div>
       </nav>

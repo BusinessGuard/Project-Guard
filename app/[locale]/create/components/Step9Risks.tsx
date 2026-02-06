@@ -61,7 +61,7 @@ export function Step9Risks() {
 
       <div className="space-y-8">
         {riskFields.map((field) => (
-          <div key={field.id} className="grid grid-cols-2 gap-8 group">
+          <div key={field.id} className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
             <div className="space-y-2">
               <Label htmlFor={field.id} className="text-sm font-semibold">
                 {field.label} <span className="text-red-500">*</span>
@@ -75,8 +75,8 @@ export function Step9Risks() {
               />
             </div>
 
-            <div className={`space-y-2 text-xs transition-opacity duration-300 ${risks[field.id as keyof typeof risks] ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-              <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+            <div className={`space-y-2 text-sm transition-opacity duration-300 ${risks[field.id as keyof typeof risks] ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+              <h4 className="text-base font-semibold text-black flex items-center gap-2">
                 Guidelines
                 {risks[field.id as keyof typeof risks] && <TbChecks className="text-green-500 text-lg" />}
               </h4>

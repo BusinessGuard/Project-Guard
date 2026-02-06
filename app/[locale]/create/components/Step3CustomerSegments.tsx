@@ -86,7 +86,7 @@ export function Step3CustomerSegments() {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="primarySegment" className="text-sm font-semibold">
               2.1. Primary customer segment <span className="text-red-500">*</span>
@@ -100,8 +100,8 @@ export function Step3CustomerSegments() {
             />
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${primarySegment ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${primarySegment ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {primarySegment && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -116,7 +116,7 @@ export function Step3CustomerSegments() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               2.2. Market size <span className="text-red-500">*</span>
@@ -156,8 +156,8 @@ export function Step3CustomerSegments() {
             ))}
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(marketSize.tam || marketSize.sam || marketSize.som) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(marketSize.tam || marketSize.sam || marketSize.som) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(marketSize.tam > 0 && marketSize.sam > 0 && marketSize.som > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -172,7 +172,7 @@ export function Step3CustomerSegments() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               2.3. Geographic features <span className="text-red-500">*</span>
@@ -203,8 +203,8 @@ export function Step3CustomerSegments() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(geography.markets?.length > 0 || geography.notes) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(geography.markets?.length > 0 || geography.notes) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(geography.markets?.length > 0 && geography.notes) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
@@ -219,7 +219,7 @@ export function Step3CustomerSegments() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
               2.4. Willingness to pay <span className="text-red-500">*</span>
@@ -252,8 +252,8 @@ export function Step3CustomerSegments() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-xs transition-opacity duration-300 ${(willingnessToPay.evidence || willingnessToPay.averageDealSize) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
-            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${(willingnessToPay.evidence || willingnessToPay.averageDealSize) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+            <h4 className="text-base font-semibold text-black flex items-center gap-2">
               Guidelines
               {(willingnessToPay.evidence && willingnessToPay.averageDealSize > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>

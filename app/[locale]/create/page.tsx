@@ -267,7 +267,7 @@ export default function CreateProjectPage() {
         </div>
       </div>
 
-      <div className="p-8">
+      <div className="py-8 px-2 md:px-8">
         <div className={`w-full mx-auto space-y-8 ${currentStep === 1 ? 'max-w-[600px]' : 'max-w-[1200px]'}`}>
           <div className="space-y-2 max-w-[600px]">
             <div className="flex items-center justify-between">
@@ -279,7 +279,7 @@ export default function CreateProjectPage() {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-lg shadow-sm">
+          <div className="bg-white px-4 py-8 md:px-8 rounded-lg shadow-sm">
           {currentStep === 1 && <Step1BasicInfo />}
           {currentStep === 2 && <Step2ValueProposition />}
           {currentStep === 3 && <Step3CustomerSegments />}
