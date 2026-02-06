@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "@/lib/navigation";
+import { useTranslations } from "next-intl";
 import { LuMoveLeft } from "react-icons/lu";
 import { HeroContent } from "../home/HeroContent";
 import { AuthForm } from "../home/AuthForm";
@@ -8,7 +9,12 @@ import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
+  const tNav = useTranslations('nav');
   const [isNavigating, setIsNavigating] = useState(false);
+
+  useEffect(() => {
+    document.title = `ProjectGuard AI | ${tNav('login')}`;
+  }, [tNav]);
 
   const handleBack = () => {
     setIsNavigating(true);

@@ -25,6 +25,10 @@ export default function ProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    document.title = `ProjectGuard AI | ${t('list')}`;
+  }, [t]);
+
+  useEffect(() => {
     async function loadData() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();

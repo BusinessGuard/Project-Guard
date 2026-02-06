@@ -3,6 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Recommendation {
   id: string;
@@ -32,6 +33,8 @@ export function RecommendationsList({
   getPriorityColor,
   totalExperts
 }: RecommendationsListProps) {
+  const t = useTranslations('dashboard.recommendations');
+
   return (
     <div className="space-y-4">
       {recommendations.map((rec) => (
@@ -56,7 +59,7 @@ export function RecommendationsList({
                 {expandedRecommendations[rec.id] && (
                   <>
                     <div>
-                      <h4 className="font-medium text-sm mb-2">Action Steps:</h4>
+                      <h4 className="font-medium text-sm mb-2">{t('actionSteps')}:</h4>
                       <div className="space-y-2">
                         {rec.actionSteps.map((step, idx) => (
                           <label key={idx} className="flex items-start gap-2 text-sm cursor-pointer hover:bg-gray-50 p-2 rounded">
@@ -69,21 +72,21 @@ export function RecommendationsList({
 
                     <div className="flex flex-wrap gap-4 pt-2 text-sm">
                       <div>
-                        <span className="font-medium">Expected Impact:</span>
+                        <span className="font-medium">{t('expectedImpact')}:</span>
                         <span className="text-gray-600 ml-2">{rec.expectedImpact}</span>
                       </div>
                       <div>
-                        <span className="font-medium">Effort:</span>
+                        <span className="font-medium">{t('effort')}:</span>
                         <span className="text-gray-600 ml-2">{rec.effort}</span>
                       </div>
                       <div>
-                        <span className="font-medium">Timeline:</span>
+                        <span className="font-medium">{t('timeline')}:</span>
                         <span className="text-gray-600 ml-2">{rec.timeline}</span>
                       </div>
                     </div>
 
                     <div className="text-xs text-gray-500">
-                      Supported by {rec.expertsSupporting.length}/{totalExperts} experts
+                      {t('supportedBy', { count: rec.expertsSupporting.length, total: totalExperts })}
                     </div>
                   </>
                 )}

@@ -8,6 +8,7 @@ interface ProjectStore {
   currentStep: number;
   
   setCurrentStep: (step: number) => void;
+  setProjectData: (data: ProjectData) => void;
   updateBasicInfo: (data: Partial<BasicInfo>) => void;
   updateValueProposition: (data: Partial<ValueProposition>) => void;
   updateCustomerSegments: (data: Partial<CustomerSegments>) => void;
@@ -28,6 +29,8 @@ export const useProjectStore = create<ProjectStore>()(
       currentStep: 1,
 
       setCurrentStep: (step) => set({ currentStep: step }),
+
+      setProjectData: (data) => set({ projectData: data }),
 
       updateBasicInfo: (data) =>
         set((state) => ({

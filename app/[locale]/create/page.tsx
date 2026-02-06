@@ -141,16 +141,60 @@ export default function CreateProjectPage() {
   const tNav = useTranslations('nav');
   const tAuth = useTranslations('auth');
   const router = useRouter();
-  const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
+  const { projectData, currentStep, setCurrentStep, resetProject, setProjectData } = useProjectStore();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [isLoadingProjectData, setIsLoadingProjectData] = useState(false);
   
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
+
+  useEffect(() => {
+    const pageTitle = isReAnalysis ? t('reAnalyzeTitle') : t('title');
+    document.title = `ProjectGuard AI | ${pageTitle}`;
+  }, [t, isReAnalysis]);
   const { data: existingProject } = useProject(projectId ?? "");
   const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
+
+  // Load canvas_data from latest venture version when re-analyzing
+  useEffect(() => {
+    const loadCanvasData = async () => {
+      if (!projectId) return;
+      
+      setIsLoadingProjectData(true);
+      try {
+        const supabase = createClient();
+        
+        // Get the latest version for venture audience
+        const { data: versions, error } = await supabase
+          .from('project_versions')
+          .select('canvas_data, version_number')
+          .eq('project_id', projectId)
+          .eq('audience_type', 'venture')
+          .order('version_number', { ascending: false })
+          .limit(1);
+        
+        if (error) {
+          console.error('Failed to load canvas data:', error);
+          return;
+        }
+        
+        if (versions && versions.length > 0 && versions[0].canvas_data) {
+          const canvasData = versions[0].canvas_data as ProjectData;
+          console.log('✅ Loaded canvas data from version:', versions[0].version_number);
+          setProjectData(canvasData);
+        }
+      } catch (error) {
+        console.error('Error loading canvas data:', error);
+      } finally {
+        setIsLoadingProjectData(false);
+      }
+    };
+    
+    loadCanvasData();
+  }, [projectId, setProjectData]);
 
   useEffect(() => {
     const checkDemoLimit = async () => {
@@ -255,6 +299,7 @@ export default function CreateProjectPage() {
   };
 
   if (createProjectMutation.isPending) return <LoadingScreen text={t('analyzing')} />;
+  if (isLoadingProjectData) return <LoadingScreen text={tCommon('loading')} />;
 
   return (
     <div className="min-h-screen bg-white">

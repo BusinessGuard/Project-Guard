@@ -25,6 +25,10 @@ export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  useEffect(() => {
+    document.title = 'ProjectGuard AI';
+  }, []);
+
   // Handle OAuth callback redirect
   useEffect(() => {
     const code = searchParams.get('code');

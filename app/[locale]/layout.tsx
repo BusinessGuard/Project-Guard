@@ -18,7 +18,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Guard - Business Analysis Platform",
+  title: {
+    template: "ProjectGuard AI | %s",
+    default: "ProjectGuard AI"
+  },
   description: "Analyze your business projects with AI-powered insights",
 };
 
