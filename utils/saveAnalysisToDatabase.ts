@@ -6,6 +6,7 @@ interface AnalysisWithMeta {
   audienceType: 'venture' | 'bank' | 'corporate';
   analysis: AnalysisApiResponse;
   userPrompt: string;
+  systemPrompt: string;
   rawResponse: any;
 }
 
@@ -163,6 +164,7 @@ export async function saveAnalysisToDatabase({
     const logInserts = analyses.map((item, index) => ({
       project_version_id: versions[index].id,
       user_prompt: item.userPrompt,
+      system_prompt: item.systemPrompt,
       openai_response: item.rawResponse,
     }));
 

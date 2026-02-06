@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
         audienceType: audienceTypes[index],
         analysis: result.analysis,
         userPrompt: result.userPrompt,
+        systemPrompt: result.systemPrompt,
         rawResponse: result.rawResponse,
       })),
     });

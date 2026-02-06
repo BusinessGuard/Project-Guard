@@ -5,6 +5,7 @@ import type { AnalysisApiResponse } from '@/types/analysis-api';
 export interface AnalyzeProjectResult {
   analysis: AnalysisApiResponse;
   userPrompt: string;
+  systemPrompt: string;
   rawResponse: {
     id: string;
     model: string;
@@ -87,7 +88,7 @@ export async function analyzeProject(
     };
 
     console.log(`✅ Analysis result ready for ${audienceType}`);
-    return { analysis, userPrompt, rawResponse };
+    return { analysis, userPrompt, systemPrompt, rawResponse };
   } catch (error) {
     const duration = ((Date.now() - startTime) / 1000).toFixed(1);
     console.error(`❌ AI analysis failed for ${audienceType} after ${duration}s:`, error);
