@@ -137,6 +137,12 @@
     "reAnalyzeTitle": "Re-analyze Project",
     "resetForm": "Reset Form",
     "resetConfirm": "Clear all form data and start over?",
+    "resetModal": {
+      "title": "ProjectGuard AI says",
+      "message": "Clear all form data and start over?",
+      "cancel": "Cancel",
+      "confirm": "Clear & Start Over"
+    },
     "step": "Step",
     "of": "of",
     "fieldsCompleted": "Fields completed",
@@ -849,7 +855,9 @@
     "emptyProjects": {
       "title": "No Projects Yet",
       "authenticatedMessage": "Start your journey by creating your first project. Get AI-powered analysis and insights to help your business grow.",
-      "unauthenticatedMessage": "Create an account to save your projects and access them anytime."
+      "unauthenticatedMessage": "Create an account to save your projects and access them anytime.",
+      "anonymousProjectMessage": "You have an anonymous project! View it below or create an account to save it permanently.",
+      "viewAnonymousProject": "View Your Project"
     },
     "projectHeader": {
       "defaultProjectName": "Project",

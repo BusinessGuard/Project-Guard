@@ -38,7 +38,7 @@ export default function DashboardLayout({
         />
       )}
 
-      <div className="flex flex-col lg:ml-64">
+      <div className={`flex flex-col ${isAuthenticated ? 'lg:ml-64' : ''}`}>
         {isAuthenticated && (
           <MobileHeader 
             isAuthenticated={isAuthenticated} 

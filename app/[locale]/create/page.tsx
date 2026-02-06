@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/lib/navigation";
+import { useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Step1BasicInfo } from "./components/Step1BasicInfo";
@@ -22,6 +23,7 @@ import type { ProjectData } from "@/types/project";
 import { hasDemoLimit } from "@/lib/utils/demoLimit";
 import { createClient } from "@/lib/supabase/client";
 import { setAnonymousProjectId } from "@/lib/utils/anonymousProject";
+import { useProject } from "@/lib/hooks/useProjects";
 
 const getStepFieldsCount = (step: number, data: ProjectData): { filled: number; total: number } => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
@@ -141,15 +143,21 @@ export default function CreateProjectPage() {
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   
-  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
+  const { data: existingProject } = useProject(projectId ?? "");
+  const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
 
   useEffect(() => {
     const checkDemoLimit = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
+      
+      setIsLoggedIn(!!user);
       
       // Don't show limit modal if user is re-analyzing (has projectId in URL)
       if (!user && !isReAnalysis && hasDemoLimit()) {
@@ -240,10 +248,6 @@ export default function CreateProjectPage() {
   };
 
   const handleSubmit = () => {
-    // Get projectId from URL query params if exists (for re-analysis)
-    const searchParams = new URLSearchParams(window.location.search);
-    const projectId = searchParams.get('projectId');
-    
     createProjectMutation.mutate({
       projectData,
       projectId: projectId || undefined,
@@ -332,6 +336,28 @@ export default function CreateProjectPage() {
         </div>
       </div>
       
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg max-w-md space-y-4 shadow-lg">
+            <h2 className="text-lg font-semibold text-slate-800">{t('resetModal.title')}</h2>
+            <p className="text-slate-600">{t('resetModal.message')}</p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowResetConfirm(false)}>
+                {t('resetModal.cancel')}
+              </Button>
+              <Button
+                onClick={() => {
+                  resetProject();
+                  setShowResetConfirm(false);
+                }}
+              >
+                {t('resetModal.confirm')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showDemoLimitModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg max-w-md space-y-4">
