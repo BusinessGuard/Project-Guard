@@ -25,7 +25,7 @@ export default function ProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    document.title = `ProjectGuard AI | ${t('list')}`;
+    document.title = `Project Guard AI | ${t('list')}`;
   }, [t]);
 
   useEffect(() => {
@@ -55,16 +55,7 @@ export default function ProjectsPage() {
     loadData();
   }, []);
 
-  if (isLoading) {
-    return <div className='absolute top-0 flex items-center justify-center left-0 right-0 bottom-0 bg-white z-50 flex items-center justify-center'>
-      <h1 className='text-2xl font-bold'>Projects are loading...</h1>
-    </div>;
-  }
 
-  // Show empty state only if no projects AND no anonymous project
-  if (projects.length === 0 && !anonymousProjectId) {
-    return <EmptyProjects isAuthenticated={!!isAuthenticated} />;
-  }
 
   return (
     <div className="p-6 pt-25">
@@ -76,40 +67,46 @@ export default function ProjectsPage() {
           </Link>
         </div>
         
-        {/* Show anonymous project card for authenticated users */}
-        {isAuthenticated && anonymousProjectId && <AnonymousProjectCard />}
-        
-        {/* Show anonymous project as a card for non-authenticated users */}
-        {!isAuthenticated && anonymousProjectId && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold mb-3">{t('yourProject')}</h2>
-            <Link
-              href={`/dashboard/projects/${anonymousProjectId}`}
-              className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <h3 className="font-semibold">{t('anonymousProject')}</h3>
-              <p className="text-sm text-gray-600 mt-1">{t('clickToView')}</p>
-            </Link>
-          </div>
-        )}
-        
-        {/* Show user projects if any */}
-        {projects.length > 0 && (
-          <div className="grid gap-4">
-            {projects.map((project) => (
-              <Link
-                key={project.id}
-                href={`/dashboard/projects/${project.id}`}
-                className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <h3 className="font-semibold">{project.name}</h3>
-                <div className="flex gap-4 mt-2 text-sm text-gray-600">
-                  {project.industry && <span>{project.industry}</span>}
-                  {project.stage && <span>• {project.stage}</span>}
-                </div>
-              </Link>
-            ))}
-          </div>
+        {projects.length === 0 && !anonymousProjectId ? (
+          <EmptyProjects isAuthenticated={!!isAuthenticated} />
+        ) : (
+          <>
+            {/* Show anonymous project card for authenticated users */}
+            {isAuthenticated && anonymousProjectId && <AnonymousProjectCard />}
+            
+            {/* Show anonymous project as a card for non-authenticated users */}
+            {!isAuthenticated && anonymousProjectId && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">{t('yourProject')}</h2>
+                <Link
+                  href={`/dashboard/projects/${anonymousProjectId}`}
+                  className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <h3 className="font-semibold">{t('anonymousProject')}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{t('clickToView')}</p>
+                </Link>
+              </div>
+            )}
+            
+            {/* Show user projects if any */}
+            {projects.length > 0 && (
+              <div className="grid gap-4">
+                {projects.map((project) => (
+                  <Link
+                    key={project.id}
+                    href={`/dashboard/projects/${project.id}`}
+                    className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <h3 className="font-semibold">{project.name}</h3>
+                    <div className="flex gap-4 mt-2 text-sm text-gray-600">
+                      {project.industry && <span>{project.industry}</span>}
+                      {project.stage && <span>• {project.stage}</span>}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

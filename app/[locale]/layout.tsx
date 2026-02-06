@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "ProjectGuard AI | %s",
-    default: "ProjectGuard AI"
+    template: "Project Guard AI | %s",
+    default: "Project Guard AI"
   },
   description: "Analyze your business projects with AI-powered insights",
 };

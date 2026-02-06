@@ -15,11 +15,11 @@ export function HeroContent() {
             {t('demo')} <RxExternalLink className="size-4" />
           </a>
           <Separator orientation="vertical" className="!h-4 bg-black" />
-          <a href="https://projectguardai.vercel.app/presentation" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-2">
+          <a href="https://projectguard-demo.vercel.app/presentation" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-2">
             {t('presentation')} <RxExternalLink className="size-4" />
           </a>
           <Separator orientation="vertical" className="!h-4 bg-black" />
-          <a href="https://projectguardai.vercel.app/investment" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-2">
+          <a href="https://projectguard-demo.vercel.app/investment" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-2">
             {t('investmentProposal')} <RxExternalLink className="size-4" />
           </a>
         </div>

@@ -30,7 +30,7 @@
     "logout": "Logout",
     "login": "Login",
     "signup": "Sign Up",
-    "appName": "AI Guard"
+    "appName": "Project Guard AI"
   },
   "auth": {
     "signIn": "Sign In",
@@ -53,6 +53,9 @@
     "validation": {
       "invalidEmail": "Please enter a valid email address",
       "passwordMinLength": "Password must be at least 6 characters",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordSpecial": "Password must contain at least one special character",
       "passwordsDontMatch": "Passwords don't match"
     },
     "promptModal": {
@@ -137,7 +140,8 @@
   },
   "create": {
     "title": "Create New Project",
-    "reAnalyzeTitle": "Re-analyze Project",
+    "reAnalyzeTitle": "Re-analyze {projectName}",
+    "reAnalyzeTitleDefault": "Re-analyze Project",
     "resetForm": "Reset Form",
     "resetConfirm": "Clear all form data and start over?",
     "resetModal": {
@@ -151,7 +155,8 @@
     "fieldsCompleted": "Fields completed",
     "analyzing": "Analyzing project...",
     "submitProject": "Submit Project",
-    "reAnalyzeProject": "Re-analyze Project",
+    "reAnalyzeProject": "Re-analyze {projectName}",
+    "reAnalyzeProjectDefault": "Re-analyze Project",
     "demoLimit": {
       "title": "Demo Limit Reached",
       "message": "You've already tried our demo. Sign up to create unlimited projects and access all features.",
@@ -203,17 +208,18 @@
       "solutionUniquenessLabel": "1.3. Uniqueness of your solution",
       "solutionUniquenessPlaceholder": "What makes your product fundamentally different...",
       "advantagesLabel": "1.4. Key advantages over competitors",
-      "advantagesHint": "Add 3-5 specific advantages (minimum 3 required)",
-      "advantagesPlaceholder": "Enter advantage and click Add",
-      "measurableValueLabel": "1.5. Measurable value for customer",
+      "advantagesHint": "Add 3-5 specific advantages",
+      "advantagesHintRequired": "(minimum 3 required)",
+      "advantagesPlaceholder": "Enter an advantage and click Add",
+      "measurableValueLabel": "1.5. Measurable value for customers",
       "measurableValuePlaceholder": "Quantify the value you create...",
       "guidelines": "Guidelines",
       "add": "Add",
       "tip": "Tip: Be specific with numbers and metrics. Investors value quantifiable results.",
       "problemGuidelines": {
-        "1": "Describe the specific customer pain",
+        "1": "Describe the specific customer pain point",
         "2": "How often does this problem occur?",
-        "3": "How much time/money does the customer lose?",
+        "3": "How much time/money do customers lose?",
         "4": "How do customers solve this problem now?"
       },
       "problemExample": "Example: \"Startup founders spend 100+ hours creating business plans and pitch decks, not knowing if they're ready for investor meetings. 80% get rejected due to obvious gaps that could have been fixed in advance.\"",
@@ -225,8 +231,8 @@
       "solutionExample": "Example: \"AI-powered platform that analyzes your business model, identifies weak points, and generates investor-ready pitch deck in 15 minutes. Includes 6 specialized AI experts for different aspects: market analysis, financials, competition, risks, etc.\"",
       "solutionUniquenessGuidelines": {
         "1": "What makes your product fundamentally different?",
-        "2": "Why can't customers achieve the same result another way?",
-        "3": "Do you have technological advantage, data, network, or other protection from copying?"
+        "2": "Why can't customers achieve the same result in another way?",
+        "3": "Do you have a technological advantage, data, network, or other protection from copying?"
       },
       "solutionUniquenessExample": "Example: \"We use a system of 6 AI experts (not just one GPT prompt), each with specialization. Our database includes 1000+ analyzed startups, allowing us to provide industry benchmarks.\"",
       "advantagesExample": "Example: \"Analysis in 30 seconds instead of 2 weeks with consultants\" • \"Price €99 instead of €5,000 for consulting\" • \"Specific growth plan with steps, not general advice\"",
@@ -451,8 +457,8 @@
       "costBreakdownExample": "Example: \"Monthly costs: Founders salary €3,000 (€1,500 × 2), Developer €2,000 (contractor), OpenAI API €500 (variable), Hosting €200, Marketing €1,000, SaaS tools €200, Legal/Admin €300. Total burn: €7,200/month.\"",
       "unitEconomicsGuidelines": {
         "1": "Gross Margin = (Revenue - COGS) / Revenue × 100%",
-        "2": "ARPU = Revenue ÷ Active Users",
-        "3": "Customer Lifetime = 1 ÷ Churn Rate",
+        "2": "ARPU = Revenue / Active Users",
+        "3": "Customer Lifetime = 1 / Churn Rate",
         "4": "Contribution Margin = Revenue per customer - COGS",
         "5": "LTV = ARPU × Customer Lifetime × Gross Margin",
         "6": "CAC is in Step 3 (Channels)"

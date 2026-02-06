@@ -349,15 +349,15 @@ export function Step7Resources() {
                 <div className="divide-y divide-slate-200">
                   {partners.map((partner, index) => (
                     <div key={index} className="relative flex flex-col md:flex-row md:items-center gap-2 md:gap-3 px-4 py-3 hover:bg-slate-50 transition-colors pr-12">
-                      <span className="text-xs font-semibold text-slate-500 md:min-w-[24px]">{index + 1}.</span>
-                      <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 flex-1">
-                        <span className="text-sm font-medium text-slate-900 md:min-w-[100px]">{partner.type}</span>
-                        <span className="text-sm font-medium text-slate-800 md:min-w-[120px]">{partner.name}</span>
-                        <span className="text-sm text-slate-700 flex-1">{partner.value}</span>
+                      <span className="text-xs font-semibold text-slate-500 w-6 md:w-8 shrink-0 text-center">{index + 1}.</span>
+                      <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 flex-1 min-w-0">
+                        <span className="text-sm font-medium text-slate-900 w-full md:w-[140px] shrink-0 overflow-hidden text-ellipsis whitespace-nowrap">{partner.type}</span>
+                        <span className="text-sm font-medium text-slate-800 w-full md:w-[160px] shrink-0 overflow-hidden text-ellipsis whitespace-nowrap">{partner.name}</span>
+                        <span className="text-sm text-slate-700 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">{partner.value}</span>
                       </div>
                       <button
                         type="button"
-                        className="absolute top-1/2 -translate-y-1/2 right-2 hover:bg-red-50 rounded-full p-1.5 transition-colors"
+                        className="absolute top-1/2 -translate-y-1/2 right-2 hover:bg-red-50 rounded-full p-1.5 transition-colors shrink-0"
                         onClick={() => handleRemovePartner(index)}
                       >
                         <IoMdClose className="size-6 " />

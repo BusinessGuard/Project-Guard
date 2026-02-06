@@ -28,13 +28,13 @@ export function Step1BasicInfo() {
     { value: "other", label: t('industries.other') },
   ], [t]);
   
-  const stages = useMemo(() => [
-    { value: "idea", label: t('stages.idea') },
-    { value: "mvp", label: t('stages.mvp') },
-    { value: "seed", label: t('stages.seed') },
-    { value: "series-a", label: t('stages.seriesA') },
-    { value: "series-b", label: t('stages.seriesB') },
-  ], [t]);
+  const stages = [
+    { value: "idea", label: "Idea" },
+    { value: "mvp", label: "MVP" },
+    { value: "seed", label: "Seed" },
+    { value: "series-a", label: "Series A" },
+    { value: "series-b", label: "Series B" },
+  ];
   
   const isOtherIndustry = industry === "other" || (industry && !industries.some(i => i.value === industry));
   

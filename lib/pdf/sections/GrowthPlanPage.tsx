@@ -18,7 +18,7 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
   return (
     <View style={pdfStyles.page}>
       {/* Page Title */}
-      <Text style={pdfStyles.sectionTitle}>GROWTH ROADMAP</Text>
+      <Text style={pdfStyles.sectionTitle}>GROWTH PLAN</Text>
       <Text style={{ ...pdfStyles.text, marginBottom: 12 }}>
         Strategic phases to scale your business from current state to target goals.
       </Text>
@@ -42,7 +42,7 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
               </Text>
               {phase.goals.map((goal, i) => (
                 <View key={i} style={pdfStyles.listItem}>
-                  <Text style={pdfStyles.bullet}>•</Text>
+                  <Text style={pdfStyles.bullet}>{i + 1}.</Text>
                   <Text style={pdfStyles.listContent}>{goal}</Text>
                 </View>
               ))}
@@ -78,12 +78,37 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
               ))}
             </View>
           )}
+          
+          {/* Team Size */}
+          {phase.teamSize && (
+            <View style={pdfStyles.sectionSmall}>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>
+                Team Size:
+              </Text>
+              <Text style={pdfStyles.text}>{phase.teamSize}</Text>
+            </View>
+          )}
+          
+          {/* Success Metrics */}
+          {phase.successMetrics && phase.successMetrics.length > 0 && (
+            <View style={pdfStyles.sectionSmall}>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>
+                Success Metrics:
+              </Text>
+              {phase.successMetrics.map((metric, i) => (
+                <View key={i} style={pdfStyles.listItem}>
+                  <Text style={pdfStyles.bullet}>•</Text>
+                  <Text style={pdfStyles.listContent}>{metric}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
       ))}
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>Project Guard AI</Text>
         <Text>Page 5</Text>
       </View>
     </View>

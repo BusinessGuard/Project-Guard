@@ -36,27 +36,27 @@ export function ProjectPDF({ data }: ProjectPDFProps) {
         <BusinessScoresPage data={data} />
       </Page>
       
-      {/* Page 3: Financial Forecast */}
+      {/* Page 3: Expert Analysis (if available) */}
+      {hasExperts && (
+        <Page size="A4" style={pageStyle.page}>
+          <ExpertAnalysisPage data={data} />
+        </Page>
+      )}
+      
+      {/* Page 4: Financial Forecast */}
       <Page size="A4" style={pageStyle.page}>
         <FinancialPage data={data} />
       </Page>
       
-      {/* Page 4: Recommendations */}
+      {/* Page 5: Recommendations */}
       <Page size="A4" style={pageStyle.page}>
         <RecommendationsPage data={data} />
       </Page>
       
-      {/* Page 5: Growth Plan (if available) */}
+      {/* Page 6: Growth Plan (if available) */}
       {hasGrowthPlan && (
         <Page size="A4" style={pageStyle.page}>
           <GrowthPlanPage data={data} />
-        </Page>
-      )}
-      
-      {/* Page 6: Expert Analysis (if available) */}
-      {hasExperts && (
-        <Page size="A4" style={pageStyle.page}>
-          <ExpertAnalysisPage data={data} />
         </Page>
       )}
     </Document>

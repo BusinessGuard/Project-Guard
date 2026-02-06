@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { HeroContent } from "./home/HeroContent";
 import { createClient } from "@/lib/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { HashLoader } from "react-spinners";
 
 export default function Home() {
   const t = useTranslations('home');
@@ -26,7 +27,7 @@ export default function Home() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    document.title = 'ProjectGuard AI';
+    document.title = 'Project Guard AI';
   }, []);
 
   // Handle OAuth callback redirect
@@ -106,14 +107,18 @@ export default function Home() {
   };
 
   return (
-    <div className="relative  lg:h-screen lg:overflow-hidden">
-        <div className={`absolute inset-0 bg-white z-50 transition-opacity duration-700 ease-in-out ${isFading ? "opacity-100" : "opacity-0 pointer-events-none"}`}/>
+    <div className="relative ">
+        <div className={`absolute inset-0 bg-white z-50 transition-opacity duration-700 ease-in-out ${isFading || (isNavigating && isAuthenticated) ? "opacity-100" : "opacity-0 pointer-events-none"} flex items-center justify-center`}>
+          {(isFading || (isNavigating && isAuthenticated)) && (
+            <HashLoader color="#000000" size={60} />
+          )}
+        </div>
       
-      <div className={`flex flex flex-col lg:flex-row h-screen transition-transform duration-700 ease-in-out ${  isNavigating ? "-translate-x-full lg:-translate-x-1/2" : "lg:translate-x-0"}`}>
+      <div className={`flex min-h-screen flex flex-col lg:flex-row transition-transform duration-700 ease-in-out ${  isNavigating ? "-translate-x-full lg:-translate-x-1/2" : "lg:translate-x-0"}`}>
 
         <div 
           ref={imageContainerRef}
-          className="relative h-full transition-all duration-700 ease-in-out min-h-[500px] lg:min-h-full py-30 w-full lg:w-1/2 overflow-hidden"
+          className="relative flex-1 transition-all duration-700 ease-in-out min-h-[500px] lg:min-h-full py-30 w-full lg:w-1/2 overflow-hidden"
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >
@@ -158,9 +163,9 @@ export default function Home() {
           </div>
         </div>
       
-      <div className="flex lg:hidden items-center justify-between w-full my-10 px-8 gap-4">
+      <div className="flex lg:hidden items-center justify-between w-full  my-10 px-8 gap-4">
         <LanguageSwitcher />
-        <Button className="active:bg-black/60  cursor-pointer text-lg flex-1 py-6 " onClick={() => {
+        <Button className="active:bg-black/60 w-full max-w-40 cursor-pointer text-lg flex-1 py-6 " onClick={() => {
           setIsNavigating(true);
           setTimeout(() => {
             router.push(isAuthenticated ? "/dashboard" : "/login");

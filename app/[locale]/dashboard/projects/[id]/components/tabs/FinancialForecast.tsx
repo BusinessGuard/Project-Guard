@@ -88,7 +88,10 @@ export function FinancialForecast() {
                 tick={{ fill: '#6B7280', fontSize: 10 }}
                 label={{ value: t('month'), position: 'insideBottom', offset: -5, fill: '#6B7280', style: { fontSize: '12px' } }}
               />
-              <YAxis tick={{ fill: '#6B7280', fontSize: 10 }} />
+              <YAxis 
+                tick={{ fill: '#6B7280', fontSize: 10 }} 
+                tickFormatter={(value) => value.toLocaleString('en-US')}
+              />
               <Tooltip 
                 contentStyle={{ 
                   backgroundColor: '#FFFFFF',

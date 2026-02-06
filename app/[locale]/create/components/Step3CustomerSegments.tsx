@@ -4,21 +4,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { handleNonNegativeNumberInput } from "@/lib/utils/numberValidation";
 
 export function Step3CustomerSegments() {
   const t = useTranslations('create.step3');
   const { projectData, updateCustomerSegments } = useProjectStore();
+  const [tamUnit, setTamUnit] = useState<'M' | 'K'>('M');
+  const [samUnit, setSamUnit] = useState<'M' | 'K'>('M');
+  const [somUnit, setSomUnit] = useState<'M' | 'K'>('M');
 
   const marketSizeFields = useMemo(() => [
-    { id: 'tam', label: t('marketSizeFields.tam'), placeholder: '500' },
-    { id: 'sam', label: t('marketSizeFields.sam'), placeholder: '100' },
-    { id: 'som', label: t('marketSizeFields.som'), placeholder: '10' },
-  ], [t]);
+    { id: 'tam', label: t('marketSizeFields.tam'), placeholder: '500', unit: tamUnit, setUnit: setTamUnit },
+    { id: 'sam', label: t('marketSizeFields.sam'), placeholder: '100', unit: samUnit, setUnit: setSamUnit },
+    { id: 'som', label: t('marketSizeFields.som'), placeholder: '10', unit: somUnit, setUnit: setSomUnit },
+  ], [t, tamUnit, samUnit, somUnit]);
 
   const primarySegmentGuidelines = useMemo(() => [
     t('primarySegmentGuidelines.1'),
@@ -137,7 +142,7 @@ export function Step3CustomerSegments() {
                 <Label htmlFor={field.id} className="text-xs text-slate-600">
                   {field.label}
                 </Label>
-                <div className="grid grid-cols-[140px_1fr] gap-2">
+                <div className="grid grid-cols-[140px_60px_1fr] gap-2">
                   <InputGroup className="h-10">
                     <InputGroupAddon>€</InputGroupAddon>
                     <InputGroupInput
@@ -146,13 +151,25 @@ export function Step3CustomerSegments() {
                       placeholder={field.placeholder}
                       className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       value={marketSize[field.id as keyof typeof marketSize] || ""}
-                      onChange={(e) => updateCustomerSegments({ 
-                        marketSize: { ...marketSize, [field.id]: parseFloat(e.target.value) || 0 } 
-                      })}
+                      onChange={(e) => {
+                        handleNonNegativeNumberInput(e.target.value, (num) => {
+                          updateCustomerSegments({ 
+                            marketSize: { ...marketSize, [field.id]: num } 
+                          });
+                        });
+                      }}
                       min="0"
                     />
-                    <InputGroupAddon align="inline-end">M</InputGroupAddon>
                   </InputGroup>
+                  <Select value={field.unit} onValueChange={(value: 'M' | 'K') => field.setUnit(value)}>
+                    <SelectTrigger className="!h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="K">K</SelectItem>
+                      <SelectItem value="M">M</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Input
                     placeholder={t('calculationPlaceholder')}
                     className="h-10"
@@ -254,7 +271,11 @@ export function Step3CustomerSegments() {
                   placeholder={t('averageDealSizePlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={willingnessToPay.averageDealSize || ""}
-                  onChange={(e) => updateCustomerSegments({ willingnessToPay: { ...willingnessToPay, averageDealSize: parseFloat(e.target.value) || 0 } })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateCustomerSegments({ willingnessToPay: { ...willingnessToPay, averageDealSize: num } });
+                    });
+                  }}
                   min="0"
                 />
                 <InputGroupAddon align="inline-end">{t('perMonth')}</InputGroupAddon>

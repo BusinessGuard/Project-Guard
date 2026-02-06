@@ -156,10 +156,11 @@ export function Step2ValueProposition() {
             <Label className="text-sm font-semibold">
               {t('advantagesLabel')} <span className="text-red-500">*</span>
             </Label>
-            <p className="text-xs text-slate-500">{t('advantagesHint')}</p>
+            <p className="text-xs text-slate-500">
+              {t('advantagesHint')} <span className={advantages.length < 3 ? 'text-red-500' : 'text-slate-500'}>{t('advantagesHintRequired')}</span>
+            </p>
             
             <div className="border border-slate-200 overflow-hidden rounded-md">
-              
               
               <div className="p-2 bg-white border-b border-slate-200">
                 <div className="flex gap-2">
@@ -186,7 +187,7 @@ export function Step2ValueProposition() {
                 </div>
               </div>
 
-              {advantages.length > 0 && (
+              {advantages.length > 2 && (
                 <div className="divide-y divide-slate-200">
                   {advantages.map((advantage, index) => (
                     <div key={index} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">

@@ -56,6 +56,26 @@ export function ExpertAnalysisPage({ data }: ExpertAnalysisPageProps) {
             </View>
           )}
           
+          {/* Critical Risks */}
+          {expert.criticalRisks && expert.criticalRisks.length > 0 && (
+            <View style={{ marginBottom: 6 }}>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>
+                Critical Risks:
+              </Text>
+              {expert.criticalRisks.map((risk, i) => (
+                <View key={i} style={{ marginBottom: 4 }}>
+                  <Text style={{ ...pdfStyles.textSmall, fontWeight: 700 }}>{risk.risk}</Text>
+                  <Text style={pdfStyles.textSmall}>
+                    Likelihood: {risk.likelihood} | Impact: {risk.impact}
+                  </Text>
+                  {risk.mitigation && (
+                    <Text style={pdfStyles.textSmall}>Mitigation: {risk.mitigation}</Text>
+                  )}
+                </View>
+              ))}
+            </View>
+          )}
+          
           {/* Concerns */}
           {expert.concerns && expert.concerns.length > 0 && (
             <View style={{ marginBottom: 6 }}>
@@ -98,7 +118,7 @@ export function ExpertAnalysisPage({ data }: ExpertAnalysisPageProps) {
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>Project Guard AI</Text>
         <Text>Page 6</Text>
       </View>
     </View>

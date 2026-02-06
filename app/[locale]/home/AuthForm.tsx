@@ -34,8 +34,19 @@ export function AuthForm() {
   }), [t]);
 
   const signUpSchema = useMemo(() => z.object({
-    email: z.string().email(t('validation.invalidEmail')),
-    password: z.string().min(6, t('validation.passwordMinLength')),
+    email: z.string()
+      .email(t('validation.invalidEmail'))
+      .refine((email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }, {
+        message: t('validation.invalidEmail'),
+      }),
+    password: z.string()
+      .min(6, t('validation.passwordMinLength'))
+      .regex(/[A-Z]/, t('validation.passwordUppercase'))
+      .regex(/[0-9]/, t('validation.passwordNumber'))
+      .regex(/[^A-Za-z0-9]/, t('validation.passwordSpecial')),
     confirmPassword: z.string().min(6, t('validation.passwordMinLength')),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t('validation.passwordsDontMatch'),

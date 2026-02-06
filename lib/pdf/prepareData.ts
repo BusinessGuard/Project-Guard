@@ -46,6 +46,7 @@ export interface PDFData {
     impact: string;
     effort: string;
     timeline: string;
+    actionSteps: string[];
   }[];
   
   // Growth plan
@@ -55,6 +56,8 @@ export interface PDFData {
     goals: string[];
     keyActions: string[];
     milestones: string[];
+    teamSize: string;
+    successMetrics: string[];
   }[];
   
   // Experts
@@ -63,6 +66,12 @@ export interface PDFData {
     score: number;
     perspective: string;
     keyFindings: string[];
+    criticalRisks: {
+      risk: string;
+      likelihood: string;
+      impact: string;
+      mitigation: string;
+    }[];
     concerns: string[];
     recommendations: string[];
   }[];
@@ -103,6 +112,7 @@ export function preparePDFData(
     impact: rec.expectedImpact || '',
     effort: rec.effort || 'Medium',
     timeline: rec.timeline || '',
+    actionSteps: rec.actionSteps || [],
   }));
   
   // Prepare growth phases
@@ -112,6 +122,8 @@ export function preparePDFData(
     goals: phase.goals || [],
     keyActions: phase.keyActions || [],
     milestones: phase.milestones || [],
+    teamSize: phase.teamSize || '',
+    successMetrics: phase.successMetrics || [],
   }));
   
   // Prepare experts
@@ -120,6 +132,7 @@ export function preparePDFData(
     score: expert.confidence || 0,
     perspective: expert.summary || '',
     keyFindings: expert.keyFindings || [],
+    criticalRisks: expert.criticalRisks || [],
     concerns: expert.concerns || [],
     recommendations: expert.recommendations || [],
   }));

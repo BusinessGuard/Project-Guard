@@ -10,6 +10,7 @@ import { TbChecks, TbCheck } from "react-icons/tb";
 import { useState, useMemo } from "react";
 import { useProjectStore } from "@/store/useProjectStore";
 import { useTranslations } from "next-intl";
+import { handleNonNegativeNumberInput } from "@/lib/utils/numberValidation";
 import {
   Popover,
   PopoverContent,
@@ -230,7 +231,11 @@ export function Step4Channels() {
                   placeholder={t('cacValuePlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={cac || ""}
-                  onChange={(e) => updateChannels({ cac: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateChannels({ cac: num });
+                    });
+                  }}
                   min="0"
                 />
               </InputGroup>

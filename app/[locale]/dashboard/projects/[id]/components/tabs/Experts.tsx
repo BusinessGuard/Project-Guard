@@ -90,15 +90,15 @@ export function Experts() {
                             {risk.category}
                           </Badge>
                           <Badge variant="outline" className="text-[10px] md:text-xs">
-                            {risk.likelihood} {t('likelihood')}
+                            {risk.likelihood} likelihood
                           </Badge>
                           <Badge variant="outline" className="text-[10px] md:text-xs">
-                            {risk.impact} {t('impact')}
+                            {risk.impact} impact
                           </Badge>
                         </div>
                         <p className="text-xs md:text-sm font-medium mb-1">{risk.description}</p>
                         <p className="text-[10px] md:text-xs text-gray-600">
-                          <strong>{t('mitigation')}:</strong> {risk.mitigation}
+                          <strong>Mitigation:</strong> {risk.mitigation}
                         </p>
                       </div>
                     ))}

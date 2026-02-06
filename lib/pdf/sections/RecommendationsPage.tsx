@@ -26,7 +26,7 @@ export function RecommendationsPage({ data }: RecommendationsPageProps) {
           </Text>
         </View>
         <View style={pdfStyles.footer}>
-          <Text>AI Guard</Text>
+          <Text>Project Guard AI</Text>
           <Text>Page 4</Text>
         </View>
       </View>
@@ -56,6 +56,19 @@ export function RecommendationsPage({ data }: RecommendationsPageProps) {
           Timeline: {rec.timeline}
         </Text>
       </View>
+      
+      {/* Action Steps */}
+      {rec.actionSteps && rec.actionSteps.length > 0 && (
+        <View style={{ marginTop: 4, paddingTop: 4 }}>
+          <Text style={{ ...pdfStyles.textSmall, fontWeight: 700 }}>Action Steps:</Text>
+          {rec.actionSteps.map((step: string, i: number) => (
+            <View key={i} style={pdfStyles.listItem}>
+              <Text style={{ ...pdfStyles.bullet, fontSize: 7 }}>{i + 1}.</Text>
+              <Text style={{ ...pdfStyles.listContent, fontSize: 8 }}>{step}</Text>
+            </View>
+          ))}
+        </View>
+      )}
       
       {/* Expected Impact */}
       {rec.impact && (
@@ -107,7 +120,7 @@ export function RecommendationsPage({ data }: RecommendationsPageProps) {
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>ProjectGuard AI</Text>
         <Text>Page 4</Text>
       </View>
     </View>

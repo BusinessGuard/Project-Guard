@@ -9,8 +9,9 @@ import { useProjectStore } from "@/store/useProjectStore";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { IoMdClose } from "react-icons/io";
 import { TbChecks } from "react-icons/tb";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
+import { handleNonNegativeNumberInput, createNonNegativeNumberHandler, createRangeNumberHandler, createPositiveNumberHandler } from "@/lib/utils/numberValidation";
 
 export function Step5Economics() {
   const t = useTranslations('create.step5');
@@ -63,6 +64,7 @@ export function Step5Economics() {
   const [newStreamType, setNewStreamType] = useState("");
   const [newStreamDescription, setNewStreamDescription] = useState("");
   const [newStreamPercentage, setNewStreamPercentage] = useState("");
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [newSourceType, setNewSourceType] = useState("");
   const [newSourceCustomType, setNewSourceCustomType] = useState("");
   const [newSourceAmount, setNewSourceAmount] = useState("");
@@ -86,12 +88,13 @@ export function Step5Economics() {
     : 0;
 
   const handleAddStream = () => {
-    if (newStreamType && newStreamDescription && newStreamPercentage) {
+    const percentage = parseFloat(newStreamPercentage);
+    if (newStreamType && newStreamDescription && newStreamPercentage && percentage > 0) {
       updateEconomics({ 
         revenueStreams: [...revenueStreams, { 
           type: newStreamType, 
           description: newStreamDescription,
-          percentage: parseFloat(newStreamPercentage) || 0 
+          percentage: percentage 
         }] 
       });
       setNewStreamType("");
@@ -121,9 +124,10 @@ export function Step5Economics() {
   };
 
   const handleAddFundItem = () => {
-    if (newFundItem && newFundAmount) {
+    const amount = parseFloat(newFundAmount);
+    if (newFundItem && newFundAmount && amount >= 0) {
       updateEconomics({ 
-        useOfFunds: [{ item: newFundItem, amount: parseFloat(newFundAmount) || 0 }, ...useOfFunds] 
+        useOfFunds: [{ item: newFundItem, amount: amount }, ...useOfFunds] 
       });
       setNewFundItem("");
       setNewFundAmount("");
@@ -156,7 +160,11 @@ export function Step5Economics() {
                 placeholder={t('projectedRevenuePlaceholder')}
                 className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 value={projectedRevenue12Months || ""}
-                onChange={(e) => updateEconomics({ projectedRevenue12Months: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => {
+                  handleNonNegativeNumberInput(e.target.value, (num) => {
+                    updateEconomics({ projectedRevenue12Months: num });
+                  });
+                }}
                 min="0"
               />
             </InputGroup>
@@ -209,8 +217,12 @@ export function Step5Economics() {
 
             <div className="flex flex-col md:flex-row gap-2">
               <div className="flex gap-2 flex-1">
-                <Select value={newStreamType} onValueChange={setNewStreamType}>
-                  <SelectTrigger className="h-10 flex-1 md:w-[180px]">
+                <Select 
+                  value={newStreamType} 
+                  onValueChange={setNewStreamType}
+                  onOpenChange={setIsSelectOpen}
+                >
+                  <SelectTrigger className="!h-10 flex-1 md:w-[180px]">
                     <SelectValue placeholder={t('type')} />
                   </SelectTrigger>
                   <SelectContent>
@@ -237,9 +249,15 @@ export function Step5Economics() {
                     placeholder="0"
                     className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
                     value={newStreamPercentage}
-                    onChange={(e) => setNewStreamPercentage(e.target.value)}
-                    min="0"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === '' || (parseFloat(value) > 0 && parseFloat(value) <= 100)) {
+                        setNewStreamPercentage(value);
+                      }
+                    }}
+                    min="0.01"
                     max="100"
+                    step="0.01"
                   />
                   <InputGroupAddon align="inline-end">%</InputGroupAddon>
                 </InputGroup>
@@ -248,7 +266,7 @@ export function Step5Economics() {
                   type="button"
                   className="h-10 px-3 text-sm whitespace-nowrap"
                   onClick={handleAddStream}
-                  disabled={!newStreamType || !newStreamDescription || !newStreamPercentage}
+                  disabled={!newStreamType || !newStreamDescription || !newStreamPercentage || parseFloat(newStreamPercentage) <= 0}
                 >
                   {t('add')}
                 </Button>
@@ -256,7 +274,7 @@ export function Step5Economics() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-sm transition-opacity duration-300 ${revenueStreams.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${revenueStreams.length > 0 || isSelectOpen ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
               {t('guidelines')}
               {revenueStreams.length > 0 && totalPercentage === 100 && <TbChecks className="text-green-500 text-lg" />}
@@ -352,7 +370,12 @@ export function Step5Economics() {
                   placeholder={t('grossMarginPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={grossMargin || ""}
-                  onChange={(e) => updateEconomics({ grossMargin: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === '' || (parseFloat(value) >= 0 && parseFloat(value) <= 100)) {
+                      updateEconomics({ grossMargin: parseFloat(value) || 0 });
+                    }
+                  }}
                   min="0"
                   max="100"
                 />
@@ -369,7 +392,11 @@ export function Step5Economics() {
                   placeholder={t('arpuPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={arpu || ""}
-                  onChange={(e) => updateEconomics({ arpu: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateEconomics({ arpu: num });
+                    });
+                  }}
                   min="0"
                 />
                 <InputGroupAddon align="inline-end">{t('perMonth')}</InputGroupAddon>
@@ -384,7 +411,11 @@ export function Step5Economics() {
                   placeholder={t('customerLifetimePlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={customerLifetime || ""}
-                  onChange={(e) => updateEconomics({ customerLifetime: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateEconomics({ customerLifetime: num });
+                    });
+                  }}
                   min="0"
                 />
                 <InputGroupAddon align="inline-end">{t('months')}</InputGroupAddon>
@@ -400,7 +431,11 @@ export function Step5Economics() {
                   placeholder={t('contributionMarginPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={contributionMargin || ""}
-                  onChange={(e) => updateEconomics({ contributionMargin: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateEconomics({ contributionMargin: num });
+                    });
+                  }}
                   min="0"
                 />
               </InputGroup>
@@ -456,7 +491,11 @@ export function Step5Economics() {
                   placeholder={t('amountRaisedPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={fundingRaised || ""}
-                  onChange={(e) => updateEconomics({ fundingRaised: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateEconomics({ fundingRaised: num });
+                    });
+                  }}
                   min="0"
                 />
               </InputGroup>
@@ -489,7 +528,7 @@ export function Step5Economics() {
                           placeholder={t('amount')}
                           className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
                           value={newSourceAmount}
-                          onChange={(e) => setNewSourceAmount(e.target.value)}
+                          onChange={createNonNegativeNumberHandler(setNewSourceAmount)}
                           min="0"
                         />
                       </InputGroup>
@@ -546,7 +585,11 @@ export function Step5Economics() {
                   placeholder={t('amountSeekingPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={amountSeeking || ""}
-                  onChange={(e) => updateEconomics({ amountSeeking: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateEconomics({ amountSeeking: num });
+                    });
+                  }}
                   min="0"
                 />
               </InputGroup>
@@ -573,7 +616,7 @@ export function Step5Economics() {
                           placeholder={t('amount')}
                           className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
                           value={newFundAmount}
-                          onChange={(e) => setNewFundAmount(e.target.value)}
+                          onChange={createNonNegativeNumberHandler(setNewFundAmount)}
                           min="0"
                         />
                       </InputGroup>
@@ -618,7 +661,11 @@ export function Step5Economics() {
                   placeholder={t('currentRunwayPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={currentRunway || ""}
-                  onChange={(e) => updateEconomics({ currentRunway: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    handleNonNegativeNumberInput(e.target.value, (num) => {
+                      updateEconomics({ currentRunway: num });
+                    });
+                  }}
                   min="0"
                 />
                 <InputGroupAddon align="inline-end">{t('months')}</InputGroupAddon>

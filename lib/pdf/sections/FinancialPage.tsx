@@ -22,7 +22,7 @@ export function FinancialPage({ data }: FinancialPageProps) {
           </Text>
         </View>
         <View style={pdfStyles.footer}>
-          <Text>AI Guard</Text>
+          <Text>Project Guard AI</Text>
           <Text>Page 3</Text>
         </View>
       </View>
@@ -42,14 +42,14 @@ export function FinancialPage({ data }: FinancialPageProps) {
           <View style={pdfStyles.tableRow}>
             <Text style={{ ...pdfStyles.tableCell, flex: 1.5 }}>Customer Lifetime Value (LTV)</Text>
             <Text style={{ ...pdfStyles.tableCellBold, flex: 1, textAlign: 'right' }}>
-              ${financial.ltv.toLocaleString()}
+              €{financial.ltv.toLocaleString()}
             </Text>
           </View>
           
           <View style={pdfStyles.tableRow}>
             <Text style={{ ...pdfStyles.tableCell, flex: 1.5 }}>Customer Acquisition Cost (CAC)</Text>
             <Text style={{ ...pdfStyles.tableCellBold, flex: 1, textAlign: 'right' }}>
-              ${financial.cac.toLocaleString()}
+              €{financial.cac.toLocaleString()}
             </Text>
           </View>
           
@@ -94,7 +94,7 @@ export function FinancialPage({ data }: FinancialPageProps) {
         <View style={pdfStyles.card}>
           <View style={pdfStyles.row}>
             <Text style={pdfStyles.text}>Break-Even Month:</Text>
-            <Text style={pdfStyles.tableCellBold}>Month {financial.breakEvenMonth}</Text>
+            <Text style={pdfStyles.tableCellBold}>{financial.breakEvenMonth} Months</Text>
           </View>
           
           <View style={pdfStyles.row}>
@@ -104,7 +104,7 @@ export function FinancialPage({ data }: FinancialPageProps) {
           
           <View style={pdfStyles.row}>
             <Text style={pdfStyles.text}>Required MRR:</Text>
-            <Text style={pdfStyles.tableCellBold}>${financial.breakEvenMRR.toLocaleString()}</Text>
+            <Text style={pdfStyles.tableCellBold}>€{financial.breakEvenMRR.toLocaleString()}</Text>
           </View>
         </View>
       </View>
@@ -127,17 +127,17 @@ export function FinancialPage({ data }: FinancialPageProps) {
               <View key={index} style={pdfStyles.tableRow}>
                 <Text style={{ ...pdfStyles.tableCell, flex: 1 }}>{projection.month || index + 1}</Text>
                 <Text style={{ ...pdfStyles.tableCell, flex: 1.2, textAlign: 'right' }}>
-                  ${(projection.revenue || 0).toLocaleString()}
+                  €{(projection.revenue || 0).toLocaleString()}
                 </Text>
                 <Text style={{ ...pdfStyles.tableCell, flex: 1.2, textAlign: 'right' }}>
-                  ${(projection.costs || 0).toLocaleString()}
+                  €{(projection.costs || 0).toLocaleString()}
                 </Text>
                 <Text style={{ 
                   ...pdfStyles.tableCell, 
                   flex: 1.2,
                   textAlign: 'right',
                 }}>
-                  ${(projection.profit || 0).toLocaleString()}
+                  €{(projection.profit || 0).toLocaleString()}
                 </Text>
                 <Text style={{ ...pdfStyles.tableCell, flex: 1, textAlign: 'right' }}>
                   {(projection.customers || 0).toLocaleString()}
@@ -150,7 +150,7 @@ export function FinancialPage({ data }: FinancialPageProps) {
       
       {/* Footer */}
       <View style={pdfStyles.footer}>
-        <Text>AI Guard</Text>
+        <Text>ProjectGuard AI</Text>
         <Text>Page 3</Text>
       </View>
     </View>

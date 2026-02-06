@@ -31,20 +31,16 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen">
-      {isAuthenticated && (
-        <DesktopSidebar 
+      <DesktopSidebar 
+        isAuthenticated={isAuthenticated} 
+        onSignOut={handleSignOut} 
+      />
+
+      <div className="flex flex-col lg:ml-64">
+        <MobileHeader 
           isAuthenticated={isAuthenticated} 
           onSignOut={handleSignOut} 
         />
-      )}
-
-      <div className={`flex flex-col ${isAuthenticated ? 'lg:ml-64' : ''}`}>
-        {isAuthenticated && (
-          <MobileHeader 
-            isAuthenticated={isAuthenticated} 
-            onSignOut={handleSignOut} 
-          />
-        )}
 
         <main className="flex-1 overflow-auto">
           {children}

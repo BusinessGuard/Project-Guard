@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
-    document.title = `ProjectGuard AI | ${tNav('login')}`;
+    document.title = `Project Guard AI | ${tNav('login')}`;
   }, [tNav]);
 
   const handleBack = () => {

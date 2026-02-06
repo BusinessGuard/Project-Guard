@@ -56,17 +56,34 @@ export function ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProps
                   <Select value={version.toString()} onValueChange={(value) => setVersion(parseInt(value, 10))}>
                     <SelectTrigger className="w-[240px]">
                       <SelectValue>
-                        {currentVersionData ? `v${version}` : t('selectVersion')}
+                        <div className="flex items-center gap-2 min-w-0">
+                          {currentProject?.name ? (
+                            <>
+                              <span className="font-bold text-base shrink-0">v{version}</span>
+                              <span className="text-sm text-muted-foreground truncate min-w-0">{currentProject.name}</span>
+                            </>
+                          ) : (
+                            <span>{t('selectVersion')}</span>
+                          )}
+                        </div>
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent >
                       {versionNumbers.map((versionNum) => {
                         const versionData = versions[versionNum];
                         const ventureVersion = versionData?.venture;
+                        const projectName = versionData?.venture?.name || versionData?.bank?.name || versionData?.corporate?.name || '';
                         return (
-                          <SelectItem key={versionNum} value={versionNum.toString()} className="px-2 flex items-center justify-between">
-                              <span className="font-bold text-base">V{versionNum}</span>
-                              <span className="text-xs text-muted-foreground">({ventureVersion?.overall_score}/100)</span>
+                          <SelectItem key={versionNum} value={versionNum.toString()} className="px-2">
+                            <div className="flex items-center justify-between gap-2 min-w-0 w-full">
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                <span className="font-bold text-base shrink-0">V{versionNum}</span>
+                                {projectName && (
+                                  <span className="text-sm text-muted-foreground truncate min-w-0">{projectName}</span>
+                                )}
+                              </div>
+                              <span className="text-xs text-muted-foreground shrink-0">({ventureVersion?.overall_score}/100)</span>
+                            </div>
                           </SelectItem>
                         );
                       })}
@@ -102,17 +119,34 @@ export function ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProps
                 <Select value={version.toString()} onValueChange={(value) => setVersion(parseInt(value, 10))}>
                   <SelectTrigger className="w-full">
                     <SelectValue>
-                      {currentVersionData ? `v${version}` : t('selectVersion')}
+                      <div className="flex items-center gap-2 min-w-0">
+                        {currentProject?.name ? (
+                          <>
+                            <span className="font-bold text-base shrink-0">v{version}</span>
+                            <span className="text-sm text-muted-foreground truncate min-w-0">{currentProject.name}</span>
+                          </>
+                        ) : (
+                          <span>{t('selectVersion')}</span>
+                        )}
+                      </div>
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent >
                     {versionNumbers.map((versionNum) => {
                       const versionData = versions[versionNum];
                       const ventureVersion = versionData?.venture;
+                      const projectName = versionData?.venture?.name || versionData?.bank?.name || versionData?.corporate?.name || '';
                       return (
-                        <SelectItem key={versionNum} value={versionNum.toString()} className="px-2 flex items-center justify-between">
-                            <span className="font-bold text-base">V{versionNum}</span>
-                            <span className="text-xs text-muted-foreground">({ventureVersion?.overall_score}/100)</span>
+                        <SelectItem key={versionNum} value={versionNum.toString()} className="px-2">
+                          <div className="flex items-center justify-between gap-2 min-w-0 w-full">
+                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                              <span className="font-bold text-base shrink-0">V{versionNum}</span>
+                              {projectName && (
+                                <span className="text-sm text-muted-foreground truncate min-w-0">{projectName}</span>
+                              )}
+                            </div>
+                            <span className="text-xs text-muted-foreground shrink-0">({ventureVersion?.overall_score}/100)</span>
+                          </div>
                         </SelectItem>
                       );
                     })}

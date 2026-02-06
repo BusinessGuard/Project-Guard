@@ -1,8 +1,9 @@
 'use client';
 
-import { CiLogout } from "react-icons/ci";
+import Image from 'next/image';
+import { CiLogout, CiLogin } from "react-icons/ci";
 import { Menu } from "lucide-react";
-import { Link } from '@/lib/navigation';
+import { Link, useRouter } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -25,14 +26,22 @@ export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) 
   const tAuth = useTranslations('auth');
   const tNav = useTranslations('nav');
   const { isSheetOpen, setIsSheetOpen } = useScoreboardState();
+  const router = useRouter();
 
   return (
     <header className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
       <Link 
         href="/dashboard" 
-        className="text-xl font-bold text-black"
+        className="cursor-pointer"
       >
-        {tNav('appName')}
+        <div className="relative w-[140px] h-8">
+          <Image
+            src="/images/logo.png"
+            alt="Project Guard AI"
+            fill
+            className="object-contain"
+          />
+        </div>
       </Link>
       
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -43,9 +52,19 @@ export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) 
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0 flex flex-col">
           <SheetHeader className="p-6 border-b border-gray-200">
-            <SheetTitle className="text-2xl font-bold text-black text-left">
-              {tNav('appName')}
-            </SheetTitle>
+            <Link 
+              href="/dashboard" 
+              className="cursor-pointer"
+            >
+              <div className="relative w-[180px] h-10">
+                <Image
+                  src="/images/logo.png"
+                  alt="Project Guard AI"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </Link>
           </SheetHeader>
           
           <div className="p-4 flex-1">
@@ -56,17 +75,30 @@ export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) 
           </div>
           
           <div className="p-4 mt-auto  border-gray-200 space-y-4">
-            <Button
-              onClick={() => {
-                onSignOut();
-                setIsSheetOpen(false);
-              }}
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2 cursor-pointer px-4 h-13 shadow-none"
-            >
-              <CiLogout className="size-6" />
-              <span>{tAuth('signOut')}</span>
-            </Button>
+            {isAuthenticated ? (
+              <Button
+                onClick={() => {
+                  onSignOut();
+                  setIsSheetOpen(false);
+                }}
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 cursor-pointer px-4 h-13 shadow-none"
+              >
+                <CiLogout className="size-6" />
+                <span>{tAuth('signOut')}</span>
+              </Button>
+            ) : (
+              <Link href="/">
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-center gap-2 cursor-pointer px-4 h-13 shadow-none"
+                  onClick={() => setIsSheetOpen(false)}
+                >
+                  <CiLogin className="size-6" />
+                  <span>{tNav('home')}</span>
+                </Button>
+              </Link>
+            )}
             <div className="w-full flex justify-center">
               <LanguageSwitcher />
             </div>

@@ -7,6 +7,7 @@ import { useRouter } from "@/lib/navigation";
 import { useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { LayoutDashboard } from "lucide-react";
 import { Step1BasicInfo } from "./components/Step1BasicInfo";
 import { Step2ValueProposition } from "./components/Step2ValueProposition";
 import { Step3CustomerSegments } from "./components/Step3CustomerSegments";
@@ -151,12 +152,17 @@ export default function CreateProjectPage() {
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
 
-  useEffect(() => {
-    const pageTitle = isReAnalysis ? t('reAnalyzeTitle') : t('title');
-    document.title = `ProjectGuard AI | ${pageTitle}`;
-  }, [t, isReAnalysis]);
   const { data: existingProject } = useProject(projectId ?? "");
   const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
+
+  useEffect(() => {
+    const pageTitle = isReAnalysis 
+      ? (existingProject?.name 
+          ? t('reAnalyzeTitle', { projectName: existingProject.name }) 
+          : t('reAnalyzeTitleDefault'))
+      : t('title');
+    document.title = `Project Guard AI | ${pageTitle}`;
+  }, [t, isReAnalysis, existingProject?.name]);
 
   // Load canvas_data from latest venture version when re-analyzing
   useEffect(() => {
@@ -216,6 +222,11 @@ export default function CreateProjectPage() {
       setCurrentStep(1);
     }
   }, [setCurrentStep, isReAnalysis]);
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep]);
 
   const createProjectMutation = useMutation({
     mutationFn: async (data: { projectData: any; projectId?: string }) => {
@@ -303,13 +314,25 @@ export default function CreateProjectPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="w-full border-b px-8 py-4">
-        <div className="max-w-3xl mx-auto flex justify-between items-center">
+      <div className="w-full border-b px-2 md:px-8 py-4">
+        <div className="mx-auto max-w-[1200px] flex flex-col gap-2 md:flex-row justify-between items-center">
           <h1 className="text-xl font-bold text-black">
-            {isReAnalysis ? t('reAnalyzeTitle') : t('title')}
+            {isReAnalysis 
+              ? (existingProject?.name 
+                  ? t('reAnalyzeTitle', { projectName: existingProject.name }) 
+                  : t('reAnalyzeTitleDefault'))
+              : t('title')}
           </h1>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-auto">
             <LanguageSwitcher />
+            <Button 
+              size="sm"
+              onClick={() => router.push('/dashboard/projects')}
+              className="flex items-center gap-2"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              {tNav('dashboard')}
+            </Button>
             <Button 
               variant="outline" 
               size="sm"
@@ -373,7 +396,11 @@ export default function CreateProjectPage() {
                   {createProjectMutation.isPending 
                     ? tCommon('submitting')
                     : currentStep === 10 
-                      ? (isReAnalysis ? t('reAnalyzeProject') : t('submitProject'))
+                      ? (isReAnalysis 
+                          ? (existingProject?.name 
+                              ? t('reAnalyzeProject', { projectName: existingProject.name }) 
+                              : t('reAnalyzeProjectDefault'))
+                          : t('submitProject'))
                       : `${tCommon('next')} →`}
                 </Button>
             </div>
