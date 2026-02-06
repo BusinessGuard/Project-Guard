@@ -70,7 +70,10 @@
     "description": "Description",
     "status": "Status",
     "createdAt": "Created At",
-    "updatedAt": "Updated At"
+    "updatedAt": "Updated At",
+    "yourProject": "Your Project",
+    "anonymousProject": "Anonymous Project",
+    "clickToView": "Click to view your analysis"
   },
   "analysis": {
     "title": "Analysis",

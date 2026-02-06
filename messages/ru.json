@@ -70,7 +70,10 @@
     "description": "Описание",
     "status": "Статус",
     "createdAt": "Создан",
-    "updatedAt": "Обновлен"
+    "updatedAt": "Обновлен",
+    "yourProject": "Ваш проект",
+    "anonymousProject": "Анонимный проект",
+    "clickToView": "Нажмите, чтобы посмотреть ваш анализ"
   },
   "analysis": {
     "title": "Анализ",
