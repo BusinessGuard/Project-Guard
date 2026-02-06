@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ScoreboardHeader } from '../../components/ScoreboardHeader';
-import { ProjectHeader } from '../../components/ProjectHeader';
-import { ScoreCard } from '../../components/ScoreCard';
-import { VersionHistory } from '../../components/VersionHistory';
-import { StrengthsWeaknesses } from '../../components/StrengthsWeaknesses';
-import { TabsSection } from '../../components/tabs/TabsSection';
+import { ScoreboardHeader } from './components/ScoreboardHeader';
+import { ProjectHeader } from './components/ProjectHeader';
+import { ScoreCard } from './components/ScoreCard';
+import { VersionHistory } from './components/VersionHistory';
+import { StrengthsWeaknesses } from './components/StrengthsWeaknesses';
+import { TabsSection } from './components/tabs/TabsSection';
 import { useVersionsStore } from '@/store/useVersionsStore';
 import { VersionsByAudience } from '@/lib/utils/getVersions';
 

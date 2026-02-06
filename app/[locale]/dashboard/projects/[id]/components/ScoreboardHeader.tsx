@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link, usePathname } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, RefreshCw } from 'lucide-react';
@@ -9,13 +9,17 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useVersionsStore } from '@/store/useVersionsStore';
 import { useRouter } from '@/lib/navigation';
 import { AuthPromptModal } from '@/components/AuthPromptModal';
+import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 
 interface ScoreboardHeaderProps {
   isAuthorized?: boolean;
 }
 
-export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProps) {
+export function ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProps) {
+  const t = useTranslations('dashboard');
   const router = useRouter();
+  const locale = useLocale();
   const { versions, version, setVersion, currentProject, audienceType } = useVersionsStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   
@@ -31,8 +35,7 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
   
   const handleOpenPDFPreview = () => {
     if (currentProject?.project_id) {
-      // Open PDF preview in new tab (outside dashboard layout)
-      const pdfUrl = `/pdf/${currentProject.project_id}?version=${version}&audience=${audienceType}`;
+      const pdfUrl = `/${locale}/pdf/${currentProject.project_id}?version=${version}&audience=${audienceType}`;
       window.open(pdfUrl, '_blank');
     }
   };
@@ -53,7 +56,7 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
                   <Select value={version.toString()} onValueChange={(value) => setVersion(parseInt(value, 10))}>
                     <SelectTrigger className="w-[240px]">
                       <SelectValue>
-                        {currentVersionData ? `v${version}` : 'Select version'}
+                        {currentVersionData ? `v${version}` : t('selectVersion')}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent >
@@ -79,7 +82,7 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
               <div className="flex items-center gap-2 w-full md:w-auto ml-auto">
                 <Button className="gap-2 mr-auto md:mr-0" onClick={handleReAnalyze}>
                   <RefreshCw className="w-4 h-4" />
-                  Re-analyze
+                  {t('reAnalyze')}
                 </Button>
                 <LanguageSwitcher />
                 <Button 
@@ -88,7 +91,7 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
                   onClick={handleOpenPDFPreview}
                 >
                   <Download className="w-4 h-4" />
-                  PDF
+                  {t('pdf')}
                 </Button>
               </div>
             </div>
@@ -99,7 +102,7 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
                 <Select value={version.toString()} onValueChange={(value) => setVersion(parseInt(value, 10))}>
                   <SelectTrigger className="w-full">
                     <SelectValue>
-                      {currentVersionData ? `v${version}` : 'Select version'}
+                      {currentVersionData ? `v${version}` : t('selectVersion')}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent >
@@ -124,8 +127,8 @@ export function  ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProp
       <AuthPromptModal 
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        title="Sign up first"
-        message="Sign up first to explore all features."
+        title={t('signUpFirst')}
+        message={t('signUpFirstMessage')}
       />
     </>
   );

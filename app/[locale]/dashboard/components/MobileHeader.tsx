@@ -2,7 +2,7 @@
 
 import { CiLogout } from "react-icons/ci";
 import { Menu } from "lucide-react";
-import Link from 'next/link';
+import { Link } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -14,6 +14,7 @@ import {
 import { useScoreboardState } from '@/store/useState';
 import { NavigationMenu } from './NavigationMenu';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 interface MobileHeaderProps {
   isAuthenticated: boolean;
@@ -21,6 +22,7 @@ interface MobileHeaderProps {
 }
 
 export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) {
+  const tAuth = useTranslations('auth');
   const { isSheetOpen, setIsSheetOpen } = useScoreboardState();
 
   return (
@@ -62,7 +64,7 @@ export function MobileHeader({ isAuthenticated, onSignOut }: MobileHeaderProps) 
               className="w-full flex items-center justify-center gap-2 cursor-pointer px-4 h-13 shadow-none"
             >
               <CiLogout className="size-6" />
-              <span>Sign Out</span>
+              <span>{tAuth('signOut')}</span>
             </Button>
             <div className="w-full flex justify-center">
               <LanguageSwitcher />

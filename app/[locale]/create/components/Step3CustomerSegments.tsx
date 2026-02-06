@@ -7,47 +7,57 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-
-const marketSizeFields = [
-  { id: 'tam', label: 'TAM (Total Addressable Market)', placeholder: '500' },
-  { id: 'sam', label: 'SAM (Serviceable Available Market)', placeholder: '100' },
-  { id: 'som', label: 'SOM (Serviceable Obtainable Market)', placeholder: '10' },
-];
-
-const primarySegmentGuidelines = [
-  "Clear description of target audience (B2B/B2C)",
-  "Demographics (age, gender, income) for B2C",
-  "Firmographics (company size, industry, role) for B2B",
-  "Geography",
-  "Behavioral characteristics",
-];
-
-const marketSizeGuidelines = [
-  "TAM - total market size globally",
-  "SAM - your accessible market",
-  "SOM - realistic share in 3 years",
-  "Always specify calculation methodology!",
-];
-
-const geographyGuidelines = [
-  "Which countries/regions are your customers in?",
-  "Are there cultural/language barriers?",
-  "Is localization required?",
-  "Which regions are priority at launch?",
-];
-
-const availableMarkets = ["Ukraine", "Poland", "Germany", "Kazakhstan", "USA", "Other"];
-
-const willingnessToPayGuidelines = [
-  "Did you conduct surveys/interviews?",
-  "Do you have Letters of Intent (LOI)?",
-  "Did you test pricing?",
-  "What average check is customer ready to pay?",
-  "How often (one-time/subscription)?",
-];
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 export function Step3CustomerSegments() {
+  const t = useTranslations('create.step3');
   const { projectData, updateCustomerSegments } = useProjectStore();
+
+  const marketSizeFields = useMemo(() => [
+    { id: 'tam', label: t('marketSizeFields.tam'), placeholder: '500' },
+    { id: 'sam', label: t('marketSizeFields.sam'), placeholder: '100' },
+    { id: 'som', label: t('marketSizeFields.som'), placeholder: '10' },
+  ], [t]);
+
+  const primarySegmentGuidelines = useMemo(() => [
+    t('primarySegmentGuidelines.1'),
+    t('primarySegmentGuidelines.2'),
+    t('primarySegmentGuidelines.3'),
+    t('primarySegmentGuidelines.4'),
+    t('primarySegmentGuidelines.5'),
+  ], [t]);
+
+  const marketSizeGuidelines = useMemo(() => [
+    t('marketSizeGuidelines.1'),
+    t('marketSizeGuidelines.2'),
+    t('marketSizeGuidelines.3'),
+    t('marketSizeGuidelines.4'),
+  ], [t]);
+
+  const geographyGuidelines = useMemo(() => [
+    t('geographyGuidelines.1'),
+    t('geographyGuidelines.2'),
+    t('geographyGuidelines.3'),
+    t('geographyGuidelines.4'),
+  ], [t]);
+
+  const availableMarkets = useMemo(() => [
+    { value: 'ukraine', label: t('markets.ukraine') },
+    { value: 'poland', label: t('markets.poland') },
+    { value: 'germany', label: t('markets.germany') },
+    { value: 'kazakhstan', label: t('markets.kazakhstan') },
+    { value: 'usa', label: t('markets.usa') },
+    { value: 'other', label: t('markets.other') },
+  ], [t]);
+
+  const willingnessToPayGuidelines = useMemo(() => [
+    t('willingnessToPayGuidelines.1'),
+    t('willingnessToPayGuidelines.2'),
+    t('willingnessToPayGuidelines.3'),
+    t('willingnessToPayGuidelines.4'),
+    t('willingnessToPayGuidelines.5'),
+  ], [t]);
   const customerSegments = projectData.customerSegments || {
     primarySegment: "",
     marketSize: {
@@ -81,19 +91,19 @@ export function Step3CustomerSegments() {
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-black">Customer Segments</h2>
-        <p className="text-sm text-slate-600">Define your target audience</p>
+        <h2 className="text-2xl font-bold text-black">{t('title')}</h2>
+        <p className="text-sm text-slate-600">{t('subtitle')}</p>
       </div>
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="primarySegment" className="text-sm font-semibold">
-              2.1. Primary customer segment <span className="text-red-500">*</span>
+              {t('primarySegmentLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="primarySegment"
-              placeholder="Describe your target audience..."
+              placeholder={t('primarySegmentPlaceholder')}
               className="min-h-[120px]"
               value={primarySegment}
               onChange={(e) => updateCustomerSegments({ primarySegment: e.target.value })}
@@ -102,7 +112,7 @@ export function Step3CustomerSegments() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${primarySegment ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {primarySegment && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
@@ -111,7 +121,7 @@ export function Step3CustomerSegments() {
               ))}
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Pre-seed and seed stage founders of tech startups (SaaS, marketplace, fintech), seeking €200K-€2M investments. Age 28-45. Location: Europe and English-speaking countries."
+              {t('primarySegmentExample')}
             </div>
           </div>
         </div>
@@ -119,7 +129,7 @@ export function Step3CustomerSegments() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              2.2. Market size <span className="text-red-500">*</span>
+              {t('marketSizeLabel')} <span className="text-red-500">*</span>
             </Label>
             
             {marketSizeFields.map((field) => (
@@ -144,7 +154,7 @@ export function Step3CustomerSegments() {
                     <InputGroupAddon align="inline-end">M</InputGroupAddon>
                   </InputGroup>
                   <Input
-                    placeholder="Calculation description (e.g., 15K companies × €10K budget)"
+                    placeholder={t('calculationPlaceholder')}
                     className="h-10"
                     value={marketSize[`${field.id}Description` as keyof typeof marketSize] || ""}
                     onChange={(e) => updateCustomerSegments({ 
@@ -158,7 +168,7 @@ export function Step3CustomerSegments() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${(marketSize.tam || marketSize.sam || marketSize.som) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {(marketSize.tam > 0 && marketSize.sam > 0 && marketSize.som > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
@@ -167,7 +177,7 @@ export function Step3CustomerSegments() {
               ))}
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: TAM: €500M (500,000 early-stage startups globally × €1,000 average check) • SAM: €100M (European tech startup market) • SOM: €10M (10,000 clients × €99/month × 10 months in first year)
+              {t('marketSizeExample')}
             </div>
           </div>
         </div>
@@ -175,19 +185,19 @@ export function Step3CustomerSegments() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              2.3. Geographic features <span className="text-red-500">*</span>
+              {t('geographyLabel')} <span className="text-red-500">*</span>
             </Label>
             
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Primary Markets</Label>
+              <Label className="text-xs text-slate-600">{t('primaryMarkets')}</Label>
               <div className="flex flex-wrap gap-3">
                 {availableMarkets.map((market) => (
-                  <label key={market} className="flex items-center gap-2 cursor-pointer">
+                  <label key={market.value} className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
-                      checked={geography.markets?.includes(market) || false}
-                      onCheckedChange={() => handleMarketToggle(market)}
+                      checked={geography.markets?.includes(market.value) || false}
+                      onCheckedChange={() => handleMarketToggle(market.value)}
                     />
-                    <span className="text-sm">{market}</span>
+                    <span className="text-sm">{market.label}</span>
                   </label>
                 ))}
               </div>
@@ -195,7 +205,7 @@ export function Step3CustomerSegments() {
 
             <div className="space-y-2">
               <Textarea
-                placeholder="Focus on UK first (English, 15K target companies)..."
+                placeholder={t('geographyPlaceholder')}
                 className="min-h-[80px]"
                 value={geography.notes}
                 onChange={(e) => updateCustomerSegments({ geography: { ...geography, notes: e.target.value } })}
@@ -205,7 +215,7 @@ export function Step3CustomerSegments() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${(geography.markets?.length > 0 || geography.notes) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {(geography.markets?.length > 0 && geography.notes) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
@@ -214,7 +224,7 @@ export function Step3CustomerSegments() {
               ))}
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Focus on Europe (UK, Germany, France, Netherlands) due to high startup density. English is sufficient for 70% of market. Localization to German and French planned for Year 2."
+              {t('geographyExample')}
             </div>
           </div>
         </div>
@@ -222,13 +232,13 @@ export function Step3CustomerSegments() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              2.4. Willingness to pay <span className="text-red-500">*</span>
+              {t('willingnessToPayLabel')} <span className="text-red-500">*</span>
             </Label>
             
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Customer Validation Evidence</Label>
+              <Label className="text-xs text-slate-600">{t('customerValidationEvidence')}</Label>
               <Textarea
-                placeholder="Conducted 80 interviews with HR managers. 70% said they'd pay €50-150/mo for this..."
+                placeholder={t('customerValidationPlaceholder')}
                 className="min-h-[100px]"
                 value={willingnessToPay.evidence}
                 onChange={(e) => updateCustomerSegments({ willingnessToPay: { ...willingnessToPay, evidence: e.target.value } })}
@@ -236,25 +246,25 @@ export function Step3CustomerSegments() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Average Deal Size</Label>
+              <Label className="text-xs text-slate-600">{t('averageDealSize')}</Label>
               <InputGroup className="h-12">
                 <InputGroupAddon>€</InputGroupAddon>
                 <InputGroupInput
                   type="number"
-                  placeholder="99"
+                  placeholder={t('averageDealSizePlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={willingnessToPay.averageDealSize || ""}
                   onChange={(e) => updateCustomerSegments({ willingnessToPay: { ...willingnessToPay, averageDealSize: parseFloat(e.target.value) || 0 } })}
                   min="0"
                 />
-                <InputGroupAddon align="inline-end">per month</InputGroupAddon>
+                <InputGroupAddon align="inline-end">{t('perMonth')}</InputGroupAddon>
               </InputGroup>
             </div>
           </div>
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${(willingnessToPay.evidence || willingnessToPay.averageDealSize) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {(willingnessToPay.evidence && willingnessToPay.averageDealSize > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
@@ -263,14 +273,14 @@ export function Step3CustomerSegments() {
               ))}
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Conducted 100 interviews with founders. 65% ready to pay €50-150 for analysis. Launched landing page: 500 registrations, 50 prepayments at €99. Average LTV: €1,188 (12 months × €99)."
+              {t('willingnessToPayExample')}
             </div>
           </div>
         </div>
 
         <div className="border-l-2 border-slate-300 pl-4">
           <p className="text-sm text-slate-600">
-            Tip: Investors want to see market validation. Include specific numbers from your research.
+            {t('tip')}
           </p>
         </div>
       </div>

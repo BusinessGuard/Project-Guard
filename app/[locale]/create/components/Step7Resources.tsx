@@ -8,12 +8,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { IoMdClose } from "react-icons/io";
 import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
-import { useState } from "react";
-
-const partnerTypes = ["Technology", "Distribution", "Strategic Alliance", "Supplier", "Co-marketing", "Integration", "Other"];
+import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 export function Step7Resources() {
+  const t = useTranslations('create.step7');
   const { projectData, updateResources } = useProjectStore();
+
+  const partnerTypes = useMemo(() => [
+    t('partnerTypes.technology'),
+    t('partnerTypes.distribution'),
+    t('partnerTypes.strategicAlliance'),
+    t('partnerTypes.supplier'),
+    t('partnerTypes.coMarketing'),
+    t('partnerTypes.integration'),
+    t('partnerTypes.other'),
+  ], [t]);
   const resources = projectData.resources || {
     existing: "",
     needed: "",
@@ -63,19 +73,19 @@ export function Step7Resources() {
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-black">Key Resources & Activities</h2>
-        <p className="text-sm text-slate-600">Describe your assets, infrastructure, and key business activities</p>
+        <h2 className="text-2xl font-bold text-black">{t('title')}</h2>
+        <p className="text-sm text-slate-600">{t('subtitle')}</p>
       </div>
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="existing" className="text-sm font-semibold">
-              6.1. Existing resources <span className="text-red-500">*</span>
+              {t('existingLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="existing"
-              placeholder="Physical, intellectual, human, financial resources..."
+              placeholder={t('existingPlaceholder')}
               className="min-h-[100px]"
               value={existing}
               onChange={(e) => updateResources({ existing: e.target.value })}
@@ -84,17 +94,17 @@ export function Step7Resources() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${existing ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {existing && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Physical: Office? Equipment? Inventory?</p>
-              <p>• Intellectual: Patents, trademarks? Proprietary tech? Databases? Algorithms?</p>
-              <p>• Human: Team, advisors, network?</p>
-              <p>• Financial: Cash? Credit lines? Assets?</p>
+              <p>• {t('existingGuidelines.1')}</p>
+              <p>• {t('existingGuidelines.2')}</p>
+              <p>• {t('existingGuidelines.3')}</p>
+              <p>• {t('existingGuidelines.4')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Physical: Remote team, no office. Macbooks for founders. Intellectual: Proprietary AI prompts (6 expert system), database 1,000+ analyzed startups, trademark application filed. Human: 2 founders, 1 contractor, 2 advisors, network 500+ YC alumni. Financial: €50K cash, no debt."
+              {t('existingExample')}
             </div>
           </div>
         </div>
@@ -102,11 +112,11 @@ export function Step7Resources() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="needed" className="text-sm font-semibold">
-              6.2. Resources needed <span className="text-red-500">*</span>
+              {t('neededLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="needed"
-              placeholder="What's critical for launch? Cost? Timeline?"
+              placeholder={t('neededPlaceholder')}
               className="min-h-[100px]"
               value={needed}
               onChange={(e) => updateResources({ needed: e.target.value })}
@@ -115,16 +125,16 @@ export function Step7Resources() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${needed ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {needed && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• What resources are critical for launch?</p>
-              <p>• Cost of acquisition?</p>
-              <p>• Timeline?</p>
+              <p>• {t('neededGuidelines.1')}</p>
+              <p>• {t('neededGuidelines.2')}</p>
+              <p>• {t('neededGuidelines.3')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Need: 1) GPT-4 API access (have it), 2) Legal entity setup (€2K, 2 weeks), 3) Payment processing (Stripe, €0 setup), 4) Domain + branding (€500, done). Total: €2,500 one-time."
+              {t('neededExample')}
             </div>
           </div>
         </div>
@@ -132,11 +142,11 @@ export function Step7Resources() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="techStack" className="text-sm font-semibold">
-              6.3. Technology stack <span className="text-red-500">*</span>
+              {t('techStackLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="techStack"
-              placeholder="Stack, cloud provider, infrastructure, scalability, security..."
+              placeholder={t('techStackPlaceholder')}
               className="min-h-[100px]"
               value={techStack}
               onChange={(e) => updateResources({ techStack: e.target.value })}
@@ -145,18 +155,18 @@ export function Step7Resources() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${techStack ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {techStack && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Stack?</p>
-              <p>• Cloud provider?</p>
-              <p>• Infrastructure?</p>
-              <p>• Scalability?</p>
-              <p>• Security?</p>
+              <p>• {t('techStackGuidelines.1')}</p>
+              <p>• {t('techStackGuidelines.2')}</p>
+              <p>• {t('techStackGuidelines.3')}</p>
+              <p>• {t('techStackGuidelines.4')}</p>
+              <p>• {t('techStackGuidelines.5')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Next.js 14 + TypeScript, Supabase (Postgres), Vercel hosting, OpenAI API. Fully cloud-based, auto-scaling. SOC2 compliance via Supabase. Can scale to 100K users without rewriting."
+              {t('techStackExample')}
             </div>
           </div>
         </div>
@@ -164,11 +174,11 @@ export function Step7Resources() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="dependencies" className="text-sm font-semibold">
-              6.4. Vendor dependencies <span className="text-red-500">*</span>
+              {t('dependenciesLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="dependencies"
-              placeholder="Critical dependencies? Risks? Alternatives?"
+              placeholder={t('dependenciesPlaceholder')}
               className="min-h-[100px]"
               value={dependencies}
               onChange={(e) => updateResources({ dependencies: e.target.value })}
@@ -177,16 +187,16 @@ export function Step7Resources() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${dependencies ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {dependencies && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Who are you critically dependent on?</p>
-              <p>• What if they raise prices or leave?</p>
-              <p>• Are there alternatives?</p>
+              <p>• {t('dependenciesGuidelines.1')}</p>
+              <p>• {t('dependenciesGuidelines.2')}</p>
+              <p>• {t('dependenciesGuidelines.3')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Critical dependency on OpenAI API. Risk: 2-3x price increase. Mitigation: 1) Testing Claude/Gemini as fallback, 2) Building own fine-tuned models, 3) 50% gross margin provides buffer."
+              {t('dependenciesExample')}
             </div>
           </div>
         </div>
@@ -194,14 +204,14 @@ export function Step7Resources() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              6.5. Key Activities <span className="text-slate-400">(optional)</span>
+              {t('keyActivitiesLabel')} <span className="text-slate-400">{t('optional')}</span>
             </Label>
 
             <div className="space-y-2">
-              <Label htmlFor="production" className="text-xs text-slate-600 font-semibold">Production/Development</Label>
+              <Label htmlFor="production" className="text-xs text-slate-600 font-semibold">{t('production')}</Label>
               <Textarea
                 id="production"
-                placeholder="How do you build and deliver your product?"
+                placeholder={t('productionPlaceholder')}
                 className="min-h-[70px]"
                 value={production}
                 onChange={(e) => updateResources({ activities: { ...activities, production: e.target.value } })}
@@ -209,10 +219,10 @@ export function Step7Resources() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="innovation" className="text-xs text-slate-600 font-semibold">Innovation/R&D</Label>
+              <Label htmlFor="innovation" className="text-xs text-slate-600 font-semibold">{t('innovation')}</Label>
               <Textarea
                 id="innovation"
-                placeholder="How do you research and develop new features?"
+                placeholder={t('innovationPlaceholder')}
                 className="min-h-[70px]"
                 value={innovation}
                 onChange={(e) => updateResources({ activities: { ...activities, innovation: e.target.value } })}
@@ -220,10 +230,10 @@ export function Step7Resources() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="platform" className="text-xs text-slate-600 font-semibold">Platform/Infrastructure</Label>
+              <Label htmlFor="platform" className="text-xs text-slate-600 font-semibold">{t('platform')}</Label>
               <Textarea
                 id="platform"
-                placeholder="How do you maintain your technical infrastructure?"
+                placeholder={t('platformPlaceholder')}
                 className="min-h-[70px]"
                 value={platform}
                 onChange={(e) => updateResources({ activities: { ...activities, platform: e.target.value } })}
@@ -231,10 +241,10 @@ export function Step7Resources() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="marketing" className="text-xs text-slate-600 font-semibold">Marketing</Label>
+              <Label htmlFor="marketing" className="text-xs text-slate-600 font-semibold">{t('marketing')}</Label>
               <Textarea
                 id="marketing"
-                placeholder="How do you attract and retain customers?"
+                placeholder={t('marketingPlaceholder')}
                 className="min-h-[70px]"
                 value={marketing}
                 onChange={(e) => updateResources({ activities: { ...activities, marketing: e.target.value } })}
@@ -242,10 +252,10 @@ export function Step7Resources() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="operations" className="text-xs text-slate-600 font-semibold">Operations</Label>
+              <Label htmlFor="operations" className="text-xs text-slate-600 font-semibold">{t('operations')}</Label>
               <Textarea
                 id="operations"
-                placeholder="How do you handle daily operations?"
+                placeholder={t('operationsPlaceholder')}
                 className="min-h-[70px]"
                 value={operations}
                 onChange={(e) => updateResources({ activities: { ...activities, operations: e.target.value } })}
@@ -255,30 +265,30 @@ export function Step7Resources() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${(production || innovation || platform || marketing || operations) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {(production || innovation || platform || marketing || operations) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• <strong>Production:</strong> Development process, CI/CD, testing</p>
-              <p>• <strong>Innovation:</strong> User research, feature prioritization, A/B testing</p>
-              <p>• <strong>Platform:</strong> Infrastructure monitoring, security, scaling</p>
-              <p>• <strong>Marketing:</strong> Content creation, SEO, paid ads, email campaigns</p>
-              <p>• <strong>Operations:</strong> Customer support, onboarding, billing, compliance</p>
+              <p>• <strong>{t('production')}:</strong> {t('keyActivitiesGuidelines.production')}</p>
+              <p>• <strong>{t('innovation')}:</strong> {t('keyActivitiesGuidelines.innovation')}</p>
+              <p>• <strong>{t('platform')}:</strong> {t('keyActivitiesGuidelines.platform')}</p>
+              <p>• <strong>{t('marketing')}:</strong> {t('keyActivitiesGuidelines.marketing')}</p>
+              <p>• <strong>{t('operations')}:</strong> {t('keyActivitiesGuidelines.operations')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>Production:</strong> "2-week sprints, CI/CD via GitHub Actions, 80% test coverage"
+              <strong>{t('production')}:</strong> {t('keyActivitiesExamples.production')}
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>Innovation:</strong> "Monthly user interviews, quarterly roadmap planning"
+              <strong>{t('innovation')}:</strong> {t('keyActivitiesExamples.innovation')}
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>Platform:</strong> "24/7 monitoring via Datadog, auto-scaling on AWS"
+              <strong>{t('platform')}:</strong> {t('keyActivitiesExamples.platform')}
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>Marketing:</strong> "2 blog posts/week, LinkedIn daily, €500/mo Google Ads"
+              <strong>{t('marketing')}:</strong> {t('keyActivitiesExamples.marketing')}
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>Operations:</strong> "Email support 24h SLA, automated onboarding, GDPR compliant"
+              <strong>{t('operations')}:</strong> {t('keyActivitiesExamples.operations')}
             </div>
           </div>
         </div>
@@ -286,9 +296,9 @@ export function Step7Resources() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label className="text-sm font-semibold">
-              6.6. Key Partners <span className="text-slate-400">(optional)</span>
+              {t('keyPartnersLabel')} <span className="text-slate-400">{t('optional')}</span>
             </Label>
-            <p className="text-xs text-slate-500">Add partners if applicable</p>
+            <p className="text-xs text-slate-500">{t('keyPartnersHint')}</p>
             
             <div className="border border-slate-200 overflow-hidden rounded-md">
               <div className="p-2 bg-white border-b border-slate-200">
@@ -296,7 +306,7 @@ export function Step7Resources() {
                   <div className="flex gap-2 flex-1">
                     <Select value={newPartnerType} onValueChange={setNewPartnerType}>
                       <SelectTrigger className="h-10 flex-1 md:w-[140px]">
-                        <SelectValue placeholder="Type..." />
+                        <SelectValue placeholder={t('type')} />
                       </SelectTrigger>
                       <SelectContent>
                         {partnerTypes.map((type) => (
@@ -308,7 +318,7 @@ export function Step7Resources() {
                     </Select>
                     
                     <Input
-                      placeholder="Name"
+                      placeholder={t('name')}
                       className="!h-10 flex-1 md:w-[140px]"
                       value={newPartnerName}
                       onChange={(e) => setNewPartnerName(e.target.value)}
@@ -317,7 +327,7 @@ export function Step7Resources() {
                   
                   <div className="flex gap-2 w-full md:w-auto md:flex-1">
                     <Input
-                      placeholder="Value/benefit..."
+                      placeholder={t('value')}
                       className="!h-10 flex-1"
                       value={newPartnerValue}
                       onChange={(e) => setNewPartnerValue(e.target.value)}
@@ -329,7 +339,7 @@ export function Step7Resources() {
                       onClick={handleAddPartner}
                       disabled={!newPartnerType || !newPartnerName || !newPartnerValue}
                     >
-                      Add
+                      {t('add')}
                     </Button>
                   </div>
                 </div>
@@ -361,25 +371,25 @@ export function Step7Resources() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${partners && partners.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {partners && partners.length > 0 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Strategic alliances and partnerships</p>
-              <p>• Key suppliers and vendors</p>
-              <p>• Distribution partners</p>
-              <p>• Technology integrations</p>
-              <p>• Co-marketing partnerships</p>
+              <p>• {t('keyPartnersGuidelines.1')}</p>
+              <p>• {t('keyPartnersGuidelines.2')}</p>
+              <p>• {t('keyPartnersGuidelines.3')}</p>
+              <p>• {t('keyPartnersGuidelines.4')}</p>
+              <p>• {t('keyPartnersGuidelines.5')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Technology: Stripe (payment processing, critical). Distribution: AWS Marketplace (sales channel, 20% of leads). Strategic: HubSpot (integration partner, co-marketing, access to 100K customers)."
+              {t('keyPartnersExample')}
             </div>
           </div>
         </div>
 
         <div className="border-l-2 border-slate-300 pl-4">
           <p className="text-sm text-slate-600">
-            Tip: Show you have key resources, mitigation plans for dependencies, clear operational processes, and strategic partnerships.
+            {t('tip')}
           </p>
         </div>
       </div>

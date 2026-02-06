@@ -5,8 +5,11 @@ import { useVersionsStore } from '@/store/useVersionsStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertTriangle, Shield, Target, ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function Experts() {
+  const t = useTranslations('dashboard.experts');
+  const tAnalysis = useTranslations('analysis');
   const { currentProject } = useVersionsStore();
   const [expandedExperts, setExpandedExperts] = useState<Record<string, boolean>>({});
   
@@ -48,7 +51,7 @@ export function Experts() {
 
               <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-between md:justify-end flex-shrink-0">
                 <Badge variant="outline" className="text-xs whitespace-nowrap">
-                  Confidence: {expert.confidence}%
+                  {t('confidence')}: {expert.confidence}%
                 </Badge>
                 {expandedExperts[expertKey] ? <ChevronUp className="w-4 h-4 md:w-5 md:h-5" /> : <ChevronDown className="w-4 h-4 md:w-5 md:h-5" />}
               </div>
@@ -61,7 +64,7 @@ export function Experts() {
                 <div>
                   <h4 className="font-semibold text-xs md:text-sm mb-2 flex items-center gap-2">
                     <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-green-600 flex-shrink-0" />
-                    Key Findings
+                    {t('keyFindings')}
                   </h4>
                   <ul className="space-y-1">
                     {expert.keyFindings.map((finding, idx) => (
@@ -77,7 +80,7 @@ export function Experts() {
                 <div>
                   <h4 className="font-semibold text-xs md:text-sm mb-2 flex items-center gap-2">
                     <Shield className="w-3 h-3 md:w-4 md:h-4 text-red-600 flex-shrink-0" />
-                    Critical Risks
+                    {t('criticalRisks')}
                   </h4>
                   <div className="space-y-2">
                     {expert.criticalRisks.map((risk, idx) => (
@@ -87,15 +90,15 @@ export function Experts() {
                             {risk.category}
                           </Badge>
                           <Badge variant="outline" className="text-[10px] md:text-xs">
-                            {risk.likelihood} likelihood
+                            {risk.likelihood} {t('likelihood')}
                           </Badge>
                           <Badge variant="outline" className="text-[10px] md:text-xs">
-                            {risk.impact} impact
+                            {risk.impact} {t('impact')}
                           </Badge>
                         </div>
                         <p className="text-xs md:text-sm font-medium mb-1">{risk.description}</p>
                         <p className="text-[10px] md:text-xs text-gray-600">
-                          <strong>Mitigation:</strong> {risk.mitigation}
+                          <strong>{t('mitigation')}:</strong> {risk.mitigation}
                         </p>
                       </div>
                     ))}
@@ -107,7 +110,7 @@ export function Experts() {
                 <div>
                   <h4 className="font-semibold text-xs md:text-sm mb-2 flex items-center gap-2">
                     <AlertTriangle className="w-3 h-3 md:w-4 md:h-4 text-orange-600 flex-shrink-0" />
-                    Concerns
+                    {t('concerns')}
                   </h4>
                   <ul className="space-y-1">
                     {expert.concerns.map((concern, idx) => (
@@ -123,7 +126,7 @@ export function Experts() {
                 <div>
                   <h4 className="font-semibold text-xs md:text-sm mb-2 flex items-center gap-2">
                     <Target className="w-3 h-3 md:w-4 md:h-4 text-blue-600 flex-shrink-0" />
-                    Recommendations
+                    {tAnalysis('recommendations')}
                   </h4>
                   <ul className="space-y-1">
                     {expert.recommendations.map((rec, idx) => (

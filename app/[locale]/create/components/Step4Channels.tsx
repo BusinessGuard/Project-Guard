@@ -7,30 +7,32 @@ import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { IoMdClose } from "react-icons/io";
 import { TbChecks, TbCheck } from "react-icons/tb";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useProjectStore } from "@/store/useProjectStore";
+import { useTranslations } from "next-intl";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const channelOptions = [
-  "SEO / Organic Search",
-  "Google Ads / PPC",
-  "Social Media (Facebook, Instagram, LinkedIn)",
-  "Content Marketing / Blog",
-  "Email Marketing",
-  "Referral Program",
-  "Partnership / Affiliate",
-  "Product Hunt",
-  "Cold Outreach",
-  "Events / Conferences",
-  "Other",
-];
-
 export function Step4Channels() {
+  const t = useTranslations('create.step4');
   const { projectData, updateChannels } = useProjectStore();
+
+  const channelOptions = useMemo(() => [
+    t('channels.seo'),
+    t('channels.googleAds'),
+    t('channels.socialMedia'),
+    t('channels.contentMarketing'),
+    t('channels.emailMarketing'),
+    t('channels.referralProgram'),
+    t('channels.partnership'),
+    t('channels.productHunt'),
+    t('channels.coldOutreach'),
+    t('channels.events'),
+    t('channels.other'),
+  ], [t]);
   const channels = projectData.channels || {
     acquisitionChannels: [],
     salesChannel: "",
@@ -65,17 +67,17 @@ export function Step4Channels() {
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-black">Sales & Marketing Channels</h2>
-        <p className="text-sm text-slate-600">Define your customer acquisition strategy</p>
+        <h2 className="text-2xl font-bold text-black">{t('title')}</h2>
+        <p className="text-sm text-slate-600">{t('subtitle')}</p>
       </div>
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label className="text-sm font-semibold">
-              3.1. Main customer acquisition channels <span className="text-red-500">*</span>
+              {t('acquisitionChannelsLabel')} <span className="text-red-500">*</span>
             </Label>
-            <p className="text-xs text-slate-500">Select 3-5 channels (minimum 3 required)</p>
+            <p className="text-xs text-slate-500">{t('acquisitionChannelsHint')}</p>
             
             {acquisitionChannels.length > 0 && (
               <div className="flex flex-wrap gap-2 p-2 bg-slate-50 rounded-md">
@@ -102,15 +104,15 @@ export function Step4Channels() {
                   className="w-full h-10 justify-start text-left font-normal"
                 >
                   {acquisitionChannels.length === 0 ? (
-                    <span className="text-slate-500">Select channels...</span>
+                    <span className="text-slate-500">{t('selectChannels')}</span>
                   ) : (
-                    <span>{acquisitionChannels.length} channel(s) selected</span>
+                    <span>{acquisitionChannels.length} {t('channelsSelected')}</span>
                   )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[400px] p-2" align="start">
                 <div className="max-h-[300px] overflow-y-auto space-y-0.5">
-                  {channelOptions.filter(c => c !== "Other").map((channel) => (
+                  {channelOptions.filter(c => c !== t('channels.other')).map((channel) => (
                     <button
                       key={channel}
                       type="button"
@@ -127,10 +129,10 @@ export function Step4Channels() {
                   ))}
                   
                   <div className="border-t pt-2 mt-2 space-y-2">
-                    <Label className="text-xs text-slate-600">Custom Channel</Label>
+                    <Label className="text-xs text-slate-600">{t('customChannel')}</Label>
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Enter custom channel..."
+                        placeholder={t('customChannelPlaceholder')}
                         className="h-9 flex-1"
                         value={customChannel}
                         onChange={(e) => setCustomChannel(e.target.value)}
@@ -148,7 +150,7 @@ export function Step4Channels() {
                         onClick={handleAddCustomChannel}
                         disabled={!customChannel.trim()}
                       >
-                        Add
+                        {t('add')}
                       </Button>
                     </div>
                   </div>
@@ -157,25 +159,25 @@ export function Step4Channels() {
             </Popover>
 
             {acquisitionChannels.length < 3 && (
-              <p className="text-xs text-red-500">Please select at least 3 channels</p>
+              <p className="text-xs text-red-500">{t('channelsRequired')}</p>
             )}
           </div>
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${acquisitionChannels.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {acquisitionChannels.length >= 3 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• List all channels (minimum 3-5)</p>
-              <p>• Which channel will you test first?</p>
-              <p>• Do you have experience/results with these channels?</p>
+              <p>• {t('acquisitionChannelsGuidelines.1')}</p>
+              <p>• {t('acquisitionChannelsGuidelines.2')}</p>
+              <p>• {t('acquisitionChannelsGuidelines.3')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Examples: Paid ads (Google, Facebook, LinkedIn) • SEO/content marketing • Social media • Email marketing • Partnerships/affiliates • Direct sales (outbound) • Referral program • Community (forums, groups)
+              {t('acquisitionChannelsExamples')}
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Product Hunt (launch), Indie Hackers (community), Y Combinator network (partnership), LinkedIn outreach (outbound), SEO blog (long-term), startup podcasts (PR)."
+              {t('acquisitionChannelsExample')}
             </div>
           </div>
         </div>
@@ -183,11 +185,11 @@ export function Step4Channels() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="salesChannel" className="text-sm font-semibold">
-              3.2. Main sales channel <span className="text-red-500">*</span>
+              {t('salesChannelLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="salesChannel"
-              placeholder="Describe your sales process..."
+              placeholder={t('salesChannelPlaceholder')}
               className="min-h-[100px]"
               value={salesChannel}
               onChange={(e) => updateChannels({ salesChannel: e.target.value })}
@@ -196,18 +198,18 @@ export function Step4Channels() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${salesChannel ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {salesChannel && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Self-serve (customer buys on website)?</p>
-              <p>• Sales-assisted (manager helps)?</p>
-              <p>• Enterprise sales (long deal cycle)?</p>
-              <p>• Marketplace/platform?</p>
-              <p>• Through partners/distributors?</p>
+              <p>• {t('salesChannelGuidelines.1')}</p>
+              <p>• {t('salesChannelGuidelines.2')}</p>
+              <p>• {t('salesChannelGuidelines.3')}</p>
+              <p>• {t('salesChannelGuidelines.4')}</p>
+              <p>• {t('salesChannelGuidelines.5')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Self-serve via Stripe checkout for €99/month plan. Founder-led sales for annual €999 plan (cold outreach + demo). Plan to hire VP Sales at €10K MRR."
+              {t('salesChannelExample')}
             </div>
           </div>
         </div>
@@ -215,17 +217,17 @@ export function Step4Channels() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              3.3. Customer Acquisition Cost (CAC) <span className="text-red-500">*</span>
+              {t('cacLabel')} <span className="text-red-500">*</span>
             </Label>
             
             <div className="space-y-2">
-              <Label htmlFor="cac" className="text-xs text-slate-600">CAC Value</Label>
+              <Label htmlFor="cac" className="text-xs text-slate-600">{t('cacValue')}</Label>
               <InputGroup className="h-12">
                 <InputGroupAddon>€</InputGroupAddon>
                 <InputGroupInput
                   id="cac"
                   type="number"
-                  placeholder="55"
+                  placeholder={t('cacValuePlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={cac || ""}
                   onChange={(e) => updateChannels({ cac: parseFloat(e.target.value) || 0 })}
@@ -235,10 +237,10 @@ export function Step4Channels() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cacDescription" className="text-xs text-slate-600">CAC Breakdown & Calculation</Label>
+              <Label htmlFor="cacDescription" className="text-xs text-slate-600">{t('cacBreakdown')}</Label>
               <Textarea
                 id="cacDescription"
-                placeholder="Describe your CAC calculation: Google Ads €30, Content €15, Referrals €10..."
+                placeholder={t('cacBreakdownPlaceholder')}
                 className="min-h-[100px]"
                 value={cacDescription}
                 onChange={(e) => updateChannels({ cacDescription: e.target.value })}
@@ -248,18 +250,18 @@ export function Step4Channels() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${(cac || cacDescription) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {(cac > 0 && cacDescription) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• CAC Value: total cost to acquire one customer</p>
-              <p>• Breakdown: explain calculation by channels</p>
-              <p>• If tested - provide actual CAC</p>
-              <p>• If not - provide forecast with reasoning</p>
-              <p>• Formula: CAC = Marketing & Sales costs / New customers</p>
+              <p>• {t('cacGuidelines.1')}</p>
+              <p>• {t('cacGuidelines.2')}</p>
+              <p>• {t('cacGuidelines.3')}</p>
+              <p>• {t('cacGuidelines.4')}</p>
+              <p>• {t('cacGuidelines.5')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "CAC: €55. Breakdown: Google Ads €30/customer (CPC €2, conversion 6.7%), Content Marketing €15/customer (SEO + blog), Referral program €10/customer (20% commission)."
+              {t('cacExample')}
             </div>
           </div>
         </div>
@@ -267,11 +269,11 @@ export function Step4Channels() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="marketingTools" className="text-sm font-semibold">
-              3.4. Marketing tools <span className="text-red-500">*</span>
+              {t('marketingToolsLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="marketingTools"
-              placeholder="List marketing tools you plan to use..."
+              placeholder={t('marketingToolsPlaceholder')}
               className="min-h-[100px]"
               value={marketingTools}
               onChange={(e) => updateChannels({ marketingTools: e.target.value })}
@@ -280,19 +282,19 @@ export function Step4Channels() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${marketingTools ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {marketingTools && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Marketing automation (HubSpot, Mailchimp)</p>
-              <p>• CRM (Salesforce, Pipedrive)</p>
-              <p>• Analytics (Google Analytics, Mixpanel)</p>
-              <p>• Social media management</p>
-              <p>• Content tools (blog, newsletters)</p>
-              <p>• Paid ads platforms</p>
+              <p>• {t('marketingToolsGuidelines.1')}</p>
+              <p>• {t('marketingToolsGuidelines.2')}</p>
+              <p>• {t('marketingToolsGuidelines.3')}</p>
+              <p>• {t('marketingToolsGuidelines.4')}</p>
+              <p>• {t('marketingToolsGuidelines.5')}</p>
+              <p>• {t('marketingToolsGuidelines.6')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "PostHog for analytics, ConvertKit for email (newsletter), Buffer for social media, Notion for content calendar. Budget: €200/month on tools."
+              {t('marketingToolsExample')}
             </div>
           </div>
         </div>
@@ -300,11 +302,11 @@ export function Step4Channels() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="marketingFunnel" className="text-sm font-semibold">
-              3.5. Marketing funnel <span className="text-red-500">*</span>
+              {t('marketingFunnelLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="marketingFunnel"
-              placeholder="Describe your marketing funnel with conversions..."
+              placeholder={t('marketingFunnelPlaceholder')}
               className="min-h-[120px]"
               value={marketingFunnel}
               onChange={(e) => updateChannels({ marketingFunnel: e.target.value })}
@@ -313,23 +315,23 @@ export function Step4Channels() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${marketingFunnel ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {marketingFunnel && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Awareness → Interest → Consideration → Purchase → Retention</p>
-              <p>• Conversions at each stage</p>
-              <p>• Where are main bottlenecks?</p>
+              <p>• {t('marketingFunnelGuidelines.1')}</p>
+              <p>• {t('marketingFunnelGuidelines.2')}</p>
+              <p>• {t('marketingFunnelGuidelines.3')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Landing page → Free tool (lite) → Trial (full) → Paid. 100% → 5% signup → 30% trial → 25% paid (1000 visitors → 50 signups → 15 trials → 4 customers). Bottleneck: signup conversion. Improvement plan: add social proof, video demo."
+              {t('marketingFunnelExample')}
             </div>
           </div>
         </div>
 
         <div className="border-l-2 border-slate-300 pl-4">
           <p className="text-sm text-slate-600">
-            Tip: Investors want to see clear acquisition strategy with realistic numbers.
+            {t('tip')}
           </p>
         </div>
       </div>

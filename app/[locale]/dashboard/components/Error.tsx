@@ -1,35 +1,43 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { Link } from '@/lib/navigation';
+
 interface ErrorProps {
   error: string;
 }
 export function Error({ error }: ErrorProps) {
+  const t = useTranslations('dashboard.error');
+  const tProject = useTranslations('project');
+  
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center max-w-md space-y-4">
-        <p className="text-lg text-red-600 font-semibold">Error: {error}</p>
+        <p className="text-lg text-red-600 font-semibold">{t('title')}: {error}</p>
         {error.includes('not authenticated') && (
           <div className="space-y-2">
             <p className="text-sm text-slate-600">
-              Please try refreshing the page or sign in again.
+              {t('refreshMessage')}
             </p>
-            <a 
+            <Link 
               href="/" 
               className="inline-block text-sm text-blue-600 hover:underline"
             >
-              Go to home page
-            </a>
+              {t('goToHome')}
+            </Link>
           </div>
         )}
         {error.includes('No projects found') && (
           <div className="space-y-2">
             <p className="text-sm text-slate-600">
-              Create your first project to get started.
+              {t('noProjectsMessage')}
             </p>
-            <a 
+            <Link 
               href="/create" 
               className="inline-block px-4 py-2 bg-black text-white rounded hover:bg-black/90"
             >
-              Create Project
-            </a>
+              {tProject('create')}
+            </Link>
           </div>
         )}
       </div>

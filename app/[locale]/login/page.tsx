@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "@/lib/navigation";
 import { LuMoveLeft } from "react-icons/lu";
-import { HeroContent } from "../home/components/HeroContent";
-import { AuthForm } from "../home/components/AuthForm";
+import { HeroContent } from "../home/HeroContent";
+import { AuthForm } from "../home/AuthForm";
 import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {

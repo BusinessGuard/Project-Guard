@@ -2,10 +2,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
-import Link from 'next/link';
+import { Link } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
 
 export function AnonymousProjectCard() {
+  const t = useTranslations('dashboard.anonymousProject');
   const { data: project, isLoading } = useQuery({
     queryKey: ['anonymous-project'],
     queryFn: async () => {
@@ -73,7 +75,7 @@ export function AnonymousProjectCard() {
 
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-semibold mb-3 text-gray-700">Anonymous Project</h2>
+      <h2 className="text-lg font-semibold mb-3 text-gray-700">{t('title')}</h2>
       <div className="p-4 border rounded-lg ">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -83,16 +85,16 @@ export function AnonymousProjectCard() {
               {project.stage && <span>• {project.stage}</span>}
             </div>
             <p className="text-sm text-gray-500 mt-2">
-              This project was created without an account. Add it to your account to keep it.
+              {t('description')}
             </p>
           </div>
           <div className="flex gap-2 ml-4">
             <Button onClick={handleTransfer} size="sm">
-              Add to Account
+              {t('addToAccount')}
             </Button>
             <Link href={`/dashboard/projects/${project.id}`}>
               <Button variant="outline" size="sm">
-                View
+                {t('view')}
               </Button>
             </Link>
           </div>

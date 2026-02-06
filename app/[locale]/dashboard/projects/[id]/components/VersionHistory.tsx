@@ -3,15 +3,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, Lock, Plus } from 'lucide-react';
 import { useVersionsStore } from '@/store/useVersionsStore';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/lib/navigation';
 import { useState } from 'react';
 import { AuthPromptModal } from '@/components/AuthPromptModal';
+import { useTranslations } from 'next-intl';
 
 interface VersionHistoryProps {
   isAuthorized?: boolean;
 }
 
 export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
+  const t = useTranslations('dashboard.versionHistory');
+  const tDashboard = useTranslations('dashboard');
   const router = useRouter();
   const { versions, version, setVersion, currentProject } = useVersionsStore();
   const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
@@ -42,7 +45,7 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5" />
-            Version History
+            {t('title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -78,7 +81,7 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
                       <button
                         onClick={handleReAnalyze}
                         className="size-14 md:size-18 rounded-full  cursor-pointer bg-gray-100 flex items-center justify-center mb-3 transition-all hover:bg-gray-200 hover:scale-105"
-                        title="Re-analyze project"
+                        title={t('reAnalyzeProject')}
                       >
                         {hoveredSlot === idx ? (
                           <Plus className="size-8 text-gray-600" />
@@ -91,7 +94,7 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
                       </button>
                       {hoveredSlot === idx && (
                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-1.5 rounded whitespace-nowrap">
-                          Re-analyze project
+                          {t('reAnalyzeProject')}
                           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45" />
                         </div>
                       )}
@@ -122,8 +125,8 @@ export function VersionHistory({ isAuthorized = false }: VersionHistoryProps) {
       <AuthPromptModal 
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        title="Sign up first"
-        message="Sign up first to explore all features."
+        title={tDashboard('signUpFirst')}
+        message={tDashboard('signUpFirstMessage')}
       />
     </>
   );

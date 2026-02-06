@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/lib/navigation';
+import { useTranslations } from 'next-intl';
 
 interface AuthPromptModalProps {
   isOpen: boolean;
@@ -13,24 +14,30 @@ interface AuthPromptModalProps {
 export function AuthPromptModal({ 
   isOpen, 
   onClose,
-  title = "Sign Up Required",
-  message = "Please sign up to access this feature and unlock all capabilities."
+  title,
+  message
 }: AuthPromptModalProps) {
+  const t = useTranslations('auth.promptModal');
+  const tAuth = useTranslations('auth');
+  const tCommon = useTranslations('common');
   const router = useRouter();
 
   if (!isOpen) return null;
 
+  const modalTitle = title || t('defaultTitle');
+  const modalMessage = message || t('defaultMessage');
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-lg max-w-md space-y-4">
-        <h2 className="text-2xl font-bold">{title}</h2>
-        <p className="text-slate-600">{message}</p>
+        <h2 className="text-2xl font-bold">{modalTitle}</h2>
+        <p className="text-slate-600">{modalMessage}</p>
         <div className="flex gap-3">
           <Button onClick={() => router.push('/login')} className="flex-1">
-            Sign Up
+            {tAuth('signUp')}
           </Button>
           <Button variant="outline" onClick={onClose} className="flex-1">
-            Cancel
+            {tCommon('cancel')}
           </Button>
         </div>
       </div>

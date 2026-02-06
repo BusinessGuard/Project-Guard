@@ -2,8 +2,10 @@
 
 import { Progress } from '@/components/ui/progress';
 import { useVersionsStore } from '@/store/useVersionsStore';
+import { useTranslations } from 'next-intl';
 
 export function BlockScores() {
+  const t = useTranslations('dashboard.blockScores');
   const { currentProject } = useVersionsStore();
   
   if (!currentProject?.analysis) return null;
@@ -16,15 +18,20 @@ export function BlockScores() {
     return 'text-red-600';
   };
 
+  const getBlockLabel = (blockKey: string): string => {
+    const blockKeyLower = blockKey.charAt(0).toLowerCase() + blockKey.slice(1);
+    return t(`blocks.${blockKeyLower}`, { defaultValue: blockKey.replace(/([A-Z])/g, ' $1').trim() });
+  };
+
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-4">Detailed Block Scores</h3>
+      <h3 className="text-lg font-semibold mb-4">{t('title')}</h3>
       <div className="md:space-y-3">
         {Object.entries(blockScores).map(([block, score]) => (
           <div key={block} className="p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium capitalize">
-                {block.replace(/([A-Z])/g, ' $1').trim()}
+                {getBlockLabel(block)}
               </span>
               <span className={`text-lg md:text-2xl font-bold ${getScoreColor(score)}`}>
                 {score}

@@ -3,8 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useVersionsStore } from '@/store/useVersionsStore';
 import { CheckCircle, AlertTriangle, Award, Flame } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function StrengthsWeaknesses() {
+  const t = useTranslations('dashboard.strengthsWeaknesses');
   const { currentProject } = useVersionsStore();
   
   if (!currentProject?.analysis) return null;
@@ -16,7 +18,7 @@ export function StrengthsWeaknesses() {
         <CardHeader className="p-3 md:p-6">
           <CardTitle className="flex items-center gap-2 text-green-700 text-sm md:text-base">
             <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
-            Top Strengths
+            {t('topStrengths')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-3 md:p-6 pt-0">
@@ -35,7 +37,7 @@ export function StrengthsWeaknesses() {
         <CardHeader className="p-3 md:p-6">
           <CardTitle className="flex items-center gap-2 text-orange-700 text-sm md:text-base">
             <AlertTriangle className="w-4 h-4 md:w-5 md:h-5" />
-            Areas for Improvement
+            {t('areasForImprovement')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-3 md:p-6 pt-0">

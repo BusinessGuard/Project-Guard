@@ -6,33 +6,35 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useProjectStore } from "@/store/useProjectStore";
-import { useState } from "react";
-
-const industries = [
-  { value: "saas-b2b", label: "SaaS / B2B" },
-  { value: "saas-b2c", label: "SaaS / B2C" },
-  { value: "marketplace", label: "Marketplace" },
-  { value: "ecommerce", label: "E-commerce" },
-  { value: "fintech", label: "Fintech" },
-  { value: "healthtech", label: "Healthtech" },
-  { value: "edtech", label: "Edtech" },
-  { value: "other", label: "Other" },
-];
-
-const stages = [
-  { value: "idea", label: "Idea" },
-  { value: "mvp", label: "MVP / Pre-seed" },
-  { value: "seed", label: "Seed" },
-  { value: "series-a", label: "Series A" },
-  { value: "series-b", label: "Series B+" },
-];
+import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 export function Step1BasicInfo() {
+  const t = useTranslations('create.step1');
   const { projectData, updateBasicInfo } = useProjectStore();
   const { projectName, industry, stage, description } = projectData.basicInfo;
   
   const [customIndustry, setCustomIndustry] = useState("");
   const [touched, setTouched] = useState({ projectName: false, industry: false, stage: false });
+  
+  const industries = useMemo(() => [
+    { value: "saas-b2b", label: t('industries.saasB2b') },
+    { value: "saas-b2c", label: t('industries.saasB2c') },
+    { value: "marketplace", label: t('industries.marketplace') },
+    { value: "ecommerce", label: t('industries.ecommerce') },
+    { value: "fintech", label: t('industries.fintech') },
+    { value: "healthtech", label: t('industries.healthtech') },
+    { value: "edtech", label: t('industries.edtech') },
+    { value: "other", label: t('industries.other') },
+  ], [t]);
+  
+  const stages = useMemo(() => [
+    { value: "idea", label: t('stages.idea') },
+    { value: "mvp", label: t('stages.mvp') },
+    { value: "seed", label: t('stages.seed') },
+    { value: "series-a", label: t('stages.seriesA') },
+    { value: "series-b", label: t('stages.seriesB') },
+  ], [t]);
   
   const isOtherIndustry = industry === "other" || (industry && !industries.some(i => i.value === industry));
   
@@ -47,31 +49,31 @@ export function Step1BasicInfo() {
     <div className="max-w-600 gap-8">
       <div className="space-y-8">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold text-black">Project Details</h2>
-          <p className="text-sm text-slate-600">Let's start with the basics</p>
+          <h2 className="text-2xl font-bold text-black">{t('title')}</h2>
+          <p className="text-sm text-slate-600">{t('subtitle')}</p>
         </div>
 
         <div className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="projectName" className="text-sm">
-            Project Name <span className="text-red-500">*</span>
+            {t('projectName')} <span className="text-red-500">*</span>
           </Label>
             <Input
               id="projectName"
-              placeholder="HRFlow - Smart HR Automation"
+              placeholder={t('projectNamePlaceholder')}
               className={`h-12 ${errors.projectName ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
               value={projectName}
               onChange={(e) => updateBasicInfo({ projectName: e.target.value })}
               onBlur={() => setTouched({ ...touched, projectName: true })}
             />
             {errors.projectName && (
-              <p className="text-xs text-red-500">Project name is required</p>
+              <p className="text-xs text-red-500">{t('projectNameRequired')}</p>
             )}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="industry" className="text-sm">
-            Industry <span className="text-red-500">*</span>
+            {t('industry')} <span className="text-red-500">*</span>
           </Label>
           
           {/* Show select only if no custom industry is set */}
@@ -88,7 +90,7 @@ export function Step1BasicInfo() {
               }}
             >
               <SelectTrigger className={`!h-12 w-full py-0 ${errors.industry ? 'border-red-500' : ''}`}>
-                <SelectValue placeholder="Select industry" />
+                <SelectValue placeholder={t('selectIndustry')} />
               </SelectTrigger>
               <SelectContent>
                 {industries.map((item) => (
@@ -104,7 +106,7 @@ export function Step1BasicInfo() {
           {industry === "other" && (
             <div className="flex gap-2">
               <Input
-                placeholder="Specify your industry..."
+                placeholder={t('specifyIndustry')}
                 className="h-12 flex-1"
                 value={customIndustry}
                 onChange={(e) => setCustomIndustry(e.target.value)}
@@ -127,7 +129,7 @@ export function Step1BasicInfo() {
                 }}
                 disabled={!customIndustry.trim()}
               >
-                Add
+                {t('add')}
               </Button>
             </div>
           )}
@@ -147,13 +149,13 @@ export function Step1BasicInfo() {
           )}
           
           {errors.industry && (
-            <p className="text-xs text-red-500">Please select or specify an industry</p>
+            <p className="text-xs text-red-500">{t('industryRequired')}</p>
           )}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="stage" className="text-sm">
-            Current Stage <span className="text-red-500">*</span>
+            {t('currentStage')} <span className="text-red-500">*</span>
           </Label>
           <Select 
             value={stage} 
@@ -163,7 +165,7 @@ export function Step1BasicInfo() {
             }}
           >
             <SelectTrigger className={`!h-12 w-full py-0 ${errors.stage ? 'border-red-500' : ''}`}>
-              <SelectValue placeholder="Select stage" />
+              <SelectValue placeholder={t('selectStage')} />
             </SelectTrigger>
             <SelectContent>
               {stages.map((item) => (
@@ -174,17 +176,17 @@ export function Step1BasicInfo() {
             </SelectContent>
           </Select>
           {errors.stage && (
-            <p className="text-xs text-red-500">Please select a stage</p>
+            <p className="text-xs text-red-500">{t('stageRequired')}</p>
           )}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="description" className="text-sm">
-            One-line Description <span className="text-slate-400">(optional)</span>
+            {t('description')} <span className="text-slate-400">{t('optional')}</span>
           </Label>
           <Textarea
             id="description"
-            placeholder="AI-powered HR platform for SMBs to automate hiring and onboarding"
+            placeholder={t('descriptionPlaceholder')}
             className="min-h-[80px]"
             value={description}
             onChange={(e) => updateBasicInfo({ description: e.target.value })}
@@ -193,7 +195,7 @@ export function Step1BasicInfo() {
 
           <div className="border-l-2 border-slate-300 pl-4">
             <p className="text-sm text-slate-600">
-              Tip: You can save draft and come back anytime
+              {t('tip')}
             </p>
           </div>
         </div>

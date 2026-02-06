@@ -12,47 +12,50 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
 export function FinancialForecast() {
+  const t = useTranslations('dashboard.financialForecast');
   const { currentProject } = useVersionsStore();
   
   if (!currentProject?.analysis) return null;
   
   const { unitEconomics, breakEven, monthlyProjections } = currentProject.analysis.financialForecast;
   
-  const unitEconomicsCards = [
+  const unitEconomicsCards = useMemo(() => [
     {
-      label: 'LTV',
+      label: t('ltv'),
       value: unitEconomics.ltv,
       prefix: '€',
       color: 'text-green-600',
     },
     {
-      label: 'CAC',
+      label: t('cac'),
       value: unitEconomics.cac,
       prefix: '€',
       color: '',
     },
     {
-      label: 'LTV/CAC',
+      label: t('ltvCac'),
       value: unitEconomics.ltvCacRatio,
       suffix: 'x',
       color: 'text-green-600',
-      benchmark: 'Benchmark: >3x',
+      benchmark: t('benchmarkGt3x'),
     },
     {
-      label: 'Payback',
+      label: t('payback'),
       value: unitEconomics.paybackPeriod,
       suffix: ' mo',
       color: 'text-green-600',
-      benchmark: 'Benchmark: <12mo',
+      benchmark: t('benchmarkLt12mo'),
     },
-  ];
+  ], [unitEconomics, t]);
   
   return (
     <div className="space-y-4 md:space-y-6">
       <div>
-        <h3 className="text-sm md:text-lg font-semibold mb-3 md:mb-4">Unit Economics</h3>
+        <h3 className="text-sm md:text-lg font-semibold mb-3 md:mb-4">{t('unitEconomics')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           {unitEconomicsCards.map((card, index) => (
             <Card key={index} className="shadow-none p-0 bg-transparent">
@@ -74,7 +77,7 @@ export function FinancialForecast() {
 
       <Card className="shadow-none">
         <CardHeader className="p-3 md:p-6">
-          <CardTitle className="text-sm md:text-lg">12-Month Financial Forecast</CardTitle>
+          <CardTitle className="text-sm md:text-lg">{t('forecastTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="p-2 md:p-6">
           <ResponsiveContainer width="100%" height={250}>
@@ -83,7 +86,7 @@ export function FinancialForecast() {
               <XAxis 
                 dataKey="month" 
                 tick={{ fill: '#6B7280', fontSize: 10 }}
-                label={{ value: 'Month', position: 'insideBottom', offset: -5, fill: '#6B7280', style: { fontSize: '12px' } }}
+                label={{ value: t('month'), position: 'insideBottom', offset: -5, fill: '#6B7280', style: { fontSize: '12px' } }}
               />
               <YAxis tick={{ fill: '#6B7280', fontSize: 10 }} />
               <Tooltip 
@@ -100,7 +103,7 @@ export function FinancialForecast() {
                 dataKey="revenue"
                 stroke="#10B981"
                 strokeWidth={2}
-                name="Revenue"
+                name={t('revenue')}
                 dot={{ fill: '#10B981', r: 3 }}
               />
               <Line
@@ -108,7 +111,7 @@ export function FinancialForecast() {
                 dataKey="costs"
                 stroke="#EF4444"
                 strokeWidth={2}
-                name="Costs"
+                name={t('costs')}
                 strokeDasharray="5 5"
               />
               <Line
@@ -116,7 +119,7 @@ export function FinancialForecast() {
                 dataKey="profit"
                 stroke="#3B82F6"
                 strokeWidth={2}
-                name="Profit"
+                name={t('profit')}
                 dot={false}
               />
             </LineChart>
@@ -126,20 +129,20 @@ export function FinancialForecast() {
 
       <Card className="shadow-none gap-0">
         <CardHeader className="p-3 md:p-6">
-          <CardTitle className="text-sm md:text-lg">Break-Even Analysis</CardTitle>
+          <CardTitle className="text-sm md:text-lg">{t('breakEvenAnalysis')}</CardTitle>
         </CardHeader>
         <CardContent className="p-3 md:p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
             <div className="text-center p-4 md:p-6 bg-blue-50 rounded-lg">
-              <div className="text-xs md:text-sm text-gray-600 mb-2">Break-Even Month</div>
+              <div className="text-xs md:text-sm text-gray-600 mb-2">{t('breakEvenMonth')}</div>
               <div className="text-3xl md:text-5xl font-bold text-blue-600">{breakEven.month}</div>
             </div>
             <div className="text-center p-4 md:p-6 bg-green-50 rounded-lg">
-              <div className="text-xs md:text-sm text-gray-600 mb-2">Customers Needed</div>
+              <div className="text-xs md:text-sm text-gray-600 mb-2">{t('customersNeeded')}</div>
               <div className="text-3xl md:text-5xl font-bold text-green-600">{breakEven.customers}</div>
             </div>
             <div className="text-center p-4 md:p-6 bg-purple-50 rounded-lg">
-              <div className="text-xs md:text-sm text-gray-600 mb-2">MRR at Break-Even</div>
+              <div className="text-xs md:text-sm text-gray-600 mb-2">{t('mrrAtBreakEven')}</div>
               <div className="text-3xl md:text-5xl font-bold text-purple-600">€{breakEven.mrr}</div>
             </div>
           </div>

@@ -4,17 +4,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
-
-const riskFields = [
-  { id: "technical", label: "8.1. Technical risks", placeholder: "Tech stack feasibility, API dependencies, technical debt, security..." },
-  { id: "financial", label: "8.2. Financial risks", placeholder: "Runway, burn rate, revenue assumptions, funding risk..." },
-  { id: "legal", label: "8.3. Legal/regulatory risks", placeholder: "Licensing, GDPR, third-party ToS, IP issues..." },
-  { id: "market", label: "8.4. Market risks", placeholder: "Competition, timing, adoption barriers, economic downturn..." },
-  { id: "team", label: "8.5. Team risks", placeholder: "Founder conflicts, key person dependency, hiring, burnout..." },
-  { id: "mitigation", label: "8.6. Risk mitigation plan", placeholder: "Concrete strategies, timeline, budget..." },
-];
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 export function Step9Risks() {
+  const t = useTranslations('create.step9');
   const { projectData, updateRisks } = useProjectStore();
   const risks = projectData.risks || {
     technical: "",
@@ -25,38 +19,76 @@ export function Step9Risks() {
     mitigation: "",
   };
 
-  const guidelines = {
+  const riskFields = useMemo(() => [
+    { id: "technical", label: t('riskFields.technical.label'), placeholder: t('riskFields.technical.placeholder') },
+    { id: "financial", label: t('riskFields.financial.label'), placeholder: t('riskFields.financial.placeholder') },
+    { id: "legal", label: t('riskFields.legal.label'), placeholder: t('riskFields.legal.placeholder') },
+    { id: "market", label: t('riskFields.market.label'), placeholder: t('riskFields.market.placeholder') },
+    { id: "team", label: t('riskFields.team.label'), placeholder: t('riskFields.team.placeholder') },
+    { id: "mitigation", label: t('riskFields.mitigation.label'), placeholder: t('riskFields.mitigation.placeholder') },
+  ], [t]);
+
+  const guidelines = useMemo(() => ({
     technical: {
-      points: ["Can you build with current tech stack?", "Third-party API dependencies?", "Technical debt?", "Security/privacy concerns?"],
-      example: "Risks: 1) OpenAI API instability (mitigation: Claude fallback), 2) Scaling at >10K users (mitigation: async processing + Redis cache), 3) Data privacy for EU (mitigation: GDPR-compliant Supabase), 4) Prompt injection attacks (mitigation: input sanitization)."
+      points: [
+        t('guidelines.technical.1'),
+        t('guidelines.technical.2'),
+        t('guidelines.technical.3'),
+        t('guidelines.technical.4'),
+      ],
+      example: t('examples.technical')
     },
     financial: {
-      points: ["Runway too short?", "Burn rate too high?", "Revenue assumptions too optimistic?", "Funding risk?"],
-      example: "Risks: 1) 7-month runway (critical!) - mitigation: raise €200K seed in 3 months, 2) OpenAI costs grow faster than expected - mitigation: optimize prompts, cap usage per user, 3) Customers churn faster - mitigation: improve onboarding, add value."
+      points: [
+        t('guidelines.financial.1'),
+        t('guidelines.financial.2'),
+        t('guidelines.financial.3'),
+        t('guidelines.financial.4'),
+      ],
+      example: t('examples.financial')
     },
     legal: {
-      points: ["Licensing requirements?", "Data protection (GDPR)?", "Third-party API ToS?", "IP issues?"],
-      example: "Risks: 1) OpenAI ToS prohibits competitive products (checked - OK for tools), 2) GDPR compliance for EU customers (solved via Supabase EU hosting), 3) Giving financial advice without license (disclaimer: educational purposes only), 4) Customer data security (mitigation: encryption, SOC2)."
+      points: [
+        t('guidelines.legal.1'),
+        t('guidelines.legal.2'),
+        t('guidelines.legal.3'),
+        t('guidelines.legal.4'),
+      ],
+      example: t('examples.legal')
     },
     market: {
-      points: ["Competitors with bigger funding?", "Market timing (too early/late)?", "Customer adoption barriers?", "Economic downturn?"],
-      example: "Risks: 1) Big players (Carta, YC) may launch similar product (mitigation: speed, niche focus), 2) VC funding winter = fewer customers (mitigation: profitable unit economics), 3) AI hype fades (mitigation: real value, not just AI buzzword), 4) Startups close in recession (mitigation: diversify to SMB)."
+      points: [
+        t('guidelines.market.1'),
+        t('guidelines.market.2'),
+        t('guidelines.market.3'),
+        t('guidelines.market.4'),
+      ],
+      example: t('examples.market')
     },
     team: {
-      points: ["Founder disagreements?", "Key person dependency?", "Hiring challenges?", "Team burnout?"],
-      example: "Risks: 1) Co-founder conflict (mitigation: 4-year vesting, clear roles), 2) CEO knows everything (mitigation: documentation, processes), 3) Can't hire VP Sales (mitigation: founder-led sales until €20K MRR), 4) Burnout (mitigation: sustainable pace, no weekends)."
+      points: [
+        t('guidelines.team.1'),
+        t('guidelines.team.2'),
+        t('guidelines.team.3'),
+        t('guidelines.team.4'),
+      ],
+      example: t('examples.team')
     },
     mitigation: {
-      points: ["Concrete mitigation strategies", "Action timeline", "Risk management budget"],
-      example: "Risk reduction plan Q1 2026: 1) Raise €200K seed (Jan-Mar, high priority), 2) Hire contractor for backup development (Feb, €3K/month), 3) Launch Claude integration (Mar, 40h dev time), 4) Build customer success process for retention (Jan, 20h), 5) Legal ToS review (Jan, €1K)."
+      points: [
+        t('guidelines.mitigation.1'),
+        t('guidelines.mitigation.2'),
+        t('guidelines.mitigation.3'),
+      ],
+      example: t('examples.mitigation')
     }
-  };
+  }), [t]);
 
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-black">Risks</h2>
-        <p className="text-sm text-slate-600">Identify and mitigate key risks</p>
+        <h2 className="text-2xl font-bold text-black">{t('title')}</h2>
+        <p className="text-sm text-slate-600">{t('subtitle')}</p>
       </div>
 
       <div className="space-y-8">
@@ -77,7 +109,7 @@ export function Step9Risks() {
 
             <div className={`space-y-2 text-sm transition-opacity duration-300 ${risks[field.id as keyof typeof risks] ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
               <h4 className="text-base font-semibold text-black flex items-center gap-2">
-                Guidelines
+                {t('guidelinesTitle')}
                 {risks[field.id as keyof typeof risks] && <TbChecks className="text-green-500 text-lg" />}
               </h4>
               <div className="text-black space-y-1">
@@ -86,7 +118,7 @@ export function Step9Risks() {
                 ))}
               </div>
               <div className="text-slate-600 italic pt-2">
-                Example: {guidelines[field.id as keyof typeof guidelines].example}
+                {t('example')}: {guidelines[field.id as keyof typeof guidelines].example}
               </div>
             </div>
           </div>
@@ -94,7 +126,7 @@ export function Step9Risks() {
 
         <div className="border-l-2 border-slate-300 pl-4">
           <p className="text-sm text-slate-600">
-            Tip: Investors want to see you've thought through risks and have concrete mitigation plans.
+            {t('tip')}
           </p>
         </div>
       </div>

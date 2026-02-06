@@ -1,10 +1,11 @@
 'use client';
 
 import { CiLogout } from "react-icons/ci";
-import Link from 'next/link';
+import { Link } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu } from './NavigationMenu';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 interface DesktopSidebarProps {
   isAuthenticated: boolean;
@@ -12,6 +13,8 @@ interface DesktopSidebarProps {
 }
 
 export function DesktopSidebar({ isAuthenticated, onSignOut }: DesktopSidebarProps) {
+  const tAuth = useTranslations('auth');
+  
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 flex-col p-4 z-10">
       <div className="p-6 border-b border-gray-200">
@@ -32,7 +35,7 @@ export function DesktopSidebar({ isAuthenticated, onSignOut }: DesktopSidebarPro
           className="w-full flex items-center justify-center gap-2 cursor-pointer px-4 h-13 shadow-none"
         >
           <CiLogout className="size-6" />
-          <span>Sign Out</span>
+          <span>{tAuth('signOut')}</span>
         </Button>
         <div className="w-full flex  mt-2 justify-center">
           <LanguageSwitcher />

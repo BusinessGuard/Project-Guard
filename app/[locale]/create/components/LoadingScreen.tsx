@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { HashLoader } from 'react-spinners';
 
 interface LoadingScreenProps {
@@ -8,6 +9,7 @@ interface LoadingScreenProps {
 }
 
 export function LoadingScreen({ text }: LoadingScreenProps) {
+  const tCommon = useTranslations('common');
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export function LoadingScreen({ text }: LoadingScreenProps) {
       <HashLoader color="#000000" size={60} />
       <p className="mt-8 text-xl font-semibold text-black">{text}</p>
       <p className="mt-2 text-lg text-gray-600">{seconds}s</p>
-      <p className="mt-4 text-sm text-gray-500">This may take 30-90 seconds...</p>
+      <p className="mt-4 text-sm text-gray-500">{tCommon('mayTakeTime')}</p>
     </div>
   );
 }

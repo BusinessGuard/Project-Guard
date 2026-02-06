@@ -9,8 +9,11 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useVersionsStore } from '@/store/useVersionsStore';
+import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
 export function RadarChartView() {
+  const t = useTranslations('dashboard.radarChartView');
   const { currentProject } = useVersionsStore();
   
   if (!currentProject?.analysis) return null;
@@ -18,22 +21,22 @@ export function RadarChartView() {
   const blockScores = currentProject.analysis.scores.blocks;
 
   // Transform blockScores to radar chart format
-  const radarData = [
-    { block: 'Value Prop', score: blockScores.valueProposition, fullMark: 100 },
-    { block: 'Customers', score: blockScores.customerSegments, fullMark: 100 },
-    { block: 'Channels', score: blockScores.channels, fullMark: 100 },
-    { block: 'Revenue', score: blockScores.revenue, fullMark: 100 },
-    { block: 'Costs', score: blockScores.costs, fullMark: 100 },
-    { block: 'Resources', score: blockScores.keyResources, fullMark: 100 },
-    { block: 'Activities', score: blockScores.keyActivities, fullMark: 100 },
-    { block: 'Partners', score: blockScores.keyPartners, fullMark: 100 },
-    { block: 'Team', score: blockScores.team, fullMark: 100 },
-  ];
+  const radarData = useMemo(() => [
+    { block: t('blocks.valueProp'), score: blockScores.valueProposition, fullMark: 100 },
+    { block: t('blocks.customers'), score: blockScores.customerSegments, fullMark: 100 },
+    { block: t('blocks.channels'), score: blockScores.channels, fullMark: 100 },
+    { block: t('blocks.revenue'), score: blockScores.revenue, fullMark: 100 },
+    { block: t('blocks.costs'), score: blockScores.costs, fullMark: 100 },
+    { block: t('blocks.resources'), score: blockScores.keyResources, fullMark: 100 },
+    { block: t('blocks.activities'), score: blockScores.keyActivities, fullMark: 100 },
+    { block: t('blocks.partners'), score: blockScores.keyPartners, fullMark: 100 },
+    { block: t('blocks.team'), score: blockScores.team, fullMark: 100 },
+  ], [blockScores, t]);
 
   return (
     <div>
       <h3 className="text-lg font-semibold mb-4">
-        9-Block Business Model Analysis
+        {t('title')}
       </h3>
       <ResponsiveContainer width="100%" height={400}>
         <RadarChart data={radarData}>
@@ -41,7 +44,7 @@ export function RadarChartView() {
           <PolarAngleAxis dataKey="block" tick={{ fill: '#6B7280', fontSize: 12 }} />
           <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#6B7280' }} />
           <Radar
-            name="Score"
+            name={t('score')}
             dataKey="score"
             stroke="#3B82F6"
             fill="#3B82F6"

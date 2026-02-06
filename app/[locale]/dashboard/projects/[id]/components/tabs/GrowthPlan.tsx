@@ -3,8 +3,10 @@
 import { useVersionsStore } from '@/store/useVersionsStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 export function GrowthPlan() {
+  const t = useTranslations('dashboard.growthPlan');
   const { currentProject } = useVersionsStore();
   
   if (!currentProject?.analysis) return null;
@@ -22,14 +24,14 @@ export function GrowthPlan() {
                 <p className="text-xs md:text-sm text-gray-600 mt-1">{phase.duration}</p>
               </div>
               <div className="text-left md:text-right">
-                <div className="text-xs md:text-sm text-gray-600">Budget</div>
+                <div className="text-xs md:text-sm text-gray-600">{t('budget')}</div>
                 <div className="text-lg md:text-2xl font-bold text-green-500">{phase.budget}</div>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-3 md:space-y-4 pt-3 md:pt-6 p-3 md:p-6">
             <div>
-              <h4 className="font-semibold text-xs md:text-sm mb-2">Goals:</h4>
+              <h4 className="font-semibold text-xs md:text-sm mb-2">{t('goals')}:</h4>
               <ul className="space-y-1">
                 {phase.goals.map((goal, idx) => (
                   <li key={idx} className="text-xs md:text-sm pl-3 md:pl-4">
@@ -40,7 +42,7 @@ export function GrowthPlan() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-xs md:text-sm mb-2">Key Actions:</h4>
+              <h4 className="font-semibold text-xs md:text-sm mb-2">{t('keyActions')}:</h4>
               <ul className="space-y-1">
                 {phase.keyActions.map((action, idx) => (
                   <li key={idx} className="text-xs md:text-sm pl-3 md:pl-4">
@@ -52,11 +54,11 @@ export function GrowthPlan() {
 
             <div className="flex flex-col md:flex-row gap-3 md:gap-6 pt-2 text-xs md:text-sm">
               <div>
-                <span className="font-medium">Team Size:</span>
+                <span className="font-medium">{t('teamSize')}:</span>
                 <span className="text-gray-600 ml-1 md:ml-2">{phase.teamSize}</span>
               </div>
               <div>
-                <span className="font-medium">Success Metrics:</span>
+                <span className="font-medium">{t('successMetrics')}:</span>
                 <span className="text-gray-600 ml-1 md:ml-2">
                   {phase.successMetrics.join(', ')}
                 </span>

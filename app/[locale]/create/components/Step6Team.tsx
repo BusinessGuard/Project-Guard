@@ -4,8 +4,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TbChecks } from "react-icons/tb";
 import { useProjectStore } from "@/store/useProjectStore";
+import { useTranslations } from "next-intl";
 
 export function Step6Team() {
+  const t = useTranslations('create.step6');
   const { projectData, updateTeam } = useProjectStore();
   const team = projectData.team || {
     keyRoles: "",
@@ -18,19 +20,19 @@ export function Step6Team() {
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-black">Team</h2>
-        <p className="text-sm text-slate-600">Describe your team and expertise</p>
+        <h2 className="text-2xl font-bold text-black">{t('title')}</h2>
+        <p className="text-sm text-slate-600">{t('subtitle')}</p>
       </div>
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="keyRoles" className="text-sm font-semibold">
-              5.1. Key roles and current team <span className="text-red-500">*</span>
+              {t('keyRolesLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="keyRoles"
-              placeholder="Describe founders, team size, roles..."
+              placeholder={t('keyRolesPlaceholder')}
               className="min-h-[100px]"
               value={keyRoles}
               onChange={(e) => updateTeam({ keyRoles: e.target.value })}
@@ -39,17 +41,17 @@ export function Step6Team() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${keyRoles ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {keyRoles && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• How many founders?</p>
-              <p>• Who is CEO, CTO, etc?</p>
-              <p>• Full-time or part-time?</p>
-              <p>• How many employees/contractors?</p>
+              <p>• {t('keyRolesGuidelines.1')}</p>
+              <p>• {t('keyRolesGuidelines.2')}</p>
+              <p>• {t('keyRolesGuidelines.3')}</p>
+              <p>• {t('keyRolesGuidelines.4')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Founders (2): John Doe, CEO (full-time): 10 years in startup consulting, MBA, first startup. Jane Smith, CTO (full-time): 8 years senior engineer at Google, first startup. Team: 1 full-stack developer (contractor, part-time), 1 designer (freelancer, as needed). Total: 2 full-time + 2 part-time."
+              {t('keyRolesExample')}
             </div>
           </div>
         </div>
@@ -57,11 +59,11 @@ export function Step6Team() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="founderExperience" className="text-sm font-semibold">
-              5.2. Founder experience <span className="text-red-500">*</span>
+              {t('founderExperienceLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="founderExperience"
-              placeholder="Describe previous startups, industry experience, skills..."
+              placeholder={t('founderExperiencePlaceholder')}
               className="min-h-[100px]"
               value={founderExperience}
               onChange={(e) => updateTeam({ founderExperience: e.target.value })}
@@ -70,18 +72,18 @@ export function Step6Team() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${founderExperience ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {founderExperience && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Previous startups (successes/failures)?</p>
-              <p>• Relevant industry experience?</p>
-              <p>• Technical skills?</p>
-              <p>• Business skills (sales, marketing, fundraising)?</p>
-              <p>• Education?</p>
+              <p>• {t('founderExperienceGuidelines.1')}</p>
+              <p>• {t('founderExperienceGuidelines.2')}</p>
+              <p>• {t('founderExperienceGuidelines.3')}</p>
+              <p>• {t('founderExperienceGuidelines.4')}</p>
+              <p>• {t('founderExperienceGuidelines.5')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "CEO: consulted 50+ startups, helped raise €10M for clients, but never launched own startup. CTO: shipped 5 products at Google with millions of users, no startup experience. Both first-time founding team."
+              {t('founderExperienceExample')}
             </div>
           </div>
         </div>
@@ -89,11 +91,11 @@ export function Step6Team() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="specialists" className="text-sm font-semibold">
-              5.3. Domain specialists <span className="text-red-500">*</span>
+              {t('specialistsLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="specialists"
-              placeholder="Do you have marketing, financial, product, sales experts?"
+              placeholder={t('specialistsPlaceholder')}
               className="min-h-[100px]"
               value={specialists}
               onChange={(e) => updateTeam({ specialists: e.target.value })}
@@ -102,18 +104,18 @@ export function Step6Team() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${specialists ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {specialists && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Marketing/Growth expert?</p>
-              <p>• Financial expert/CFO?</p>
-              <p>• Product manager?</p>
-              <p>• Sales leader?</p>
-              <p>• Industry domain expert?</p>
+              <p>• {t('specialistsGuidelines.1')}</p>
+              <p>• {t('specialistsGuidelines.2')}</p>
+              <p>• {t('specialistsGuidelines.3')}</p>
+              <p>• {t('specialistsGuidelines.4')}</p>
+              <p>• {t('specialistsGuidelines.5')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "No in-house experts. Have advisors: 1) VC partner from Sequoia (fundraising strategy, 2h/month), 2) ex-CMO of SaaS unicorn (growth advice, 1h/month). Plan to hire VP Sales at month 6 when reaching €10K MRR."
+              {t('specialistsExample')}
             </div>
           </div>
         </div>
@@ -121,11 +123,11 @@ export function Step6Team() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="gaps" className="text-sm font-semibold">
-              5.4. Competency gaps <span className="text-red-500">*</span>
+              {t('gapsLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="gaps"
-              placeholder="What's missing? How will you fill gaps? When? Budget?"
+              placeholder={t('gapsPlaceholder')}
               className="min-h-[100px]"
               value={gaps}
               onChange={(e) => updateTeam({ gaps: e.target.value })}
@@ -134,24 +136,24 @@ export function Step6Team() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${gaps ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {gaps && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• What's missing in the team?</p>
-              <p>• How do you plan to close the gap?</p>
-              <p>• When do you plan to hire?</p>
-              <p>• Hiring budget?</p>
+              <p>• {t('gapsGuidelines.1')}</p>
+              <p>• {t('gapsGuidelines.2')}</p>
+              <p>• {t('gapsGuidelines.3')}</p>
+              <p>• {t('gapsGuidelines.4')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Critical gaps: 1) VP Sales (HIGH priority, hire month 6, budget €60K/year + equity), 2) Growth marketer (MEDIUM, month 9, €45K/year), 3) Customer success (LOW, month 12, €35K/year). Interim: Founders handle sales/marketing first 6 months."
+              {t('gapsExample')}
             </div>
           </div>
         </div>
 
         <div className="border-l-2 border-slate-300 pl-4">
           <p className="text-sm text-slate-600">
-            Tip: Investors invest in teams. Show relevant experience and clear hiring plan.
+            {t('tip')}
           </p>
         </div>
       </div>

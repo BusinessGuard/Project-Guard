@@ -9,13 +9,31 @@ import { useProjectStore } from "@/store/useProjectStore";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { IoMdClose } from "react-icons/io";
 import { TbChecks } from "react-icons/tb";
-import { useState, useEffect } from "react";
-
-const fundingTypes = ["Bootstrapped", "Angel investors", "VC", "Grants", "Accelerator", "Other"];
-const revenueStreamTypes = ["Subscription", "One-time payment", "Usage-based", "Commission/Marketplace", "Advertising", "Licensing", "Other"];
+import { useState, useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 export function Step5Economics() {
+  const t = useTranslations('create.step5');
   const { projectData, updateEconomics } = useProjectStore();
+
+  const fundingTypes = useMemo(() => [
+    t('fundingTypes.bootstrapped'),
+    t('fundingTypes.angel'),
+    t('fundingTypes.vc'),
+    t('fundingTypes.grants'),
+    t('fundingTypes.accelerator'),
+    t('fundingTypes.other'),
+  ], [t]);
+
+  const revenueStreamTypes = useMemo(() => [
+    t('revenueStreamTypes.subscription'),
+    t('revenueStreamTypes.oneTime'),
+    t('revenueStreamTypes.usageBased'),
+    t('revenueStreamTypes.commission'),
+    t('revenueStreamTypes.advertising'),
+    t('revenueStreamTypes.licensing'),
+    t('revenueStreamTypes.other'),
+  ], [t]);
   
   const economics = projectData.economics ? {
     ...projectData.economics,
@@ -87,7 +105,7 @@ export function Step5Economics() {
   };
 
   const handleAddSource = () => {
-    const finalType = newSourceType === "Other" ? newSourceCustomType : newSourceType;
+    const finalType = newSourceType === t('fundingTypes.other') ? newSourceCustomType : newSourceType;
     if (finalType && newSourceAmount) {
       updateEconomics({ 
         fundingSources: [{ type: finalType, amount: parseFloat(newSourceAmount) || 0 }, ...fundingSources] 
@@ -120,22 +138,22 @@ export function Step5Economics() {
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-black">Revenue & Cost Structure</h2>
-        <p className="text-sm text-slate-600">Define your financial model</p>
+        <h2 className="text-2xl font-bold text-black">{t('title')}</h2>
+        <p className="text-sm text-slate-600">{t('subtitle')}</p>
       </div>
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="projectedRevenue12Months" className="text-sm font-semibold">
-              4.1. Projected revenue for 12 months <span className="text-red-500">*</span>
+              {t('projectedRevenueLabel')} <span className="text-red-500">*</span>
             </Label>
             <InputGroup className="h-12">
               <InputGroupAddon>€</InputGroupAddon>
               <InputGroupInput
                 id="projectedRevenue12Months"
                 type="number"
-                placeholder="120000"
+                placeholder={t('projectedRevenuePlaceholder')}
                 className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 value={projectedRevenue12Months || ""}
                 onChange={(e) => updateEconomics({ projectedRevenue12Months: parseFloat(e.target.value) || 0 })}
@@ -146,15 +164,15 @@ export function Step5Economics() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${projectedRevenue12Months ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {projectedRevenue12Months > 0 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• First year revenue projection</p>
-              <p>• Based on pricing × expected customers</p>
+              <p>• {t('projectedRevenueGuidelines.1')}</p>
+              <p>• {t('projectedRevenueGuidelines.2')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "€120,000 (100 customers × €99/mo × 12 months)"
+              {t('projectedRevenueExample')}
             </div>
           </div>
         </div>
@@ -162,7 +180,7 @@ export function Step5Economics() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              4.2. Revenue Streams <span className="text-red-500">*</span>
+              {t('revenueStreamsLabel')} <span className="text-red-500">*</span>
             </Label>
             
             {revenueStreams.length > 0 && (
@@ -184,7 +202,7 @@ export function Step5Economics() {
                   </div>
                 ))}
                 <div className="text-xs font-semibold text-slate-700 pl-2">
-                  Total: {totalPercentage}% {totalPercentage !== 100 && <span className="text-red-500">(should be 100%)</span>}
+                  {t('total')}: {totalPercentage}% {totalPercentage !== 100 && <span className="text-red-500">{t('shouldBe100')}</span>}
                 </div>
               </div>
             )}
@@ -193,7 +211,7 @@ export function Step5Economics() {
               <div className="flex gap-2 flex-1">
                 <Select value={newStreamType} onValueChange={setNewStreamType}>
                   <SelectTrigger className="h-10 flex-1 md:w-[180px]">
-                    <SelectValue placeholder="Type" />
+                    <SelectValue placeholder={t('type')} />
                   </SelectTrigger>
                   <SelectContent>
                     {revenueStreamTypes.map((type) => (
@@ -205,7 +223,7 @@ export function Step5Economics() {
                 </Select>
                 
                 <Input
-                  placeholder="Description"
+                  placeholder={t('description')}
                   className="!h-10 flex-1"
                   value={newStreamDescription}
                   onChange={(e) => setNewStreamDescription(e.target.value)}
@@ -232,7 +250,7 @@ export function Step5Economics() {
                   onClick={handleAddStream}
                   disabled={!newStreamType || !newStreamDescription || !newStreamPercentage}
                 >
-                  Add
+                  {t('add')}
                 </Button>
               </div>
             </div>
@@ -240,17 +258,17 @@ export function Step5Economics() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${revenueStreams.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {revenueStreams.length > 0 && totalPercentage === 100 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• List all revenue sources</p>
-              <p>• Percentage of total revenue for each</p>
-              <p>• Total should be 100%</p>
-              <p>• Diversification reduces risk</p>
+              <p>• {t('revenueStreamsGuidelines.1')}</p>
+              <p>• {t('revenueStreamsGuidelines.2')}</p>
+              <p>• {t('revenueStreamsGuidelines.3')}</p>
+              <p>• {t('revenueStreamsGuidelines.4')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Subscription (80%): €99/mo per company. Setup fees (15%): €500 one-time. Consulting (5%): €150/hr for custom integrations."
+              {t('revenueStreamsExample')}
             </div>
           </div>
         </div>
@@ -258,11 +276,11 @@ export function Step5Economics() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="revenuePricing" className="text-sm font-semibold">
-              4.3. Pricing Strategy <span className="text-red-500">*</span>
+              {t('revenuePricingLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="revenuePricing"
-              placeholder="Describe your pricing model, tiers, and strategy..."
+              placeholder={t('revenuePricingPlaceholder')}
               className="min-h-[120px]"
               value={revenuePricing}
               onChange={(e) => updateEconomics({ revenuePricing: e.target.value })}
@@ -271,17 +289,17 @@ export function Step5Economics() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${revenuePricing ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {revenuePricing && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Pricing model (freemium, tiered, usage-based)</p>
-              <p>• Price points for each tier/plan</p>
-              <p>• What's included in each tier?</p>
-              <p>• Why this pricing? (competitor analysis, value-based)</p>
+              <p>• {t('revenuePricingGuidelines.1')}</p>
+              <p>• {t('revenuePricingGuidelines.2')}</p>
+              <p>• {t('revenuePricingGuidelines.3')}</p>
+              <p>• {t('revenuePricingGuidelines.4')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Tiered subscription: Starter €49/mo (5 users, basic features), Pro €99/mo (20 users, advanced analytics), Enterprise €299/mo (unlimited, custom integrations, dedicated support). Value-based pricing: customers save €500/mo in HR time, so €99 is 5x ROI."
+              {t('revenuePricingExample')}
             </div>
           </div>
         </div>
@@ -289,11 +307,11 @@ export function Step5Economics() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-2">
             <Label htmlFor="costBreakdown" className="text-sm font-semibold">
-              4.4. Main cost categories <span className="text-red-500">*</span>
+              {t('costBreakdownLabel')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="costBreakdown"
-              placeholder="Break down your monthly/annual costs by category..."
+              placeholder={t('costBreakdownPlaceholder')}
               className="min-h-[140px]"
               value={costBreakdown}
               onChange={(e) => updateEconomics({ costBreakdown: e.target.value })}
@@ -302,20 +320,20 @@ export function Step5Economics() {
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${costBreakdown ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {costBreakdown && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Personnel (salaries, contractors)</p>
-              <p>• Technology (hosting, APIs, SaaS tools)</p>
-              <p>• Marketing & Sales</p>
-              <p>• Office/Operations</p>
-              <p>• Legal/Admin</p>
-              <p>• R&D</p>
-              <p>• Mark fixed vs variable costs</p>
+              <p>• {t('costBreakdownGuidelines.1')}</p>
+              <p>• {t('costBreakdownGuidelines.2')}</p>
+              <p>• {t('costBreakdownGuidelines.3')}</p>
+              <p>• {t('costBreakdownGuidelines.4')}</p>
+              <p>• {t('costBreakdownGuidelines.5')}</p>
+              <p>• {t('costBreakdownGuidelines.6')}</p>
+              <p>• {t('costBreakdownGuidelines.7')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Monthly costs: Founders salary €3,000 (€1,500 × 2), Developer €2,000 (contractor), OpenAI API €500 (variable), Hosting €200, Marketing €1,000, SaaS tools €200, Legal/Admin €300. Total burn: €7,200/month."
+              {t('costBreakdownExample')}
             </div>
           </div>
         </div>
@@ -323,15 +341,15 @@ export function Step5Economics() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              4.5. Key unit economics <span className="text-red-500">*</span>
+              {t('unitEconomicsLabel')} <span className="text-red-500">*</span>
             </Label>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Gross Margin (%)</Label>
+              <Label className="text-xs text-slate-600">{t('grossMargin')}</Label>
               <InputGroup className="h-12">
                 <InputGroupInput
                   type="number"
-                  placeholder="80"
+                  placeholder={t('grossMarginPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={grossMargin || ""}
                   onChange={(e) => updateEconomics({ grossMargin: parseFloat(e.target.value) || 0 })}
@@ -343,80 +361,80 @@ export function Step5Economics() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Average Revenue Per User (ARPU)</Label>
+              <Label className="text-xs text-slate-600">{t('arpu')}</Label>
               <InputGroup className="h-12">
                 <InputGroupAddon>€</InputGroupAddon>
                 <InputGroupInput
                   type="number"
-                  placeholder="99"
+                  placeholder={t('arpuPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={arpu || ""}
                   onChange={(e) => updateEconomics({ arpu: parseFloat(e.target.value) || 0 })}
                   min="0"
                 />
-                <InputGroupAddon align="inline-end">per month</InputGroupAddon>
+                <InputGroupAddon align="inline-end">{t('perMonth')}</InputGroupAddon>
               </InputGroup>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Customer Lifetime (months)</Label>
+              <Label className="text-xs text-slate-600">{t('customerLifetime')}</Label>
               <InputGroup className="h-12">
                 <InputGroupInput
                   type="number"
-                  placeholder="18"
+                  placeholder={t('customerLifetimePlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={customerLifetime || ""}
                   onChange={(e) => updateEconomics({ customerLifetime: parseFloat(e.target.value) || 0 })}
                   min="0"
                 />
-                <InputGroupAddon align="inline-end">months</InputGroupAddon>
+                <InputGroupAddon align="inline-end">{t('months')}</InputGroupAddon>
               </InputGroup>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Contribution Margin per Customer</Label>
+              <Label className="text-xs text-slate-600">{t('contributionMargin')}</Label>
               <InputGroup className="h-12">
                 <InputGroupAddon>€</InputGroupAddon>
                 <InputGroupInput
                   type="number"
-                  placeholder="84"
+                  placeholder={t('contributionMarginPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={contributionMargin || ""}
                   onChange={(e) => updateEconomics({ contributionMargin: parseFloat(e.target.value) || 0 })}
                   min="0"
                 />
               </InputGroup>
-              <p className="text-xs text-slate-500">Revenue per customer - COGS</p>
+              <p className="text-xs text-slate-500">{t('contributionMarginHint')}</p>
             </div>
           </div>
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${(grossMargin || arpu || customerLifetime || contributionMargin) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {(grossMargin > 0 && arpu > 0 && customerLifetime > 0 && contributionMargin > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Gross Margin = (Revenue - COGS) / Revenue × 100%</p>
-              <p>• ARPU = Revenue ÷ Active Users</p>
-              <p>• Customer Lifetime = 1 ÷ Churn Rate</p>
-              <p>• Contribution Margin = Revenue per customer - COGS</p>
-              <p>• LTV = ARPU × Customer Lifetime × Gross Margin</p>
-              <p>• CAC is in Step 3 (Channels)</p>
+              <p>• {t('unitEconomicsGuidelines.1')}</p>
+              <p>• {t('unitEconomicsGuidelines.2')}</p>
+              <p>• {t('unitEconomicsGuidelines.3')}</p>
+              <p>• {t('unitEconomicsGuidelines.4')}</p>
+              <p>• {t('unitEconomicsGuidelines.5')}</p>
+              <p>• {t('unitEconomicsGuidelines.6')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Gross Margin: 85%, ARPU: €99/month, Lifetime: 18 months, Contribution: €84. LTV: €1,505 (€99 × 18 × 0.85)."
+              {t('unitEconomicsExample')}
             </div>
         {(ltv > 0 || ltvCacRatio > 0 || paybackPeriod > 0 || monthlyBurn > 0) && (
           <div className="text-xs text-slate-500 space-y-1">
-            <p className="font-medium text-slate-600">📊 Unit Economics (Auto-calculated):</p>
+            <p className="font-medium text-slate-600">{t('unitEconomicsCalculated')}</p>
             {ltv > 0 && <p>• LTV: €{ltv.toFixed(2)}</p>}
             {ltvCacRatio > 0 && cac > 0 && (
-              <p>• LTV/CAC Ratio: {ltvCacRatio.toFixed(1)}x {ltvCacRatio >= 3 ? '(Excellent)' : ltvCacRatio >= 2 ? '(Acceptable)' : '(Needs improvement)'}</p>
+              <p>• {t('ltvCacRatio')}: {ltvCacRatio.toFixed(1)}x {ltvCacRatio >= 3 ? t('excellent') : ltvCacRatio >= 2 ? t('acceptable') : t('needsImprovement')}</p>
             )}
             {paybackPeriod > 0 && (
-              <p>• Payback Period: {paybackPeriod.toFixed(1)} months {paybackPeriod <= 12 ? '(Excellent)' : paybackPeriod <= 18 ? '(Acceptable)' : '(Too long)'}</p>
+              <p>• {t('paybackPeriod')}: {paybackPeriod.toFixed(1)} {t('months')} {paybackPeriod <= 12 ? t('excellent') : paybackPeriod <= 18 ? t('acceptable') : t('tooLong')}</p>
             )}
-            {monthlyBurn > 0 && <p>• Monthly Burn Rate: €{monthlyBurn.toFixed(0)}</p>}
+            {monthlyBurn > 0 && <p>• {t('monthlyBurnRate')}: €{monthlyBurn.toFixed(0)}</p>}
           </div>
         )}
           </div>
@@ -426,16 +444,16 @@ export function Step5Economics() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 group border-b md:border-b-0 pb-8 md:pb-0">
           <div className="space-y-4">
             <Label className="text-sm font-semibold">
-              4.6. Funding & runway <span className="text-red-500">*</span>
+              {t('fundingRunwayLabel')} <span className="text-red-500">*</span>
             </Label>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Amount Already Raised</Label>
+              <Label className="text-xs text-slate-600">{t('amountRaised')}</Label>
               <InputGroup className="h-12">
                 <InputGroupAddon>€</InputGroupAddon>
                 <InputGroupInput
                   type="number"
-                  placeholder="50000"
+                  placeholder={t('amountRaisedPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={fundingRaised || ""}
                   onChange={(e) => updateEconomics({ fundingRaised: parseFloat(e.target.value) || 0 })}
@@ -445,15 +463,15 @@ export function Step5Economics() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-900">Funding Sources <span className="text-red-500">*</span></Label>
-              <p className="text-xs text-slate-500">Add at least 1 funding source</p>
+              <Label className="text-sm font-medium text-slate-900">{t('fundingSources')} <span className="text-red-500">*</span></Label>
+              <p className="text-xs text-slate-500">{t('fundingSourcesHint')}</p>
               
               <div className="border border-slate-200 overflow-hidden rounded-md">
                 <div className="p-2 bg-white border-b border-slate-200">
                   <div className="flex flex-col md:flex-row gap-2">
                     <Select value={newSourceType} onValueChange={setNewSourceType}>
                       <SelectTrigger className="h-10 flex-1">
-                        <SelectValue placeholder="Select type..." />
+                        <SelectValue placeholder={t('selectType')} />
                       </SelectTrigger>
                       <SelectContent>
                         {fundingTypes.map((type) => (
@@ -468,7 +486,7 @@ export function Step5Economics() {
                         <InputGroupAddon>€</InputGroupAddon>
                         <InputGroupInput
                           type="number"
-                          placeholder="Amount"
+                          placeholder={t('amount')}
                           className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
                           value={newSourceAmount}
                           onChange={(e) => setNewSourceAmount(e.target.value)}
@@ -479,15 +497,15 @@ export function Step5Economics() {
                         type="button"
                         className="h-10 px-4 text-sm whitespace-nowrap"
                         onClick={handleAddSource}
-                        disabled={(!newSourceType || (newSourceType === "Other" && !newSourceCustomType)) || !newSourceAmount}
+                        disabled={(!newSourceType || (newSourceType === t('fundingTypes.other') && !newSourceCustomType)) || !newSourceAmount}
                       >
-                        Add
+                        {t('add')}
                       </Button>
                     </div>
                   </div>
-                  {newSourceType === "Other" && (
+                  {newSourceType === t('fundingTypes.other') && (
                     <Input
-                      placeholder="Specify source type..."
+                      placeholder={t('specifySourceType')}
                       className="!h-10 mt-2"
                       value={newSourceCustomType}
                       onChange={(e) => setNewSourceCustomType(e.target.value)}
@@ -512,7 +530,7 @@ export function Step5Economics() {
                       </div>
                     ))}
                     <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
-                      <span className="text-xs font-semibold text-slate-700">Total: €{totalRaised.toLocaleString()}</span>
+                      <span className="text-xs font-semibold text-slate-700">{t('total')}: €{totalRaised.toLocaleString()}</span>
                     </div>
                   </div>
                 )}
@@ -520,12 +538,12 @@ export function Step5Economics() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Amount Seeking</Label>
+              <Label className="text-xs text-slate-600">{t('amountSeeking')}</Label>
               <InputGroup className="h-12">
                 <InputGroupAddon>€</InputGroupAddon>
                 <InputGroupInput
                   type="number"
-                  placeholder="300000"
+                  placeholder={t('amountSeekingPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={amountSeeking || ""}
                   onChange={(e) => updateEconomics({ amountSeeking: parseFloat(e.target.value) || 0 })}
@@ -535,14 +553,14 @@ export function Step5Economics() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-900">Use of Funds <span className="text-red-500">*</span></Label>
-              <p className="text-xs text-slate-500">Add at least 1 allocation item</p>
+              <Label className="text-sm font-medium text-slate-900">{t('useOfFunds')} <span className="text-red-500">*</span></Label>
+              <p className="text-xs text-slate-500">{t('useOfFundsHint')}</p>
               
               <div className="border border-slate-200 overflow-hidden rounded-md">
                 <div className="p-2 bg-white border-b border-slate-200">
                   <div className="flex flex-col md:flex-row gap-2">
                     <Input
-                      placeholder="e.g., Runway, Hiring, Marketing..."
+                      placeholder={t('useOfFundsPlaceholder')}
                       className="!min-h-10 flex-1"
                       value={newFundItem}
                       onChange={(e) => setNewFundItem(e.target.value)}
@@ -552,7 +570,7 @@ export function Step5Economics() {
                         <InputGroupAddon>€</InputGroupAddon>
                         <InputGroupInput
                           type="number"
-                          placeholder="Amount"
+                          placeholder={t('amount')}
                           className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-sm"
                           value={newFundAmount}
                           onChange={(e) => setNewFundAmount(e.target.value)}
@@ -565,7 +583,7 @@ export function Step5Economics() {
                         onClick={handleAddFundItem}
                         disabled={!newFundItem || !newFundAmount}
                       >
-                        Add
+                        {t('add')}
                       </Button>
                     </div>
                   </div>
@@ -593,42 +611,42 @@ export function Step5Economics() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-600">Current Runway (months)</Label>
+              <Label className="text-xs text-slate-600">{t('currentRunway')}</Label>
               <InputGroup className="h-10">
                 <InputGroupInput
                   type="number"
-                  placeholder="11"
+                  placeholder={t('currentRunwayPlaceholder')}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={currentRunway || ""}
                   onChange={(e) => updateEconomics({ currentRunway: parseFloat(e.target.value) || 0 })}
                   min="0"
                 />
-                <InputGroupAddon align="inline-end">months</InputGroupAddon>
+                <InputGroupAddon align="inline-end">{t('months')}</InputGroupAddon>
               </InputGroup>
             </div>
           </div>
 
           <div className={`space-y-2 text-sm transition-opacity duration-300 ${(fundingRaised > 0 || fundingSources.length > 0 || amountSeeking || useOfFunds.length > 0) ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
-              Guidelines
+              {t('guidelines')}
               {(fundingRaised > 0 && fundingSources.length > 0 && amountSeeking > 0 && useOfFunds.length > 0 && currentRunway > 0) && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-black space-y-1">
-              <p>• Amount Raised: total funding received to date</p>
-              <p>• Funding Sources: add each source with type and amount</p>
-              <p>• Amount Seeking: target for next funding round</p>
-              <p>• Use of Funds: detailed allocation plan</p>
-              <p>• Runway: enter your calculated runway in months</p>
+              <p>• {t('fundingRunwayGuidelines.1')}</p>
+              <p>• {t('fundingRunwayGuidelines.2')}</p>
+              <p>• {t('fundingRunwayGuidelines.3')}</p>
+              <p>• {t('fundingRunwayGuidelines.4')}</p>
+              <p>• {t('fundingRunwayGuidelines.5')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              Example: "Sources: Bootstrapped €50K, Angel €25K. Seeking: €300K. Use: €150K runway, €80K hiring, €40K marketing, €30K buffer. Runway: 11 months."
+              {t('fundingRunwayExample')}
             </div>
           </div>
         </div>
 
         <div className="border-l-2 border-slate-300 pl-4">
           <p className="text-sm text-slate-600">
-            Tip: Investors prioritize clear unit economics and realistic path to profitability.
+            {t('tip')}
           </p>
         </div>
       </div>

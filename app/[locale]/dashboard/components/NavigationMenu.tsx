@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from '@/lib/navigation';
+import { Link, usePathname } from '@/lib/navigation';
 import { useTranslations } from 'next-intl';
 
 interface NavigationMenuProps {

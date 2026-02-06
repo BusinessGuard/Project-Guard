@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/navigation";
 import { useMutation } from "@tanstack/react-query";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Step1BasicInfo } from "./components/Step1BasicInfo";
 import { Step2ValueProposition } from "./components/Step2ValueProposition";
 import { Step3CustomerSegments } from "./components/Step3CustomerSegments";
@@ -132,6 +134,10 @@ const validateStep = (step: number, data: ProjectData): boolean => {
 };
 
 export default function CreateProjectPage() {
+  const t = useTranslations('create');
+  const tCommon = useTranslations('common');
+  const tNav = useTranslations('nav');
+  const tAuth = useTranslations('auth');
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject } = useProjectStore();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
@@ -244,26 +250,29 @@ export default function CreateProjectPage() {
     });
   };
 
-  if (createProjectMutation.isPending) return <LoadingScreen text="Analyzing project..." />;
+  if (createProjectMutation.isPending) return <LoadingScreen text={t('analyzing')} />;
 
   return (
     <div className="min-h-screen bg-white">
       <div className="w-full border-b px-8 py-4">
         <div className="max-w-3xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-bold text-black">
-            {isReAnalysis ? 'Re-analyze Project' : 'Create New Project'}
+            {isReAnalysis ? t('reAnalyzeTitle') : t('title')}
           </h1>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {
-              if (confirm('Clear all form data and start over?')) {
-                resetProject();
-              }
-            }}
-          >
-            Reset Form
-          </Button>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                if (confirm(t('resetConfirm'))) {
+                  resetProject();
+                }
+              }}
+            >
+              {t('resetForm')}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -271,7 +280,7 @@ export default function CreateProjectPage() {
         <div className={`w-full mx-auto space-y-8 ${currentStep === 1 ? 'max-w-[600px]' : 'max-w-[1200px]'}`}>
           <div className="space-y-2 max-w-[600px]">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">Step {currentStep} of 10</span>
+              <span className="text-sm text-slate-600">{t('step')} {currentStep} {t('of')} 10</span>
               <span className="text-sm text-slate-600">{Math.round((currentStep / 10) * 100)}%</span>
             </div>
             <div className="w-full bg-slate-200 h-1">
@@ -295,7 +304,7 @@ export default function CreateProjectPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-end text-sm">
               <span className="text-slate-600">
-                Fields completed: <span className="font-semibold text-black">{getStepFieldsCount(currentStep, projectData).filled}</span> / {getStepFieldsCount(currentStep, projectData).total}
+                {t('fieldsCompleted')}: <span className="font-semibold text-black">{getStepFieldsCount(currentStep, projectData).filled}</span> / {getStepFieldsCount(currentStep, projectData).total}
               </span>
             </div>
             
@@ -305,7 +314,7 @@ export default function CreateProjectPage() {
                   onClick={currentStep === 1 ? () => router.back() : handleBack}
                   className="text-lg px-8 py-6"
                 >
-                  ← Back
+                  ← {tCommon('back')}
                 </Button>
                 <Button 
                   onClick={currentStep === 10 ? handleSubmit : handleNext}
@@ -313,10 +322,10 @@ export default function CreateProjectPage() {
                   disabled={!validateStep(currentStep, projectData) || createProjectMutation.isPending}
                 >
                   {createProjectMutation.isPending 
-                    ? "Submitting..." 
+                    ? tCommon('submitting')
                     : currentStep === 10 
-                      ? (isReAnalysis ? "Re-analyze Project" : "Submit Project")
-                      : "Next →"}
+                      ? (isReAnalysis ? t('reAnalyzeProject') : t('submitProject'))
+                      : `${tCommon('next')} →`}
                 </Button>
             </div>
           </div>
@@ -326,16 +335,16 @@ export default function CreateProjectPage() {
       {showDemoLimitModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg max-w-md space-y-4">
-            <h2 className="text-2xl font-bold">Demo Limit Reached</h2>
+            <h2 className="text-2xl font-bold">{t('demoLimit.title')}</h2>
             <p className="text-slate-600">
-              You've already tried our demo. Sign up to create unlimited projects and access all features.
+              {t('demoLimit.message')}
             </p>
             <div className="flex gap-3">
               <Button onClick={() => router.push('/login')} className="flex-1">
-                Sign Up
+                {tAuth('signUp')}
               </Button>
               <Button variant="outline" onClick={() => router.push('/')} className="flex-1">
-                Go Home
+                {t('demoLimit.goHome')}
               </Button>
             </div>
           </div>

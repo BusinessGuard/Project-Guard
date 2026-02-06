@@ -6,9 +6,11 @@ import { useScoreboardState } from '@/store/useState';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function Recommendations() {
+  const t = useTranslations('dashboard.recommendations');
   const { currentProject } = useVersionsStore();
   const { recommendationsProgress, setRecommendationsProgress } = useScoreboardState();
   const [expandedRecommendations, setExpandedRecommendations] = useState<Record<string, boolean>>({});
@@ -89,7 +91,7 @@ export function Recommendations() {
         return (
           <div key={rec.id} className="space-y-2">
             <div className="text-xs md:text-sm text-gray-500 px-2">
-              Progress: {progress.completed}/{progress.total} completed
+              {t('progress')}: {progress.completed}/{progress.total} {t('completed')}
             </div>
             <Card className={`border-l-4 md:border-l-8 relative shadow-none ${getPriorityBorderColor(rec.priority)}`}>
               <CardContent className="p-3 md:p-6">
@@ -112,7 +114,7 @@ export function Recommendations() {
                     {expandedRecommendations[rec.id] && (
                       <>
                         <div>
-                          <h4 className="font-medium text-xs md:text-sm mb-2">Action Steps:</h4>
+                          <h4 className="font-medium text-xs md:text-sm mb-2">{t('actionSteps')}:</h4>
                           <div className=" md:pl-10 py-2 md:py-4 pb-4 md:pb-8">
                             {rec.actionSteps.map((step, idx) => (
                               <label key={idx} className="flex items-center gap-2 text-xs md:text-sm cursor-pointer hover:bg-gray-50 p-2 md:p-4 rounded">
@@ -129,9 +131,9 @@ export function Recommendations() {
                          <div className="flex flex-col gap-2 bg-gray-100 p-2 md:p-4 rounded-lg">
                             <div className="flex flex-wrap gap-2 md:gap-4 text-xs md:text-sm">
                               {[
-                                { label: 'Expected Impact', value: rec.expectedImpact },
-                                { label: 'Effort', value: rec.effort },
-                                { label: 'Timeline', value: rec.timeline },
+                                { label: t('expectedImpact'), value: rec.expectedImpact },
+                                { label: t('effort'), value: rec.effort },
+                                { label: t('timeline'), value: rec.timeline },
                               ].map((item, idx) => (
                                 <div key={idx}>
                                   <span className="font-medium">{item.label}:</span>
@@ -141,7 +143,7 @@ export function Recommendations() {
                             </div>
 
                             <div className="text-[10px] md:text-xs text-gray-500">
-                              Supported by {rec.expertsSupporting.length}/{totalExperts} experts
+                              {t('supportedBy', { count: rec.expertsSupporting.length, total: totalExperts })}
                             </div>
                           </div>   
                       </>

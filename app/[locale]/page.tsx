@@ -3,15 +3,18 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/lib/navigation";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { LuMoveLeft } from "react-icons/lu";
 import { Sparkles, Rocket, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { HeroContent } from "./home/components/HeroContent";
+import { HeroContent } from "./home/HeroContent";
 import { createClient } from "@/lib/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default function Home() {
+  const t = useTranslations('home');
+  const tNav = useTranslations('nav');
   const [showAuth, setShowAuth] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isFading, setIsFading] = useState(false);
@@ -132,11 +135,11 @@ export default function Home() {
           <div className="relative z-10 h-full flex flex-col items-center md:items-start px-5 md:px-12 justify-center">
             <div className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm font-medium mb-2">
               <Sparkles className="size-4" />
-              AI-Powered Startup Evaluation
+              {t('badge')}
             </div>
 
-            <h1 className="text-4xl xl:text-7xl font-bold text-white mb-2">ProjectGuard AI</h1>
-            <p className="text-md md:text-2xl text-white/90 mb-10">AI-Powered Startup Evaluation in 30 Seconds</p>
+            <h1 className="text-4xl xl:text-7xl font-bold text-white mb-2">{t('title')}</h1>
+            <p className="text-md md:text-2xl text-white/90 mb-10">{t('subtitle')}</p>
 
             <div className="flex gap-4 pt-2 ">
               <Button
@@ -145,7 +148,7 @@ export default function Home() {
                 className="gap-2 text-lg px-8 py-6 bg-white text-gray-900 hover:bg-white/90 cursor-pointer"
               >
                 <Rocket className="w-6 h-6" />
-                Start Free Analysis
+                {t('ctaButton')}
               </Button>
             </div>
           </div>
@@ -159,7 +162,7 @@ export default function Home() {
             router.push(isAuthenticated ? "/dashboard" : "/login");
           }, 700);
         }}>
-          {isAuthenticated ? "Dashboard" : "Login"}
+          {isAuthenticated ? tNav('dashboard') : tNav('login')}
         </Button>
       </div>
         <div className={`relative flex items-center justify-center px-8 bg-white transition-all duration-700 ease-in-out ${showAuth ? "w-full lg:w-1/2" : "w-full lg:w-1/2" }`}>
@@ -180,10 +183,10 @@ export default function Home() {
               {isAuthenticated ? (
                 <>
                   <LayoutDashboard className="w-5 h-5" />
-                  Dashboard
+                  {tNav('dashboard')}
                 </>
               ) : (
-                "Login"
+                tNav('login')
               )}
             </Button>
           </div>

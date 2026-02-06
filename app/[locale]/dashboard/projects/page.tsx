@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
-import Link from 'next/link';
+import { Link } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
 import { EmptyProjects } from './components/EmptyProjects';
 import { AnonymousProjectCard } from './components/AnonymousProjectCard';
+import { getTranslations } from 'next-intl/server';
 
 async function getUserProjects() {
   const supabase = await createClient();
@@ -20,6 +21,7 @@ async function getUserProjects() {
 }
 
 export default async function ProjectsPage() {
+  const t = await getTranslations('project');
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const isAuthenticated = !!user;
@@ -35,9 +37,9 @@ export default async function ProjectsPage() {
       <div className="p-6 pt-25">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Projects</h1>
+            <h1 className="text-2xl font-bold">{t('list')}</h1>
             <Link href="/create">
-              <Button>Create Project</Button>
+              <Button>{t('create')}</Button>
             </Link>
           </div>
           

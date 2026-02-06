@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadarChartView } from './RadarChartView';
@@ -10,20 +10,13 @@ import { Experts } from './Experts';
 import { LuChartBar, LuNotebookPen } from "react-icons/lu";
 import { GoCommentDiscussion } from "react-icons/go";
 import { TbZoomMoney } from "react-icons/tb";
+import { useTranslations } from 'next-intl';
 
 interface TabItem {
   value: string;
   label: string;
   content: React.ReactNode;
 }
-
-const tabs: TabItem[] = [
-  { value: 'overview', label: 'Overview', content: <div className="grid lg:grid-cols-2 gap-6"><RadarChartView /><BlockScores /></div>},
-  { value: 'experts', label: 'Expert Insights', content: <Experts /> },
-  { value: 'recommendations', label: 'Recommendations', content: <Recommendations /> },
-  { value: 'growth', label: 'Growth Plan', content: <GrowthPlan /> },
-  { value: 'financial', label: 'Financial Forecast', content: <FinancialForecast /> },
-];
 
 const mobileIcons = [
   LuChartBar,           // Overview
@@ -34,10 +27,19 @@ const mobileIcons = [
 ];
 
 export const TabsSection = () => {
+  const t = useTranslations('dashboard.tabsSection');
   const [activeTab, setActiveTab] = useState('overview');
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  const tabs: TabItem[] = useMemo(() => [
+    { value: 'overview', label: t('overview'), content: <div className="grid lg:grid-cols-2 gap-6"><RadarChartView /><BlockScores /></div>},
+    { value: 'experts', label: t('expertInsights'), content: <Experts /> },
+    { value: 'recommendations', label: t('recommendations'), content: <Recommendations /> },
+    { value: 'growth', label: t('growthPlan'), content: <GrowthPlan /> },
+    { value: 'financial', label: t('financialForecast'), content: <FinancialForecast /> },
+  ], [t]);
 
   useEffect(() => {
     const updateIndicator = () => {

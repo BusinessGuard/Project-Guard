@@ -8,6 +8,7 @@ import { ProjectPDF } from '@/lib/pdf/ProjectPDF';
 import { preparePDFData } from '@/lib/pdf/prepareData';
 import { VersionsByAudience } from '@/lib/utils/getVersions';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface PDFPreviewClientProps {
   versions: VersionsByAudience;
@@ -22,6 +23,7 @@ export function PDFPreviewClient({
   initialAudience,
   isAuthorized 
 }: PDFPreviewClientProps) {
+  const t = useTranslations('pdf');
   const [isDownloading, setIsDownloading] = useState(false);
   
   // Prepare PDF data
@@ -31,10 +33,10 @@ export function PDFPreviewClient({
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">No Data Available</h1>
-          <p className="text-gray-600 mb-6">Unable to generate PDF. No analysis data found.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('noDataTitle')}</h1>
+          <p className="text-gray-600 mb-6">{t('noDataMessage')}</p>
           <Button onClick={() => window.close()}>
-            Close
+            {t('close')}
           </Button>
         </div>
       </div>
@@ -44,7 +46,7 @@ export function PDFPreviewClient({
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
-      toast.info('Generating PDF for download...');
+      toast.info(t('generatingPdf'));
       
       // Generate PDF blob
       const blob = await pdf(<ProjectPDF data={pdfData} />).toBlob();
@@ -59,10 +61,10 @@ export function PDFPreviewClient({
       // Cleanup
       URL.revokeObjectURL(url);
       
-      toast.success('PDF downloaded successfully!');
+      toast.success(t('pdfDownloaded'));
     } catch (error) {
       console.error('Failed to download PDF:', error);
-      toast.error('Failed to download PDF. Please try again.');
+      toast.error(t('pdfDownloadFailed'));
     } finally {
       setIsDownloading(false);
     }
@@ -70,15 +72,14 @@ export function PDFPreviewClient({
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Top Download Button */}
       <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-[900px] mx-auto px-6 py-4 flex items-center justify-center gap-4">
           <div className="flex-1 text-center">
             <h1 className="text-lg font-semibold text-gray-900">
-              {pdfData.projectName} - PDF Preview
+              {pdfData.projectName} - {t('preview')}
             </h1>
             <p className="text-sm text-gray-500">
-              Version {initialVersion} • {pdfData.audienceType} Analysis
+              {t('version')} {initialVersion} • {t(`audienceTypes.${initialAudience}`)} {t('analysis')}
             </p>
           </div>
           
@@ -88,7 +89,7 @@ export function PDFPreviewClient({
             className="gap-2 min-w-[140px]"
           >
             <Download className="w-4 h-4" />
-            {isDownloading ? 'Downloading...' : 'Download PDF'}
+            {isDownloading ? t('downloading') : t('downloadPdf')}
           </Button>
         </div>
       </div>
@@ -119,11 +120,11 @@ export function PDFPreviewClient({
             size="lg"
           >
             <Download className="w-5 h-5" />
-            {isDownloading ? 'Downloading PDF...' : 'Download PDF Report'}
+            {isDownloading ? t('downloadingPdf') : t('downloadPdfReport')}
           </Button>
           
           <p className="text-center text-sm text-gray-500 mt-3">
-            This report contains {pdfData.recommendations.length} recommendations and detailed financial analysis
+            {t('reportContains', { count: pdfData.recommendations.length })}
           </p>
         </div>
       </div>
