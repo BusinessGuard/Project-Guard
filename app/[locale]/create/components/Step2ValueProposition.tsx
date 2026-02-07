@@ -187,7 +187,7 @@ export function Step2ValueProposition() {
                 </div>
               </div>
 
-              {advantages.length > 2 && (
+              {advantages.length > 0 && (
                 <div className="divide-y divide-slate-200">
                   {advantages.map((advantage, index) => (
                     <div key={index} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">
@@ -207,10 +207,10 @@ export function Step2ValueProposition() {
             </div>
           </div>
 
-          <div className={`space-y-2 text-sm transition-opacity duration-300 ${advantages.length > 0 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
+          <div className={`space-y-2 text-sm transition-opacity duration-300 ${advantages.length > 2 ? 'opacity-100' : 'opacity-10 group-focus-within:opacity-100'}`}>
             <h4 className="text-base font-semibold text-black flex items-center gap-2">
               {t('guidelines')}
-              {advantages.length > 0 && <TbChecks className="text-green-500 text-lg" />}
+              {advantages.length > 2 && <TbChecks className="text-green-500 text-lg" />}
             </h4>
             <div className="text-slate-600 italic">
               {t('advantagesExample')}
