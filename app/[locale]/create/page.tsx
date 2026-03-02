@@ -268,20 +268,41 @@ export default function CreateProjectPage() {
         jobId,
       };
 
-      // Send analysis request IMMEDIATELY, then redirect to processing page
-      console.log('📤 Sending analysis request (fire-and-forget)...');
-      fetch('/api/projects', {
+      // Send analysis and WAIT for response
+      console.log('📤 Sending analysis request and waiting...');
+      const analysisResponse = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestPayload),
-        keepalive: true,
-      }).catch(err => console.error('Analysis request error:', err));
+      });
 
-      // Redirect immediately to processing page which will poll for status
-      console.log('🔄 Redirecting to processing page...');
-      router.push(`/create/processing?jobId=${jobId}`);
+      console.log('📡 Response received, status:', analysisResponse.status);
+
+      if (!analysisResponse.ok) {
+        const errorData = await analysisResponse.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `Server error: ${analysisResponse.status}`);
+      }
+
+      const result = await analysisResponse.json();
+      console.log('✅ Analysis complete! Project ID:', result.projectId);
+
+      const resultProjectId = result.projectId as string;
+      if (!resultProjectId) {
+        throw new Error('No projectId in response');
+      }
+
+      // Save for anonymous users
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setAnonymousProjectId(resultProjectId);
+      }
+
+      // Redirect to project
+      console.log('🔄 Redirecting to project page...');
+      router.push(`/dashboard/projects/${resultProjectId}`);
     } catch (error) {
-      console.error('❌ Project creation failed:', error);
+      console.error('❌ Analysis failed:', error);
       setIsSubmitting(false);
     }
   };
