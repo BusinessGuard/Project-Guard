@@ -308,6 +308,7 @@ export default function CreateProjectPage() {
   };
 
   if (isLoadingProjectData) return <LoadingScreen text={tCommon('loading')} />;
+  if (isSubmitting) return <LoadingScreen text={t('analyzing')} />;
 
   return (
     <div className="min-h-screen bg-white">
