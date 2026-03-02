@@ -83,6 +83,10 @@ export async function saveAnalysisToDatabase({
     }
     
     if (!projectId || !project) {
+      console.log('🔵 Creating new project...');
+      console.log('  - user_id:', userId || 'null (anonymous)');
+      console.log('  - project name:', projectData.basicInfo.projectName);
+      
       const { data: newProject, error: projectError } = await supabase
         .from('projects')
         .insert({
@@ -95,73 +99,139 @@ export async function saveAnalysisToDatabase({
         .select()
         .single();
 
+      console.log('📊 Project insert result:');
+      console.log('  - data:', newProject ? `ID: ${newProject.id}` : 'null');
+      console.log('  - error:', projectError);
+
       if (projectError || !newProject) {
-        console.error('❌ Error creating project:', projectError);
+        console.error('❌ Error creating project!');
+        if (projectError) {
+          console.error('🔍 ERROR DETAILS:');
+          console.error('  - message:', projectError.message);
+          console.error('  - code:', projectError.code);
+          console.error('  - details:', projectError.details);
+          console.error('  - hint:', projectError.hint);
+        }
         throw new Error('Failed to create project');
       }
       
       project = newProject;
       versionNumber = 1;
       console.log('✅ Project created:', project.id);
+      
+      // Verify project was created and is accessible
+      console.log('🔍 Verifying project accessibility...');
+      const { data: verifyProject, error: verifyError } = await supabase
+        .from('projects')
+        .select('id, user_id, name')
+        .eq('id', project.id)
+        .single();
+      
+      console.log('📊 Verify result:');
+      console.log('  - data:', verifyProject);
+      console.log('  - error:', verifyError);
+      
+      if (verifyError) {
+        console.error('⚠️ Project was created but cannot be read back!');
+        console.error('  This suggests RLS is blocking anonymous reads');
+      }
     }
 
-    // 2. Create 3 project versions (one for each audience)
-    const versionInserts = analyses.map(({ audienceType, analysis }) => ({
-      project_id: project.id,
-      version_number: versionNumber,
-      audience_type: audienceType,
-      
-      // Canvas data (raw form data)
-      canvas_data: projectData,
-      
-      // Scores
-      overall_score: analysis.scores.overall,
-      readiness_status: analysis.scores.readiness,
-      score_value_proposition: analysis.scores.blocks.valueProposition,
-      score_customer_segments: analysis.scores.blocks.customerSegments,
-      score_channels: analysis.scores.blocks.channels,
-      score_revenue: analysis.scores.blocks.revenue,
-      score_costs: analysis.scores.blocks.costs,
-      score_key_resources: analysis.scores.blocks.keyResources,
-      score_key_activities: analysis.scores.blocks.keyActivities,
-      score_key_partners: analysis.scores.blocks.keyPartners,
-      score_team: analysis.scores.blocks.team,
-      
-      // Benchmark
-      benchmark_percentile: analysis.benchmark.percentile,
-      benchmark_better_than: analysis.benchmark.betterThan,
-      
-      // Consensus
-      consensus_strengths: analysis.consensus.findings.topStrengths,
-      consensus_weaknesses: analysis.consensus.findings.topWeaknesses,
-      
-      // Complex data as JSONB
-      experts: analysis.experts,
-      recommendations: analysis.recommendations,
-      growth_phases: analysis.growthPlan,
-      
-      // Financial metrics
-      fin_ltv: analysis.financialForecast.unitEconomics.ltv,
-      fin_cac: analysis.financialForecast.unitEconomics.cac,
-      fin_ltv_cac_ratio: analysis.financialForecast.unitEconomics.ltvCacRatio,
-      fin_payback_period: analysis.financialForecast.unitEconomics.paybackPeriod,
-      fin_gross_margin: analysis.financialForecast.unitEconomics.grossMargin,
-      fin_churn_rate: analysis.financialForecast.unitEconomics.churnRate,
-      fin_break_even_month: analysis.financialForecast.breakEven.month,
-      fin_break_even_customers: analysis.financialForecast.breakEven.customers,
-      fin_break_even_mrr: analysis.financialForecast.breakEven.mrr,
-      fin_monthly_projections: analysis.financialForecast.monthlyProjections,
-    }));
+    // 2. Create project versions (one for each audience)
+    const versionInserts = analyses.map(({ audienceType, analysis }) => {
+      // Validate that analysis has required structure
+      if (!analysis || !analysis.scores || !analysis.experts) {
+        console.error('❌ Invalid analysis structure for', audienceType);
+        throw new Error(`Invalid analysis structure for ${audienceType}`);
+      }
+
+      return {
+        project_id: project.id,
+        version_number: versionNumber,
+        audience_type: audienceType,
+        
+        // Canvas data (raw form data)
+        canvas_data: projectData,
+        
+        // Scores
+        overall_score: analysis.scores.overall ?? 0,
+        readiness_status: analysis.scores.readiness ?? 'Not Ready',
+        score_value_proposition: analysis.scores.blocks?.valueProposition ?? 0,
+        score_customer_segments: analysis.scores.blocks?.customerSegments ?? 0,
+        score_channels: analysis.scores.blocks?.channels ?? 0,
+        score_revenue: analysis.scores.blocks?.revenue ?? 0,
+        score_costs: analysis.scores.blocks?.costs ?? 0,
+        score_key_resources: analysis.scores.blocks?.keyResources ?? 0,
+        score_key_activities: analysis.scores.blocks?.keyActivities ?? 0,
+        score_key_partners: analysis.scores.blocks?.keyPartners ?? 0,
+        score_team: analysis.scores.blocks?.team ?? 0,
+        
+        // Benchmark
+        benchmark_percentile: analysis.benchmark?.percentile ?? 0,
+        benchmark_better_than: analysis.benchmark?.betterThan ?? 0,
+        
+        // Consensus
+        consensus_strengths: analysis.consensus?.findings?.topStrengths ?? [],
+        consensus_weaknesses: analysis.consensus?.findings?.topWeaknesses ?? [],
+        
+        // Complex data as JSONB
+        experts: analysis.experts ?? [],
+        recommendations: analysis.recommendations ?? [],
+        growth_phases: analysis.growthPlan ?? [],
+        
+        // Financial metrics
+        fin_ltv: analysis.financialForecast?.unitEconomics?.ltv ?? 0,
+        fin_cac: analysis.financialForecast?.unitEconomics?.cac ?? 0,
+        fin_ltv_cac_ratio: analysis.financialForecast?.unitEconomics?.ltvCacRatio ?? 0,
+        fin_payback_period: analysis.financialForecast?.unitEconomics?.paybackPeriod ?? 0,
+        fin_gross_margin: analysis.financialForecast?.unitEconomics?.grossMargin ?? 0,
+        fin_churn_rate: analysis.financialForecast?.unitEconomics?.churnRate ?? 0,
+        fin_break_even_month: analysis.financialForecast?.breakEven?.month ?? 0,
+        fin_break_even_customers: analysis.financialForecast?.breakEven?.customers ?? 0,
+        fin_break_even_mrr: analysis.financialForecast?.breakEven?.mrr ?? 0,
+        fin_monthly_projections: analysis.financialForecast?.monthlyProjections ?? [],
+      };
+    });
 
     console.log('🔵 Inserting', versionInserts.length, 'versions...');
+    console.log('📝 Version data sample:');
+    console.log('  - project_id:', versionInserts[0]?.project_id);
+    console.log('  - audience_type:', versionInserts[0]?.audience_type);
+    console.log('  - version_number:', versionInserts[0]?.version_number);
+    console.log('  - overall_score:', versionInserts[0]?.overall_score);
     
     const { data: versions, error: versionError } = await supabase
       .from('project_versions')
       .insert(versionInserts)
       .select();
 
-    if (versionError || !versions || versions.length !== 3) {
-      console.error('❌ Error creating versions:', versionError);
+    console.log('📊 Insert result:');
+    console.log('  - data:', versions ? `${versions.length} rows` : 'null');
+    console.log('  - error:', versionError);
+
+    if (versionError || !versions || versions.length !== versionInserts.length) {
+      console.error('❌ Error creating versions!');
+      console.error('📊 Expected:', versionInserts.length, 'Got:', versions?.length || 0);
+      
+      if (versionError) {
+        console.error('🔍 ERROR DETAILS:');
+        console.error('  - message:', versionError.message);
+        console.error('  - code:', versionError.code);
+        console.error('  - details:', versionError.details);
+        console.error('  - hint:', versionError.hint);
+      }
+      
+      console.error('🔍 Project ID used:', versionInserts[0]?.project_id);
+      
+      // Check if project exists
+      const { data: checkProject, error: checkError } = await supabase
+        .from('projects')
+        .select('id, user_id')
+        .eq('id', versionInserts[0]?.project_id)
+        .single();
+      
+      console.error('🔍 Project check result:', checkProject, 'Error:', checkError);
+      
       throw new Error('Failed to create project versions');
     }
     
