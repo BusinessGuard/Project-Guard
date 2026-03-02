@@ -4,7 +4,7 @@ import { analyzeProject } from '@/utils/analizeProject';
 import { saveAnalysisToDatabase } from '@/utils/saveAnalysisToDatabase';
 
 // Increase timeout for Vercel (Pro plan: up to 300s, Hobby: 10s)
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,9 +26,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Run 3 analyses in parallel for 3 audience types
-    const audienceTypes = ['venture', 'bank', 'corporate'] as const;
+    // For anonymous users, only generate 'venture' to speed up the process
+    const audienceTypes = isAnonymous 
+      ? ['venture'] as const 
+      : ['venture', 'bank', 'corporate'] as const;
     
-    console.log('🔵 Starting 3 AI analyses in parallel...');
+    console.log(`🔵 Starting ${audienceTypes.length} AI analyses in parallel...`);
     const analysisStartTime = Date.now();
     
     const analysisPromises = audienceTypes.map(audienceType => 
