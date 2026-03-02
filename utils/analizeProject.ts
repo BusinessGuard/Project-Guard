@@ -25,6 +25,7 @@ export async function analyzeProject(
   language: string = 'ru',
   audienceType: 'venture' | 'bank' | 'corporate' = 'venture'
 ): Promise<AnalyzeProjectResult> {
+  const model = process.env.OPENAI_MODEL || 'gpt-4o';
   console.log(`🤖 Starting AI analysis for audience: ${audienceType}`);
   const startTime = Date.now();
   
@@ -33,7 +34,7 @@ export async function analyzeProject(
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'chatgpt-4o-latest',
+      model,
       max_completion_tokens: 8000,
       temperature: 0.7,
       response_format: { type: 'json_object' },
