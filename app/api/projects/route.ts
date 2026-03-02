@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
         .eq('id', jobId);
     }
 
-    // Run 3 analyses in parallel
+    // Run 3 analyses in parallel.
     const audienceTypes = ['venture', 'bank', 'corporate'] as const;
     console.log(`🔵 Starting ${audienceTypes.length} AI analyses...`);
     

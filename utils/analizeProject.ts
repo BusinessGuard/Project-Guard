@@ -25,7 +25,7 @@ export async function analyzeProject(
   language: string = 'ru',
   audienceType: 'venture' | 'bank' | 'corporate' = 'venture'
 ): Promise<AnalyzeProjectResult> {
-  const model = process.env.OPENAI_MODEL || 'gpt-4o';
+  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
   console.log(`🤖 Starting AI analysis for audience: ${audienceType}`);
   const startTime = Date.now();
   
@@ -39,8 +39,8 @@ export async function analyzeProject(
     try {
       const response = await openai.chat.completions.create({
         model,
-        max_completion_tokens: 4000, // Optimized: ~3500-4000 tokens needed for full response
-        temperature: 0.7,
+        max_completion_tokens: 4000,
+        temperature: 0.1,
         response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: systemPrompt },
@@ -52,10 +52,16 @@ export async function analyzeProject(
       console.log(`✅ AI analysis completed for ${audienceType} in ${duration}s`);
 
       const content = response.choices[0].message.content;
+      const finishReason = response.choices[0].finish_reason;
 
       if (!content) {
-        console.error(`❌ Empty AI response for ${audienceType}`);
+        console.error(`❌ Empty AI response for ${audienceType}. finish_reason=${finishReason}`);
         throw new Error('Empty AI response');
+      }
+
+      if (finishReason === 'length') {
+        console.error(`❌ Truncated AI response for ${audienceType} (finish_reason=length)`);
+        throw new Error('Truncated AI response');
       }
 
       let analysis: AnalysisApiResponse;
