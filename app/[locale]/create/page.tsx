@@ -268,56 +268,75 @@ export default function CreateProjectPage() {
         jobId,
       };
 
-      // Start analysis in background
+      // Start analysis in background (ignore connection errors - will poll instead)
       console.log('📤 Starting analysis (background)...');
       fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestPayload),
         keepalive: true,
-      }).catch(err => console.warn('Analysis request error (will poll instead):', err));
+      }).catch(err => {
+        // Ignore network errors - analysis continues on server, we'll poll for status
+        console.warn('⚠️ Request connection closed (analysis continues on server, polling...):', err.message);
+      });
 
-      // Poll for completion
+      // Poll for completion - keep loading screen until we get result
       console.log('⏳ Polling for job completion...');
       const maxAttempts = 240; // 8 minutes
+      let lastError: Error | null = null;
+      
       for (let attempt = 0; attempt < maxAttempts; attempt++) {
         await new Promise(resolve => setTimeout(resolve, 2000));
         
-        const statusResponse = await fetch(`/api/projects/jobs/${jobId}`, {
-          method: 'GET',
-          cache: 'no-store',
-        });
+        try {
+          const statusResponse = await fetch(`/api/projects/jobs/${jobId}`, {
+            method: 'GET',
+            cache: 'no-store',
+          });
 
-        if (!statusResponse.ok) {
-          console.warn(`⚠️ Status check failed (attempt ${attempt + 1})`);
-          continue;
-        }
-
-        const statusData = await statusResponse.json();
-        console.log(`📊 Job status: ${statusData.status} (attempt ${attempt + 1})`);
-
-        if (statusData.status === 'completed' && statusData.projectId) {
-          const resultProjectId = statusData.projectId as string;
-          
-          // Save for anonymous users
-          const supabase = createClient();
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) {
-            setAnonymousProjectId(resultProjectId);
+          if (!statusResponse.ok) {
+            console.warn(`⚠️ Status check failed (attempt ${attempt + 1}/${maxAttempts}), retrying...`);
+            continue;
           }
 
-          console.log('✅ Analysis complete! Redirecting to:', resultProjectId);
-          router.push(`/dashboard/projects/${resultProjectId}`);
-          return;
-        }
+          const statusData = await statusResponse.json();
+          console.log(`📊 Job status: ${statusData.status} (attempt ${attempt + 1}/${maxAttempts})`);
 
-        if (statusData.status === 'failed') {
-          throw new Error(statusData.error || 'Analysis failed');
+          if (statusData.status === 'completed' && statusData.projectId) {
+            const resultProjectId = statusData.projectId as string;
+            
+            // Save for anonymous users
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+              setAnonymousProjectId(resultProjectId);
+            }
+
+            console.log('✅ Analysis complete! Redirecting to:', resultProjectId);
+            // Keep loading screen during redirect
+            router.push(`/dashboard/projects/${resultProjectId}`);
+            // Don't reset isSubmitting - let redirect happen with loading screen
+            return;
+          }
+
+          if (statusData.status === 'failed') {
+            lastError = new Error(statusData.error || 'Analysis failed');
+            break; // Exit loop, will throw below
+          }
+        } catch (pollError) {
+          // Network errors during polling - just retry, don't give up
+          console.warn(`⚠️ Polling error (attempt ${attempt + 1}), retrying...:`, pollError);
+          continue;
         }
       }
 
+      // Only throw error if we exhausted all attempts or got failed status
+      if (lastError) {
+        throw lastError;
+      }
       throw new Error('Timeout waiting for analysis');
     } catch (error) {
+      // Only hide loading screen on real errors (failed status or timeout)
       console.error('❌ Analysis failed:', error);
       setIsSubmitting(false);
     }
