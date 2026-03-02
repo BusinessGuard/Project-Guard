@@ -3,5 +3,14 @@
     "app/api/projects/route.ts": {
       "maxDuration": 300
     }
-  }
+  },
+  "routes": [
+    {
+      "src": "/api/projects",
+      "dest": "/api/projects",
+      "headers": {
+        "x-vercel-functions-timeout": "300000"
+      }
+    }
+  ]
 }

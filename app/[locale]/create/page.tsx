@@ -231,62 +231,57 @@ export default function CreateProjectPage() {
   const createProjectMutation = useMutation({
     mutationFn: async (data: { projectData: any; projectId?: string }) => {
       const startTime = Date.now();
-      console.log('🚀 Starting project creation at:', new Date().toISOString());
-      console.log('📦 Project data:', data.projectData.basicInfo.projectName);
-      if (data.projectId) {
-        console.log('🔄 Re-analyzing existing project:', data.projectId);
-      }
+      console.log('🚀 Starting project analysis...');
       
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
+        
         const response = await fetch('/api/projects', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
+          signal: controller.signal,
+          keepalive: true,
         });
         
-        const endTime = Date.now();
-        const duration = ((endTime - startTime) / 1000).toFixed(1);
-        console.log(`⏱️ Request completed in ${duration} seconds`);
+        clearTimeout(timeoutId);
+        
+        const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.log(`⏱️ Completed in ${duration}s`);
         
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('❌ Server error:', response.status, errorText);
-          throw new Error(`Server error: ${response.status} - ${errorText}`);
+          throw new Error(`Server error: ${response.status}`);
         }
         
-        const result = await response.json();
-        console.log('✅ Response received:', result);
-        return result;
+        return await response.json();
       } catch (error) {
-        const endTime = Date.now();
-        const duration = ((endTime - startTime) / 1000).toFixed(1);
-        console.error(`❌ Request failed after ${duration} seconds:`, error);
+        const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.error(`❌ Failed after ${duration}s:`, error);
         throw error;
       }
     },
     onSuccess: async (data) => {
-      if (data?.projectId) {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          console.log('💾 Saving anonymous project ID to localStorage:', data.projectId);
-          setAnonymousProjectId(data.projectId);
-        }
-        
-        console.log('🔀 Redirecting to:', `/dashboard/projects/${data.projectId}`);
-        router.push(`/dashboard/projects/${data.projectId}`);
-      } else {
-        console.log('⚠️ No projectId in response, redirecting to projects list');
+      if (!data?.projectId) {
+        console.error('⚠️ No projectId in response');
         router.push('/dashboard/projects');
+        return;
       }
+
+      // Save projectId for anonymous users
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        console.log('💾 Saving anonymous project ID:', data.projectId);
+        setAnonymousProjectId(data.projectId);
+      }
+      
+      console.log('🔀 Redirecting to project:', data.projectId);
+      router.push(`/dashboard/projects/${data.projectId}`);
     },
     onError: (error) => {
-      console.error('❌ Project creation failed');
-      console.error('Error:', error instanceof Error ? error.message : String(error));
-      if (error instanceof Error && error.stack) {
-        console.error('Stack trace:', error.stack);
-      }
+      console.error('❌ Project creation failed:', error);
     },
   });
 
