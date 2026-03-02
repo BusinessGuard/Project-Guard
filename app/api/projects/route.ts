@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server';
 import { analyzeProject } from '@/utils/analizeProject';
 import { saveAnalysisToDatabase } from '@/utils/saveAnalysisToDatabase';
 
+// Increase timeout for Vercel (Pro plan: up to 300s, Hobby: 10s)
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🚀 POST /api/projects - Starting...');
