@@ -241,10 +241,14 @@ export default function CreateProjectPage() {
   };
 
   const handleSubmit = async () => {
-    if (isSubmitting) return;
+    if (isSubmitting) {
+      console.log('⚠️ Submit already in progress, ignoring duplicate click');
+      return;
+    }
     setIsSubmitting(true);
 
     try {
+      console.log('📤 Creating analysis job...');
       const jobResponse = await fetch('/api/projects/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -256,6 +260,7 @@ export default function CreateProjectPage() {
 
       const jobPayload = await jobResponse.json();
       const jobId = jobPayload.jobId as string;
+      console.log('✅ Job created:', jobId);
 
       const requestPayload = {
         projectData,
@@ -263,6 +268,7 @@ export default function CreateProjectPage() {
       };
 
       sessionStorage.setItem('analysisRequestPayload', JSON.stringify(requestPayload));
+      console.log('🔄 Redirecting to processing page...');
       router.push(`/create/processing?jobId=${jobId}`);
     } catch (error) {
       console.error('❌ Project creation failed:', error);
