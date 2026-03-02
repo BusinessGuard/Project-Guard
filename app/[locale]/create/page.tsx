@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/lib/navigation";
 import { useSearchParams } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LayoutDashboard } from "lucide-react";
 import { Step1BasicInfo } from "./components/Step1BasicInfo";
@@ -147,6 +146,7 @@ export default function CreateProjectPage() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [isLoadingProjectData, setIsLoadingProjectData] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
@@ -228,111 +228,6 @@ export default function CreateProjectPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentStep]);
 
-  const createProjectMutation = useMutation({
-    mutationFn: async (data: { projectData: any; projectId?: string }) => {
-      const startTime = Date.now();
-      console.log('🚀 Starting project analysis...');
-      let jobId: string | null = null;
-
-      const pollJobUntilDone = async (jobId: string) => {
-        const maxAttempts = 240; // ~8 minutes with 2s interval
-
-        for (let attempt = 0; attempt < maxAttempts; attempt++) {
-          const statusResponse = await fetch(`/api/projects/jobs/${jobId}`, {
-            method: 'GET',
-            cache: 'no-store',
-          });
-
-          if (!statusResponse.ok) {
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            continue;
-          }
-
-          const statusData = await statusResponse.json();
-          if (statusData.status === 'completed' && statusData.projectId) {
-            return { projectId: statusData.projectId, jobId, success: true };
-          }
-
-          if (statusData.status === 'failed') {
-            throw new Error(statusData.error || 'Analysis job failed');
-          }
-
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-        }
-
-        throw new Error('Timed out while waiting for analysis result');
-      };
-      
-      try {
-        const jobResponse = await fetch('/api/projects/jobs', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (!jobResponse.ok) {
-          throw new Error('Failed to create analysis job');
-        }
-
-        const jobPayload = await jobResponse.json();
-        jobId = jobPayload.jobId as string;
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10 * 60 * 1000);
-        
-        const response = await fetch('/api/projects', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, jobId }),
-          signal: controller.signal,
-          keepalive: true,
-        });
-        
-        clearTimeout(timeoutId);
-        
-        const duration = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.log(`⏱️ Completed in ${duration}s`);
-        
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-        
-        return await response.json();
-      } catch (error) {
-        const duration = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.error(`❌ Failed after ${duration}s:`, error);
-
-        // If long request connection is closed by network layer, keep polling job status.
-        if (jobId && error instanceof TypeError && error.message.includes('fetch')) {
-          return await pollJobUntilDone(jobId);
-        }
-
-        throw error;
-      }
-    },
-    onSuccess: async (data) => {
-      if (!data?.projectId) {
-        console.error('⚠️ No projectId in response');
-        router.push('/dashboard/projects');
-        return;
-      }
-
-      // Save projectId for anonymous users
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        console.log('💾 Saving anonymous project ID:', data.projectId);
-        setAnonymousProjectId(data.projectId);
-      }
-      
-      console.log('🔀 Redirecting to project:', data.projectId);
-      router.push(`/dashboard/projects/${data.projectId}`);
-    },
-    onError: (error) => {
-      console.error('❌ Project creation failed:', error);
-    },
-  });
-
   const handleNext = () => {
     if (currentStep < 10) {
       setCurrentStep(currentStep + 1);
@@ -345,14 +240,37 @@ export default function CreateProjectPage() {
     }
   };
 
-  const handleSubmit = () => {
-    createProjectMutation.mutate({
-      projectData,
-      projectId: projectId || undefined,
-    });
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      const jobResponse = await fetch('/api/projects/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!jobResponse.ok) {
+        throw new Error('Failed to create analysis job');
+      }
+
+      const jobPayload = await jobResponse.json();
+      const jobId = jobPayload.jobId as string;
+
+      const requestPayload = {
+        projectData,
+        projectId: projectId || undefined,
+      };
+
+      sessionStorage.setItem('analysisRequestPayload', JSON.stringify(requestPayload));
+      router.push(`/create/processing?jobId=${jobId}`);
+    } catch (error) {
+      console.error('❌ Project creation failed:', error);
+      setIsSubmitting(false);
+    }
   };
 
-  if (createProjectMutation.isPending) return <LoadingScreen text={t('analyzing')} />;
+  if (isSubmitting) return <LoadingScreen text={t('analyzing')} />;
   if (isLoadingProjectData) return <LoadingScreen text={tCommon('loading')} />;
 
   return (
@@ -434,9 +352,9 @@ export default function CreateProjectPage() {
                 <Button 
                   onClick={currentStep === 10 ? handleSubmit : handleNext}
                   className="bg-black hover:bg-black/90 text-lg px-8 py-6"
-                  disabled={!validateStep(currentStep, projectData) || createProjectMutation.isPending}
+                  disabled={!validateStep(currentStep, projectData) || isSubmitting}
                 >
-                  {createProjectMutation.isPending 
+                  {isSubmitting 
                     ? tCommon('submitting')
                     : currentStep === 10 
                       ? (isReAnalysis 
