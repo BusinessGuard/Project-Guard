@@ -6,6 +6,7 @@ import { saveAnalysisToDatabase } from '@/utils/saveAnalysisToDatabase';
 export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
+  let jobId: string | undefined;
   try {
     console.log('🚀 POST /api/projects - Starting...');
     
@@ -13,10 +14,18 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     
     const body = await request.json();
-    const { projectData, projectId } = body;
+    const { projectData, projectId, jobId: requestJobId } = body;
+    jobId = requestJobId;
     
     console.log('📦 Project:', projectData.basicInfo.projectName);
     console.log('👤 User:', user?.id || 'anonymous');
+
+    if (jobId) {
+      await supabase
+        .from('analysis_jobs')
+        .update({ status: 'processing', error_message: null, updated_at: new Date().toISOString() })
+        .eq('id', jobId);
+    }
 
     // Run 3 analyses in parallel
     const audienceTypes = ['venture', 'bank', 'corporate'] as const;
@@ -49,14 +58,41 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Complete! Project ID:', saveResult.projectId);
 
+    if (jobId) {
+      await supabase
+        .from('analysis_jobs')
+        .update({
+          status: 'completed',
+          project_id: saveResult.projectId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', jobId);
+    }
+
     return NextResponse.json({ 
       success: true, 
       projectId: saveResult.projectId,
+      jobId,
       versionIds: saveResult.versionIds,
       analyses: results.map(r => r.analysis)
     });
   } catch (error) {
     console.error('❌ Error:', error);
+    if (jobId) {
+      try {
+        const supabase = await createClient();
+        await supabase
+          .from('analysis_jobs')
+          .update({
+            status: 'failed',
+            error_message: error instanceof Error ? error.message : 'Failed to analyze project',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', jobId);
+      } catch (jobUpdateError) {
+        console.error('❌ Failed to update job status:', jobUpdateError);
+      }
+    }
     return NextResponse.json(
       { success: false, message: error instanceof Error ? error.message : 'Failed to analyze project' },
       { status: 500 }
