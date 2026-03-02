@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     
     console.log('📦 Project:', projectData.basicInfo.projectName);
     console.log('👤 User:', user?.id || 'anonymous');
+    console.log('🆔 JobId:', jobId || 'NOT PROVIDED');
 
     if (jobId) {
       await supabase

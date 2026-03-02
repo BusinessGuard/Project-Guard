@@ -27,6 +27,8 @@ export default function ProcessingPage() {
   useEffect(() => {
     if (!jobId || startedRef.current) return;
     
+    console.log('🔄 Processing page mounted with jobId:', jobId);
+    
     // Global protection against duplicate requests
     const globalKey = `analysis_running_${jobId}`;
     if (typeof window !== 'undefined' && (window as any)[globalKey]) {
@@ -35,6 +37,7 @@ export default function ProcessingPage() {
     }
     if (typeof window !== 'undefined') {
       (window as any)[globalKey] = true;
+      console.log('✅ Marked jobId as running:', jobId);
     }
     
     startedRef.current = true;
@@ -70,68 +73,20 @@ export default function ProcessingPage() {
 
     const run = async () => {
       try {
-        const payloadRaw = sessionStorage.getItem("analysisRequestPayload");
-        if (!payloadRaw) {
-          throw new Error("Missing analysis payload");
-        }
-
-        const payload = JSON.parse(payloadRaw) as { projectData: any; projectId?: string };
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10 * 60 * 1000);
-
-        try {
-          const response = await fetch("/api/projects", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...payload, jobId }),
-            signal: controller.signal,
-            keepalive: true,
-          });
-
-          clearTimeout(timeoutId);
-
-          if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-          }
-
-          const result = await response.json();
-          const resolvedProjectId = result?.projectId as string | undefined;
-          if (!resolvedProjectId) {
-            throw new Error("No projectId in response");
-          }
-
-          const supabase = createClient();
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-          if (!user) {
-            setAnonymousProjectId(resolvedProjectId);
-          }
-
-          sessionStorage.removeItem("analysisRequestPayload");
-          router.replace(`/dashboard/projects/${resolvedProjectId}`);
-          return;
-        } catch (networkError) {
-          clearTimeout(timeoutId);
-
-          if (!(networkError instanceof TypeError)) {
-            throw networkError;
-          }
-        }
-
+        console.log('⏳ Starting to poll for job status...');
         const resolvedProjectId = await pollJobUntilDone(jobId);
+        
         const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
           setAnonymousProjectId(resolvedProjectId);
         }
 
-        sessionStorage.removeItem("analysisRequestPayload");
+        console.log('✅ Analysis complete, redirecting to project:', resolvedProjectId);
         router.replace(`/dashboard/projects/${resolvedProjectId}`);
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to process analysis";
+        console.error('❌ Processing error:', message);
         setError(message);
       }
     };

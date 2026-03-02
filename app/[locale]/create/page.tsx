@@ -265,9 +265,19 @@ export default function CreateProjectPage() {
       const requestPayload = {
         projectData,
         projectId: projectId || undefined,
+        jobId,
       };
 
-      sessionStorage.setItem('analysisRequestPayload', JSON.stringify(requestPayload));
+      // Send analysis request IMMEDIATELY, then redirect to processing page
+      console.log('📤 Sending analysis request (fire-and-forget)...');
+      fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestPayload),
+        keepalive: true,
+      }).catch(err => console.error('Analysis request error:', err));
+
+      // Redirect immediately to processing page which will poll for status
       console.log('🔄 Redirecting to processing page...');
       router.push(`/create/processing?jobId=${jobId}`);
     } catch (error) {
