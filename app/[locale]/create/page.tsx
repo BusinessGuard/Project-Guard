@@ -268,39 +268,55 @@ export default function CreateProjectPage() {
         jobId,
       };
 
-      // Send analysis and WAIT for response
-      console.log('📤 Sending analysis request and waiting...');
-      const analysisResponse = await fetch('/api/projects', {
+      // Start analysis in background
+      console.log('📤 Starting analysis (background)...');
+      fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestPayload),
-      });
+        keepalive: true,
+      }).catch(err => console.warn('Analysis request error (will poll instead):', err));
 
-      console.log('📡 Response received, status:', analysisResponse.status);
+      // Poll for completion
+      console.log('⏳ Polling for job completion...');
+      const maxAttempts = 240; // 8 minutes
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const statusResponse = await fetch(`/api/projects/jobs/${jobId}`, {
+          method: 'GET',
+          cache: 'no-store',
+        });
 
-      if (!analysisResponse.ok) {
-        const errorData = await analysisResponse.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(errorData.message || `Server error: ${analysisResponse.status}`);
+        if (!statusResponse.ok) {
+          console.warn(`⚠️ Status check failed (attempt ${attempt + 1})`);
+          continue;
+        }
+
+        const statusData = await statusResponse.json();
+        console.log(`📊 Job status: ${statusData.status} (attempt ${attempt + 1})`);
+
+        if (statusData.status === 'completed' && statusData.projectId) {
+          const resultProjectId = statusData.projectId as string;
+          
+          // Save for anonymous users
+          const supabase = createClient();
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) {
+            setAnonymousProjectId(resultProjectId);
+          }
+
+          console.log('✅ Analysis complete! Redirecting to:', resultProjectId);
+          router.push(`/dashboard/projects/${resultProjectId}`);
+          return;
+        }
+
+        if (statusData.status === 'failed') {
+          throw new Error(statusData.error || 'Analysis failed');
+        }
       }
 
-      const result = await analysisResponse.json();
-      console.log('✅ Analysis complete! Project ID:', result.projectId);
-
-      const resultProjectId = result.projectId as string;
-      if (!resultProjectId) {
-        throw new Error('No projectId in response');
-      }
-
-      // Save for anonymous users
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setAnonymousProjectId(resultProjectId);
-      }
-
-      // Redirect to project
-      console.log('🔄 Redirecting to project page...');
-      router.push(`/dashboard/projects/${resultProjectId}`);
+      throw new Error('Timeout waiting for analysis');
     } catch (error) {
       console.error('❌ Analysis failed:', error);
       setIsSubmitting(false);
