@@ -270,7 +270,6 @@ export default function CreateProjectPage() {
     }
   };
 
-  if (isSubmitting) return <LoadingScreen text={t('analyzing')} />;
   if (isLoadingProjectData) return <LoadingScreen text={tCommon('loading')} />;
 
   return (
