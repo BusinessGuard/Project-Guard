@@ -32,11 +32,37 @@ export async function POST(request: NextRequest) {
     console.log(`🔵 Starting ${audienceTypes.length} AI analyses...`);
     
     const analysisStartTime = Date.now();
-    const results = await Promise.all(
-      audienceTypes.map(audienceType => 
-        analyzeProject(projectData, 'ru', audienceType)
-      )
+    const settledResults = await Promise.allSettled(
+      audienceTypes.map((audienceType) => analyzeProject(projectData, 'ru', audienceType))
     );
+
+    const resultsByAudience = new Map<
+      (typeof audienceTypes)[number],
+      Awaited<ReturnType<typeof analyzeProject>>
+    >();
+
+    for (let i = 0; i < settledResults.length; i++) {
+      const audienceType = audienceTypes[i];
+      const settled = settledResults[i];
+
+      if (settled.status === 'fulfilled') {
+        resultsByAudience.set(audienceType, settled.value);
+        continue;
+      }
+
+      console.warn(`⚠️ Initial analysis failed for ${audienceType}, retrying once...`);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const retryResult = await analyzeProject(projectData, 'ru', audienceType);
+      resultsByAudience.set(audienceType, retryResult);
+    }
+
+    const results = audienceTypes.map((audienceType) => {
+      const value = resultsByAudience.get(audienceType);
+      if (!value) {
+        throw new Error(`Missing analysis result for ${audienceType}`);
+      }
+      return value;
+    });
     
     const analysisDuration = ((Date.now() - analysisStartTime) / 1000).toFixed(1);
     console.log(`✅ AI analyses completed in ${analysisDuration}s`);
