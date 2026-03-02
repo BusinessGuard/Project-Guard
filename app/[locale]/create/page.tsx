@@ -232,15 +232,57 @@ export default function CreateProjectPage() {
     mutationFn: async (data: { projectData: any; projectId?: string }) => {
       const startTime = Date.now();
       console.log('🚀 Starting project analysis...');
+      let jobId: string | null = null;
+
+      const pollJobUntilDone = async (jobId: string) => {
+        const maxAttempts = 240; // ~8 minutes with 2s interval
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          const statusResponse = await fetch(`/api/projects/jobs/${jobId}`, {
+            method: 'GET',
+            cache: 'no-store',
+          });
+
+          if (!statusResponse.ok) {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            continue;
+          }
+
+          const statusData = await statusResponse.json();
+          if (statusData.status === 'completed' && statusData.projectId) {
+            return { projectId: statusData.projectId, jobId, success: true };
+          }
+
+          if (statusData.status === 'failed') {
+            throw new Error(statusData.error || 'Analysis job failed');
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+
+        throw new Error('Timed out while waiting for analysis result');
+      };
       
       try {
+        const jobResponse = await fetch('/api/projects/jobs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!jobResponse.ok) {
+          throw new Error('Failed to create analysis job');
+        }
+
+        const jobPayload = await jobResponse.json();
+        jobId = jobPayload.jobId as string;
+
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
+        const timeoutId = setTimeout(() => controller.abort(), 10 * 60 * 1000);
         
         const response = await fetch('/api/projects', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
+          body: JSON.stringify({ ...data, jobId }),
           signal: controller.signal,
           keepalive: true,
         });
@@ -258,6 +300,12 @@ export default function CreateProjectPage() {
       } catch (error) {
         const duration = ((Date.now() - startTime) / 1000).toFixed(1);
         console.error(`❌ Failed after ${duration}s:`, error);
+
+        // If long request connection is closed by network layer, keep polling job status.
+        if (jobId && error instanceof TypeError && error.message.includes('fetch')) {
+          return await pollJobUntilDone(jobId);
+        }
+
         throw error;
       }
     },
