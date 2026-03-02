@@ -37,12 +37,19 @@ export async function saveAnalysisToDatabase({
     if (projectId) {
       console.log('🔍 Looking for existing project:', projectId);
       
-      const { data: existingProject, error: fetchError } = await supabase
+      // Build query conditionally to avoid slow null comparisons
+      let query = supabase
         .from('projects')
         .select('*')
-        .eq('id', projectId)
-        .eq('user_id', userId)
-        .single();
+        .eq('id', projectId);
+      
+      if (userId) {
+        query = query.eq('user_id', userId);
+      } else {
+        query = query.is('user_id', null);
+      }
+      
+      const { data: existingProject, error: fetchError } = await query.single();
       
       if (existingProject && !fetchError) {
         // Project exists - increment version
