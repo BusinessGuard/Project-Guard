@@ -26,6 +26,17 @@ export default function ProcessingPage() {
 
   useEffect(() => {
     if (!jobId || startedRef.current) return;
+    
+    // Global protection against duplicate requests
+    const globalKey = `analysis_running_${jobId}`;
+    if (typeof window !== 'undefined' && (window as any)[globalKey]) {
+      console.log('⚠️ Analysis already running for jobId:', jobId);
+      return;
+    }
+    if (typeof window !== 'undefined') {
+      (window as any)[globalKey] = true;
+    }
+    
     startedRef.current = true;
 
     const pollJobUntilDone = async (activeJobId: string): Promise<string> => {
