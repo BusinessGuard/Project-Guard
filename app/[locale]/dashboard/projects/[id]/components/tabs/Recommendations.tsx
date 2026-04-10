@@ -75,7 +75,22 @@ export function Recommendations() {
       default: return 'border-l-gray-400';
     }
   };
-  
+
+  const getPriorityLabel = (priority: string): string => {
+    switch (priority) {
+      case 'CRITICAL':
+        return t('priorityLabel.CRITICAL');
+      case 'HIGH':
+        return t('priorityLabel.HIGH');
+      case 'MEDIUM':
+        return t('priorityLabel.MEDIUM');
+      case 'LOW':
+        return t('priorityLabel.LOW');
+      default:
+        return priority;
+    }
+  };
+
   const recommendations = analysis.recommendations.list;
   const totalExperts = analysis.experts.list.length; // Dynamic expert count
   
@@ -96,7 +111,7 @@ export function Recommendations() {
             <Card className={`border-l-4 md:border-l-8 relative shadow-none ${getPriorityBorderColor(rec.priority)}`}>
               <CardContent className="p-3 md:p-6">
                 <Badge className={`${getPriorityColor(rec.priority)} text-white !text-[10px] md:!text-xs flex-shrink-0 absolute -top-[1px] rounded-none rounded-tr-lg rounded-bl-lg -right-0`}>
-                  {rec.priority}
+                  {getPriorityLabel(rec.priority)}
                 </Badge>
                 <div className="flex items-start gap-2 md:gap-4">
                   <div className="flex-1 space-y-2 md:space-y-3">

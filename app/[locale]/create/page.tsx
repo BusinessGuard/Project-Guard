@@ -161,8 +161,8 @@ export default function CreateProjectPage() {
           ? t('reAnalyzeTitle', { projectName: existingProject.name }) 
           : t('reAnalyzeTitleDefault'))
       : t('title');
-    document.title = `Project Guard AI | ${pageTitle}`;
-  }, [t, isReAnalysis, existingProject?.name]);
+    document.title = `${tNav('appName')} | ${pageTitle}`;
+  }, [t, tNav, isReAnalysis, existingProject?.name]);
 
   // Load canvas_data from latest venture version when re-analyzing
   useEffect(() => {
@@ -385,7 +385,9 @@ export default function CreateProjectPage() {
         <div className={`w-full mx-auto space-y-8 ${currentStep === 1 ? 'max-w-[600px]' : 'max-w-[1200px]'}`}>
           <div className="space-y-2 max-w-[600px]">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">{t('step')} {currentStep} {t('of')} 10</span>
+              <span className="text-sm text-slate-600">
+                {t('progressStep', { current: currentStep, total: 10 })}
+              </span>
               <span className="text-sm text-slate-600">{Math.round((currentStep / 10) * 100)}%</span>
             </div>
             <div className="w-full bg-slate-200 h-1">
@@ -419,7 +421,7 @@ export default function CreateProjectPage() {
                   onClick={currentStep === 1 ? () => router.back() : handleBack}
                   className="text-lg px-8 py-6"
                 >
-                  ← {tCommon('back')}
+                  {t('pageBack', { label: tCommon('back') })}
                 </Button>
                 <Button 
                   onClick={currentStep === 10 ? handleSubmit : handleNext}
@@ -434,7 +436,7 @@ export default function CreateProjectPage() {
                               ? t('reAnalyzeProject', { projectName: existingProject.name }) 
                               : t('reAnalyzeProjectDefault'))
                           : t('submitProject'))
-                      : `${tCommon('next')} →`}
+                      : t('pageNext', { label: tCommon('next') })}
                 </Button>
             </div>
           </div>

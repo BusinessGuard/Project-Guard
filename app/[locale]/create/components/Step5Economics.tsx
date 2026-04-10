@@ -11,7 +11,7 @@ import { IoMdClose } from "react-icons/io";
 import { TbChecks } from "react-icons/tb";
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { handleNonNegativeNumberInput, createNonNegativeNumberHandler, createRangeNumberHandler, createPositiveNumberHandler } from "@/lib/utils/numberValidation";
+import { handleNonNegativeNumberInput, createNonNegativeNumberHandler } from "@/lib/utils/numberValidation";
 
 export function Step5Economics() {
   const t = useTranslations('create.step5');

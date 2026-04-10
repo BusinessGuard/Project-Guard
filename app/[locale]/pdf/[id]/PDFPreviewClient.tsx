@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PDFViewer, pdf } from '@react-pdf/renderer';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { ProjectPDF } from '@/lib/pdf/ProjectPDF';
 import { preparePDFData } from '@/lib/pdf/prepareData';
+import { buildPdfDocumentLabels } from '@/lib/pdf/pdfDocumentLabels';
 import { VersionsByAudience } from '@/lib/utils/getVersions';
 import { toast } from 'sonner';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import type { Locale } from '@/i18n/config';
+import { locales } from '@/i18n/config';
 
 // Transliterate Cyrillic to Latin
 function transliterate(text: string): string {
@@ -42,11 +45,25 @@ export function PDFPreviewClient({
   isAuthorized 
 }: PDFPreviewClientProps) {
   const t = useTranslations('pdf');
+  const tDoc = useTranslations('pdfDocument');
+  const localeRaw = useLocale();
+  const locale = (locales.includes(localeRaw as Locale) ? localeRaw : 'en') as Locale;
   const [isDownloading, setIsDownloading] = useState(false);
-  
-  // Prepare PDF data
-  const pdfData = preparePDFData(versions, initialVersion, initialAudience);
-  
+
+  const labels = useMemo(
+    () => buildPdfDocumentLabels((key, values) => tDoc(key, values)),
+    [tDoc]
+  );
+
+  const pdfData = useMemo(() => {
+    const base = preparePDFData(versions, initialVersion, initialAudience, labels, locale);
+    if (!base) return null;
+    return {
+      ...base,
+      coverBenchmarkText: tDoc('cover.benchmarkCompared', { percent: base.benchmarkPercentile }),
+    };
+  }, [versions, initialVersion, initialAudience, labels, locale, tDoc]);
+
   if (!pdfData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">

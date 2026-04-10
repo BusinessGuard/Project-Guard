@@ -54,13 +54,13 @@ export function Step10Growth() {
               <p>• {t('tractionGuidelines.4')}</p>
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>B2B SaaS:</strong> {t('tractionExamples.b2b')}
+              <strong>{t('tractionExampleLabels.b2b')}</strong> {t('tractionExamples.b2b')}
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>Marketplace:</strong> {t('tractionExamples.marketplace')}
+              <strong>{t('tractionExampleLabels.marketplace')}</strong> {t('tractionExamples.marketplace')}
             </div>
             <div className="text-slate-600 italic pt-2">
-              <strong>Pre-revenue:</strong> {t('tractionExamples.preRevenue')}
+              <strong>{t('tractionExampleLabels.preRevenue')}</strong> {t('tractionExamples.preRevenue')}
             </div>
           </div>
         </div>
