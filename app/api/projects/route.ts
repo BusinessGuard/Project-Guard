@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
         userPrompt: result.userPrompt,
         systemPrompt: result.systemPrompt,
         rawResponse: result.rawResponse,
+        systemPrompt: result.systemPrompt,
       })),
     });
 

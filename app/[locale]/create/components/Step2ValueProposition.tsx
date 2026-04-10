@@ -199,7 +199,7 @@ export function Step2ValueProposition() {
                         aria-label={t('removeAdvantage')}
                         onClick={() => handleRemoveAdvantage(index)}
                       >
-                        <IoMdClose className="h-4 w-4 text-red-600" />
+                        <IoMdClose className="h-4 w-4 text-blue-600 group-hover/btn:text-red-600" />
                       </button>
                     </div>
                   ))}

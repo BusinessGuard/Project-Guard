@@ -14,7 +14,7 @@ export default async function DebugLogPage({ params }: PageProps) {
 
   const { data: row, error } = await supabase
     .from('openai_analysis_log')
-    .select('id, project_version_id, user_prompt, openai_response, created_at')
+    .select('id, project_version_id, user_prompt, system_prompt, openai_response, created_at')
     .eq('project_version_id', projectVersionId)
     .maybeSingle();
 
@@ -60,6 +60,17 @@ export default async function DebugLogPage({ params }: PageProps) {
             {new Date(row.created_at).toISOString()} · {row.project_version_id}
           </p>
         </header>
+
+        {row.system_prompt != null && (
+          <section className="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <h2 className="bg-slate-700 text-white px-4 py-2 text-sm font-semibold">
+              System prompt
+            </h2>
+            <pre className="p-4 text-sm text-slate-800 overflow-x-auto whitespace-pre-wrap font-mono border-t border-slate-200 max-h-[40vh] overflow-y-auto">
+              {row.system_prompt}
+            </pre>
+          </section>
+        )}
 
         <section className="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
           <h2 className="bg-slate-800 text-white px-4 py-2 text-sm font-semibold">

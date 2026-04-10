@@ -87,10 +87,10 @@ export function Step4Channels() {
                     <span>{channel}</span>
                     <button
                       type="button"
-                      className="ml-1 hover:bg-slate-100 rounded-full p-0.5"
+                      className="group/btn ml-1 hover:bg-slate-100 rounded-full p-0.5"
                       onClick={() => handleRemoveChannel(channel)}
                     >
-                      <IoMdClose className="h-3.5 w-3.5 text-slate-500" />
+                      <IoMdClose className="h-3.5 w-3.5 text-blue-600 group-hover/btn:text-red-600" />
                     </button>
                   </div>
                 ))}

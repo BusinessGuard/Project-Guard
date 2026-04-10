@@ -151,6 +151,8 @@ export default function CreateProjectPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
+  const { data: existingProject } = useProject(projectId ?? "");
+  const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
 
   const { data: existingProject } = useProject(projectId ?? "");
   const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
