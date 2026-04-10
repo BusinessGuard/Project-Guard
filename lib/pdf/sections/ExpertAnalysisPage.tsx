@@ -7,46 +7,36 @@ interface ExpertAnalysisPageProps {
 }
 
 export function ExpertAnalysisPage({ data }: ExpertAnalysisPageProps) {
-  const { experts } = data;
-  
-  const hasExperts = experts.length > 0;
-  
-  if (!hasExperts) {
-    return null; // Don't render page if no experts
+  const { experts, labels } = data;
+  const e = labels.experts;
+
+  if (experts.length === 0) {
+    return null;
   }
-  
+
   return (
     <View style={pdfStyles.page}>
-      {/* Page Title */}
-      <Text style={pdfStyles.sectionTitle}>EXPERT PERSPECTIVES</Text>
-      <Text style={{ ...pdfStyles.text, marginBottom: 12 }}>
-        Analysis from multiple expert viewpoints to provide comprehensive insights.
-      </Text>
-      
-      {/* Expert Cards */}
+      <Text style={pdfStyles.sectionTitle}>{e.title}</Text>
+      <Text style={{ ...pdfStyles.text, marginBottom: 12 }}>{e.intro}</Text>
+
       {experts.map((expert, index) => (
         <View key={index} style={{ ...pdfStyles.card, marginBottom: 10 }} wrap={false}>
-          {/* Expert Header */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <Text style={pdfStyles.heading}>{expert.role.toUpperCase()}</Text>
             <Text style={{ ...pdfStyles.heading, fontSize: 11 }}>
-              Confidence: {expert.score}%
+              {e.confidence}: {expert.score}%
             </Text>
           </View>
-          
-          {/* Summary */}
+
           {expert.perspective && (
             <View style={{ marginBottom: 6 }}>
               <Text style={pdfStyles.text}>{expert.perspective}</Text>
             </View>
           )}
-          
-          {/* Key Findings */}
+
           {expert.keyFindings && expert.keyFindings.length > 0 && (
             <View style={{ marginBottom: 6 }}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>
-                Key Findings:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>{e.keyFindings}</Text>
               {expert.keyFindings.map((finding, i) => (
                 <View key={i} style={pdfStyles.listItem}>
                   <Text style={pdfStyles.bullet}>•</Text>
@@ -55,33 +45,27 @@ export function ExpertAnalysisPage({ data }: ExpertAnalysisPageProps) {
               ))}
             </View>
           )}
-          
-          {/* Critical Risks */}
+
           {expert.criticalRisks && expert.criticalRisks.length > 0 && (
             <View style={{ marginBottom: 6 }}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>
-                Critical Risks:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>{e.criticalRisks}</Text>
               {expert.criticalRisks.map((risk, i) => (
                 <View key={i} style={{ marginBottom: 4 }}>
                   <Text style={{ ...pdfStyles.textSmall, fontWeight: 700 }}>{risk.risk}</Text>
                   <Text style={pdfStyles.textSmall}>
-                    Likelihood: {risk.likelihood} | Impact: {risk.impact}
+                    {e.likelihood}: {risk.likelihood} | {e.impact}: {risk.impact}
                   </Text>
                   {risk.mitigation && (
-                    <Text style={pdfStyles.textSmall}>Mitigation: {risk.mitigation}</Text>
+                    <Text style={pdfStyles.textSmall}>{e.mitigation}: {risk.mitigation}</Text>
                   )}
                 </View>
               ))}
             </View>
           )}
-          
-          {/* Concerns */}
+
           {expert.concerns && expert.concerns.length > 0 && (
             <View style={{ marginBottom: 6 }}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>
-                Concerns:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>{e.concerns}</Text>
               {expert.concerns.map((concern, i) => (
                 <View key={i} style={pdfStyles.listItem}>
                   <Text style={pdfStyles.bullet}>•</Text>
@@ -90,13 +74,10 @@ export function ExpertAnalysisPage({ data }: ExpertAnalysisPageProps) {
               ))}
             </View>
           )}
-          
-          {/* Recommendations */}
+
           {expert.recommendations && expert.recommendations.length > 0 && (
             <View style={{ marginBottom: 4 }}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>
-                Recommendations:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 2 }}>{e.recommendations}</Text>
               {expert.recommendations.map((rec, i) => (
                 <View key={i} style={pdfStyles.listItem}>
                   <Text style={pdfStyles.bullet}>•</Text>
@@ -107,19 +88,14 @@ export function ExpertAnalysisPage({ data }: ExpertAnalysisPageProps) {
           )}
         </View>
       ))}
-      
-      {/* Consensus Note */}
+
       <View style={{ ...pdfStyles.card, marginTop: 10 }}>
-        <Text style={pdfStyles.textSmall}>
-          Note: These perspectives are generated by AI based on industry best practices and 
-          should be validated with real-world domain experts.
-        </Text>
+        <Text style={pdfStyles.textSmall}>{e.disclaimer}</Text>
       </View>
-      
-      {/* Footer */}
+
       <View style={pdfStyles.footer}>
-        <Text>Project Guard AI</Text>
-        <Text>Page 6</Text>
+        <Text>{labels.footer.brand}</Text>
+        <Text>{`${labels.footer.pageLabel} 3`}</Text>
       </View>
     </View>
   );

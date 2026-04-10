@@ -35,6 +35,21 @@ export function RecommendationsList({
 }: RecommendationsListProps) {
   const t = useTranslations('dashboard.recommendations');
 
+  const getPriorityLabel = (priority: string): string => {
+    switch (priority) {
+      case 'CRITICAL':
+        return t('priorityLabel.CRITICAL');
+      case 'HIGH':
+        return t('priorityLabel.HIGH');
+      case 'MEDIUM':
+        return t('priorityLabel.MEDIUM');
+      case 'LOW':
+        return t('priorityLabel.LOW');
+      default:
+        return priority;
+    }
+  };
+
   return (
     <div className="space-y-4">
       {recommendations.map((rec) => (
@@ -42,7 +57,7 @@ export function RecommendationsList({
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
               <Badge className={`${getPriorityColor(rec.priority)} text-white flex-shrink-0`}>
-                {rec.priority}
+                {getPriorityLabel(rec.priority)}
               </Badge>
               <div className="flex-1 space-y-3">
                 <div 

@@ -18,6 +18,7 @@ interface ScoreboardHeaderProps {
 
 export function ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProps) {
   const t = useTranslations('dashboard');
+  const tNav = useTranslations('nav');
   const router = useRouter();
   const locale = useLocale();
   const { versions, version, setVersion, currentProject, audienceType } = useVersionsStore();
@@ -92,7 +93,7 @@ export function ScoreboardHeader({ isAuthorized = false }: ScoreboardHeaderProps
                 </div>
               ) : (
                 <Link href="/" className="text-2xl w-30 font-bold text-black hover:opacity-80 transition-opacity">
-                  AI Guard
+                  {tNav('appName')}
                 </Link>
               )}
 

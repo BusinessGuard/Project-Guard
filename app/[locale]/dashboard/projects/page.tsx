@@ -19,14 +19,16 @@ interface Project {
 
 export default function ProjectsPage() {
   const t = useTranslations('project');
+  const tNav = useTranslations('nav');
+  const tProjectsPage = useTranslations('dashboard.projectsPage');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [anonymousProjectId, setAnonymousProjectId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    document.title = `Project Guard AI | ${t('list')}`;
-  }, [t]);
+    document.title = `${tNav('appName')} | ${t('list')}`;
+  }, [t, tNav]);
 
   useEffect(() => {
     async function loadData() {
@@ -55,7 +57,15 @@ export default function ProjectsPage() {
     loadData();
   }, []);
 
-
+  if (isLoading) {
+    return (
+      <div className="p-6 pt-25">
+        <div className="max-w-7xl mx-auto flex min-h-[50vh] items-center justify-center">
+          <p className="text-muted-foreground">{tProjectsPage('loading')}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 pt-25">

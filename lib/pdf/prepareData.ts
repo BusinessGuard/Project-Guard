@@ -1,29 +1,45 @@
-import { ProjectVersionWithAudience, VersionsByAudience } from '@/lib/utils/getVersions';
+import type { Locale } from '@/i18n/config';
+import { VersionsByAudience } from '@/lib/utils/getVersions';
+import type {
+  CriticalRisk,
+  ExpertInsight,
+  GrowthPhase,
+  MonthlyProjection,
+  Recommendation as AnalysisRecommendation,
+} from '@/store/useAnalizeStore.types';
+import type { PDFDocumentLabels } from './pdfDocumentLabels';
+
+const DATE_LOCALE: Record<Locale, string> = {
+  en: 'en-US',
+  ru: 'ru-RU',
+  uk: 'uk-UA',
+};
 
 export interface PDFData {
-  // Project info
+  labels: PDFDocumentLabels;
+  /** Filled in PDF preview client via `t('cover.benchmarkCompared', { percent })` */
+  coverBenchmarkText: string;
+
   projectName: string;
   industry: string;
   stage: string;
-  audienceType: string;
+  /** Localized audience name (e.g. Venture Capital) */
+  audienceTitle: string;
+
   generatedDate: string;
-  
-  // Scores
+
   overallScore: number;
   readinessStatus: string;
   benchmarkPercentile: number;
-  
-  // Consensus
+
   topStrengths: string[];
   topWeaknesses: string[];
-  
-  // Block scores
+
   blockScores: {
     name: string;
     score: number;
   }[];
-  
-  // Financial data
+
   financial: {
     ltv: number;
     cac: number;
@@ -34,10 +50,9 @@ export interface PDFData {
     breakEvenMonth: number;
     breakEvenCustomers: number;
     breakEvenMRR: number;
-    monthlyProjections: any[];
+    monthlyProjections: MonthlyProjection[];
   };
-  
-  // Recommendations
+
   recommendations: {
     priority: string;
     category: string;
@@ -48,8 +63,7 @@ export interface PDFData {
     timeline: string;
     actionSteps: string[];
   }[];
-  
-  // Growth plan
+
   growthPhases: {
     name: string;
     duration: string;
@@ -59,8 +73,7 @@ export interface PDFData {
     teamSize: string;
     successMetrics: string[];
   }[];
-  
-  // Experts
+
   experts: {
     role: string;
     score: number;
@@ -80,32 +93,33 @@ export interface PDFData {
 export function preparePDFData(
   versions: VersionsByAudience,
   version: number,
-  audienceType: 'venture' | 'bank' | 'corporate'
+  audienceType: 'venture' | 'bank' | 'corporate',
+  labels: PDFDocumentLabels,
+  locale: Locale
 ): PDFData | null {
   const currentVersion = versions[version]?.[audienceType];
-  
+
   if (!currentVersion || !currentVersion.analysis) {
     return null;
   }
-  
+
   const { analysis } = currentVersion;
-  
-  // Prepare block scores
+  const b = labels.blocks;
+
   const blockScores = [
-    { name: 'Value Proposition', score: analysis.scores.blocks.valueProposition },
-    { name: 'Customer Segments', score: analysis.scores.blocks.customerSegments },
-    { name: 'Channels', score: analysis.scores.blocks.channels },
-    { name: 'Revenue Streams', score: analysis.scores.blocks.revenue },
-    { name: 'Cost Structure', score: analysis.scores.blocks.costs },
-    { name: 'Key Resources', score: analysis.scores.blocks.keyResources },
-    { name: 'Key Activities', score: analysis.scores.blocks.keyActivities },
-    { name: 'Key Partners', score: analysis.scores.blocks.keyPartners },
-    { name: 'Team', score: analysis.scores.blocks.team },
+    { name: b.valueProposition, score: analysis.scores.blocks.valueProposition },
+    { name: b.customerSegments, score: analysis.scores.blocks.customerSegments },
+    { name: b.channels, score: analysis.scores.blocks.channels },
+    { name: b.revenue, score: analysis.scores.blocks.revenue },
+    { name: b.costs, score: analysis.scores.blocks.costs },
+    { name: b.keyResources, score: analysis.scores.blocks.keyResources },
+    { name: b.keyActivities, score: analysis.scores.blocks.keyActivities },
+    { name: b.keyPartners, score: analysis.scores.blocks.keyPartners },
+    { name: b.team, score: analysis.scores.blocks.team },
   ];
-  
-  // Prepare recommendations
-  const recommendations = (analysis.recommendations?.list || []).map((rec: any) => ({
-    priority: rec.priority || 'MEDIUM',
+
+  const recommendations = (analysis.recommendations?.list || []).map((rec: AnalysisRecommendation) => ({
+    priority: String(rec.priority ?? 'MEDIUM'),
     category: rec.category || 'general',
     title: rec.title || '',
     description: rec.description || '',
@@ -114,49 +128,62 @@ export function preparePDFData(
     timeline: rec.timeline || '',
     actionSteps: rec.actionSteps || [],
   }));
-  
-  // Prepare growth phases
-  const growthPhases = Object.entries(analysis.growthPlan?.phases || {}).map(([key, phase]: [string, any]) => ({
-    name: phase.name || key,
-    duration: phase.duration || '',
-    goals: phase.goals || [],
-    keyActions: phase.keyActions || [],
-    milestones: phase.milestones || [],
-    teamSize: phase.teamSize || '',
-    successMetrics: phase.successMetrics || [],
-  }));
-  
-  // Prepare experts
-  const experts = (analysis.experts?.list || []).map((expert: any) => ({
+
+  const growthPhases = Object.entries(analysis.growthPlan?.phases || {}).map(([key, phase]) => {
+    const p = phase as GrowthPhase & { milestones?: string[] };
+    return {
+      name: p.name || key,
+      duration: p.duration || '',
+      goals: p.goals || [],
+      keyActions: p.keyActions || [],
+      milestones: p.milestones || [],
+      teamSize: p.teamSize || '',
+      successMetrics: p.successMetrics || [],
+    };
+  });
+
+  const experts = (analysis.experts?.list || []).map((expert: ExpertInsight) => ({
     role: expert.role || expert.name || '',
     score: expert.confidence || 0,
     perspective: expert.summary || '',
     keyFindings: expert.keyFindings || [],
-    criticalRisks: expert.criticalRisks || [],
+    criticalRisks: (expert.criticalRisks || []).map((r) => {
+      const row = r as CriticalRisk & { risk?: string };
+      return {
+      risk: row.risk || row.description || '',
+      likelihood: String(row.likelihood ?? ''),
+      impact: String(row.impact ?? ''),
+      mitigation: String(row.mitigation ?? ''),
+    };
+    }),
     concerns: expert.concerns || [],
     recommendations: expert.recommendations || [],
   }));
-  
+
+  const dateLocale = DATE_LOCALE[locale] ?? 'en-US';
+
   return {
-    projectName: currentVersion.name || 'Untitled Project',
-    industry: currentVersion.industry || 'N/A',
-    stage: currentVersion.stage || 'N/A',
-    audienceType: audienceType.charAt(0).toUpperCase() + audienceType.slice(1),
-    generatedDate: new Date().toLocaleDateString('en-US', {
+    labels,
+    coverBenchmarkText: '',
+    projectName: currentVersion.name || labels.common.untitledProject,
+    industry: currentVersion.industry || labels.common.notAvailable,
+    stage: currentVersion.stage || labels.common.notAvailable,
+    audienceTitle: labels.audience[audienceType],
+    generatedDate: new Date().toLocaleDateString(dateLocale, {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     }),
-    
+
     overallScore: analysis.scores.overall || 0,
     readinessStatus: analysis.scores.readiness || 'Not Ready',
     benchmarkPercentile: analysis.benchmark.percentile || 0,
-    
+
     topStrengths: analysis.consensus.findings.topStrengths || [],
     topWeaknesses: analysis.consensus.findings.topWeaknesses || [],
-    
+
     blockScores,
-    
+
     financial: {
       ltv: analysis.financialForecast.unitEconomics.ltv || 0,
       cac: analysis.financialForecast.unitEconomics.cac || 0,
@@ -169,7 +196,7 @@ export function preparePDFData(
       breakEvenMRR: analysis.financialForecast.breakEven.mrr || 0,
       monthlyProjections: analysis.financialForecast.monthlyProjections || [],
     },
-    
+
     recommendations,
     growthPhases,
     experts,

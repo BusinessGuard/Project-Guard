@@ -18,7 +18,8 @@
     "actions": "Actions",
     "continue": "Continue",
     "submitting": "Submitting...",
-    "mayTakeTime": "This may take 30-90 seconds..."
+    "mayTakeTime": "This may take 30-90 seconds...",
+    "elapsedSeconds": "{seconds}s"
   },
   "nav": {
     "home": "Home",
@@ -63,6 +64,73 @@
       "defaultMessage": "Please sign up to access this feature and unlock all capabilities."
     }
   },
+  "login": {
+    "backAriaLabel": "Back",
+    "title": {
+      "signin": "Welcome Back",
+      "signup": "Create Account",
+      "forgot": "Reset Password"
+    },
+    "subtitle": {
+      "signin": "Sign in to your account",
+      "signup": "Sign up to get started",
+      "forgot": "Enter your email and we will send you a link to reset your password"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password"
+    },
+    "placeholders": {
+      "email": "your@email.com",
+      "password": "Enter your password",
+      "confirmPassword": "Confirm your password"
+    },
+    "actions": {
+      "continueWithGoogle": "Continue with Google",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign In",
+      "signUp": "Sign Up",
+      "loading": "Loading...",
+      "sending": "Sending...",
+      "sendResetLink": "Send reset link",
+      "backToSignIn": "Back to sign in"
+    },
+    "messages": {
+      "resetEmailSent": "Check your email for a link to reset your password. If it does not arrive within a few minutes, check your spam folder."
+    },
+    "footer": {
+      "noAccount": "Don't have an account?",
+      "hasAccount": "Already have an account?"
+    },
+    "validation": {
+      "invalidEmail": "Please enter a valid email address",
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordsDontMatch": "Passwords don't match"
+    }
+  },
+  "resetPassword": {
+    "documentTitle": "Reset password",
+    "checkingSession": "Checking session...",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "title": "Set a new password",
+    "subtitle": "Choose a strong password for your account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "placeholder": "Enter a new password",
+    "confirmPlaceholder": "Confirm your new password",
+    "submit": "Update password",
+    "loading": "Updating...",
+    "successTitle": "Password updated",
+    "successMessage": "Your password has been changed. You can sign in with your new password.",
+    "goToLogin": "Go to sign in",
+    "sessionMissing": "This link is invalid or has expired. Request a new reset link from the sign-in page.",
+    "validation": {
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordsDontMatch": "Passwords do not match"
+    }
+  },
   "project": {
     "create": "Create Project",
     "edit": "Edit Project",
@@ -104,6 +172,8 @@
     "networkError": "Network error"
   },
   "home": {
+    "imageAlt": "Business canvas background",
+    "logoAlt": "Project Guard AI logo",
     "badge": "AI-Powered Startup Evaluation",
     "title": "ProjectGuard AI",
     "subtitle": "AI-Powered Startup Evaluation in 30 Seconds",
@@ -152,6 +222,7 @@
     },
     "step": "Step",
     "of": "of",
+    "progressStep": "Step {current} of {total}",
     "fieldsCompleted": "Fields completed",
     "analyzing": "Analyzing project...",
     "submitProject": "Submit Project",
@@ -162,6 +233,8 @@
       "message": "You've already tried our demo. Sign up to create unlimited projects and access all features.",
       "goHome": "Go Home"
     },
+    "pageBack": "← {label}",
+    "pageNext": "{label} →",
     "step1": {
       "title": "Project Details",
       "subtitle": "Let's start with the basics",
@@ -173,6 +246,7 @@
       "specifyIndustry": "Specify your industry...",
       "industryRequired": "Please select or specify an industry",
       "add": "Add",
+      "removeCustomIndustry": "Remove custom industry",
       "currentStage": "Current Stage",
       "selectStage": "Select stage",
       "stageRequired": "Please select a stage",
@@ -180,16 +254,6 @@
       "optional": "(optional)",
       "descriptionPlaceholder": "AI-powered HR platform for SMBs to automate hiring and onboarding",
       "tip": "Tip: You can save draft and come back anytime",
-      "industries": {
-        "saasB2b": "SaaS / B2B",
-        "saasB2c": "SaaS / B2C",
-        "marketplace": "Marketplace",
-        "ecommerce": "E-commerce",
-        "fintech": "Fintech",
-        "healthtech": "Healthtech",
-        "edtech": "Edtech",
-        "other": "Other"
-      },
       "stages": {
         "idea": "Idea",
         "mvp": "MVP / Pre-seed",
@@ -211,6 +275,7 @@
       "advantagesHint": "Add 3-5 specific advantages",
       "advantagesHintRequired": "(minimum 3 required)",
       "advantagesPlaceholder": "Enter an advantage and click Add",
+      "removeAdvantage": "Remove advantage",
       "measurableValueLabel": "1.5. Measurable value for customers",
       "measurableValuePlaceholder": "Quantify the value you create...",
       "guidelines": "Guidelines",
@@ -773,6 +838,11 @@
       "targets36MonthsPlaceholder": "2,000 customers, €200K MRR, 25 team, 30% margin, 5% SAM...",
       "guidelines": "Guidelines",
       "tip": "Tip: Show ambitious but realistic growth targets with clear path to profitability.",
+      "tractionExampleLabels": {
+        "b2b": "B2B SaaS:",
+        "marketplace": "Marketplace:",
+        "preRevenue": "Pre-revenue:"
+      },
       "tractionGuidelines": {
         "1": "Current users/customers and revenue",
         "2": "Growth metrics (MoM, retention, churn, NPS)",
@@ -780,9 +850,9 @@
         "4": "For pre-revenue: signups, pilots, validation"
       },
       "tractionExamples": {
-        "b2b": "B2B SaaS: \"120 paying customers, €11.8K MRR, +25% MoM growth for last 3 months, 3.5% monthly churn, NPS 65, CAC payback 4.2 months\"",
-        "marketplace": "Marketplace: \"€45K GMV/month, 320 active buyers, 45 active sellers, 15% take rate, 40% repeat purchase rate, 3x growth in last quarter\"",
-        "preRevenue": "Pre-revenue: \"2,500 signups, 80 customer interviews completed, 5 pilot customers using for free (3 ready to pay), 12 LOIs worth €1,200 MRR potential\""
+        "b2b": "\"120 paying customers, €11.8K MRR, +25% MoM growth for last 3 months, 3.5% monthly churn, NPS 65, CAC payback 4.2 months\"",
+        "marketplace": "\"€45K GMV/month, 320 active buyers, 45 active sellers, 15% take rate, 40% repeat purchase rate, 3x growth in last quarter\"",
+        "preRevenue": "\"2,500 signups, 80 customer interviews completed, 5 pilot customers using for free (3 ready to pay), 12 LOIs worth €1,200 MRR potential\""
       },
       "scalingPlanGuidelines": {
         "1": "Growth strategy (product-led, sales-led, community-led)?",
@@ -840,6 +910,13 @@
       "corporate": "Corporate"
     }
   },
+  "debugLog": {
+    "errorTitle": "Debug log error",
+    "pageTitle": "Debug: OpenAI request / response",
+    "requestHeading": "Request (user prompt)",
+    "responseHeading": "Response (OpenAI)",
+    "noContent": "(no content)"
+  },
   "dashboard": {
     "selectVersion": "Select version",
     "reAnalyze": "Re-analyze",
@@ -867,6 +944,9 @@
       "unauthenticatedMessage": "Create an account to save your projects and access them anytime.",
       "anonymousProjectMessage": "You have an anonymous project! View it below or create an account to save it permanently.",
       "viewAnonymousProject": "View Your Project"
+    },
+    "projectsPage": {
+      "loading": "Loading projects..."
     },
     "projectHeader": {
       "defaultProjectName": "Project",
@@ -996,7 +1076,132 @@
       "expectedImpact": "Expected Impact",
       "effort": "Effort",
       "timeline": "Timeline",
-      "supportedBy": "Supported by {count}/{total} experts"
+      "supportedBy": "Supported by {count}/{total} experts",
+      "priorityLabel": {
+        "CRITICAL": "Critical",
+        "HIGH": "High",
+        "MEDIUM": "Medium",
+        "LOW": "Low"
+      }
+    }
+  },
+  "pdfDocument": {
+    "common": {
+      "untitledProject": "Untitled Project",
+      "notAvailable": "N/A"
+    },
+    "cover": {
+      "logo": "Project Guard AI",
+      "reportType": "Business Analysis Report",
+      "analysisSuffix": "Analysis",
+      "overallScore": "Overall Score",
+      "benchmark": "BENCHMARK",
+      "benchmarkCompared": "This project scores better than {percent}% of similar businesses at this stage.",
+      "keyStrengths": "KEY STRENGTHS",
+      "areasToImprove": "AREAS TO IMPROVE",
+      "generatedBy": "Generated by Project Guard AI"
+    },
+    "footer": {
+      "brand": "Project Guard AI",
+      "pageLabel": "Page"
+    },
+    "audience": {
+      "venture": "Venture Capital",
+      "bank": "Bank",
+      "corporate": "Corporate"
+    },
+    "blocks": {
+      "valueProposition": "Value Proposition",
+      "customerSegments": "Customer Segments",
+      "channels": "Channels",
+      "revenue": "Revenue Streams",
+      "costs": "Cost Structure",
+      "keyResources": "Key Resources",
+      "keyActivities": "Key Activities",
+      "keyPartners": "Key Partners",
+      "team": "Team"
+    },
+    "statusLabels": {
+      "strong": "Strong",
+      "good": "Good",
+      "needsWork": "Needs Work",
+      "critical": "Critical"
+    },
+    "businessScores": {
+      "title": "BUSINESS MODEL CANVAS SCORES",
+      "intro": "Detailed breakdown of your business model across 9 key dimensions.",
+      "colBlock": "Block",
+      "colScore": "Score",
+      "colStatus": "Status",
+      "averageBlockScore": "Average Block Score:",
+      "legend": "LEGEND",
+      "strongBold": "Strong (80-100):",
+      "strongText": "Well-developed and ready for scaling.",
+      "goodBold": "Good (60-79):",
+      "goodText": "Solid foundation, minor improvements recommended.",
+      "needsWorkBold": "Needs Work (40-59):",
+      "needsWorkText": "Requires significant attention.",
+      "criticalBold": "Critical (<40):",
+      "criticalText": "High-priority area needing immediate action."
+    },
+    "financial": {
+      "title": "FINANCIAL FORECAST",
+      "noData": "No financial data available for this analysis.",
+      "unitEconomics": "Unit Economics",
+      "ltv": "Customer Lifetime Value (LTV)",
+      "cac": "Customer Acquisition Cost (CAC)",
+      "ltvCacRatio": "LTV/CAC Ratio",
+      "paybackPeriod": "Payback Period",
+      "months": "months",
+      "grossMargin": "Gross Margin",
+      "monthlyChurn": "Monthly Churn Rate",
+      "breakEvenHeading": "Break-Even Analysis",
+      "breakEvenMonth": "Break-Even Month:",
+      "breakEvenCustomers": "Required Customers:",
+      "breakEvenMrr": "Required MRR:",
+      "projections12": "12-Month Projections",
+      "colMonth": "Month",
+      "colRevenue": "Revenue",
+      "colCosts": "Costs",
+      "colProfit": "Profit",
+      "colUsers": "Users"
+    },
+    "recommendations": {
+      "title": "RECOMMENDATIONS",
+      "titleLong": "ACTION PLAN & RECOMMENDATIONS",
+      "empty": "No specific recommendations available for this analysis.",
+      "intro": "Prioritized recommendations based on AI analysis from multiple expert perspectives.",
+      "criticalSection": "CRITICAL PRIORITY (Do Now)",
+      "highSection": "HIGH PRIORITY (Next 3 Months)",
+      "mediumSection": "MEDIUM PRIORITY (Next 6 Months)",
+      "category": "Category",
+      "effort": "Effort",
+      "timeline": "Timeline",
+      "actionSteps": "Action Steps:",
+      "expectedImpact": "Expected Impact:"
+    },
+    "growthPlan": {
+      "title": "GROWTH PLAN",
+      "intro": "Strategic phases to scale your business from current state to target goals.",
+      "phasePrefix": "Phase",
+      "goals": "Goals:",
+      "keyActions": "Key Actions:",
+      "milestones": "Milestones:",
+      "teamSize": "Team Size:",
+      "successMetrics": "Success Metrics:"
+    },
+    "experts": {
+      "title": "EXPERT PERSPECTIVES",
+      "intro": "Analysis from multiple expert viewpoints to provide comprehensive insights.",
+      "confidence": "Confidence",
+      "keyFindings": "Key Findings:",
+      "criticalRisks": "Critical Risks:",
+      "likelihood": "Likelihood",
+      "impact": "Impact",
+      "mitigation": "Mitigation",
+      "concerns": "Concerns:",
+      "recommendations": "Recommendations:",
+      "disclaimer": "Note: These perspectives are generated by AI based on industry best practices and should be validated with real-world domain experts."
     }
   }
 }

@@ -3,21 +3,25 @@ import { getVersions } from '@/lib/utils/getVersions';
 import { notFound } from 'next/navigation';
 import { PDFPreviewClient } from './PDFPreviewClient';
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const supabase = await createClient();
-  
+
   const { data: project } = await supabase
     .from('projects')
     .select('name')
     .eq('id', id)
     .single();
-  
-  const projectName = project?.name || 'Project';
-  
+
+  const locale = await getLocale();
+  const tPdf = await getTranslations({ locale, namespace: 'pdf' });
+  const tHeader = await getTranslations({ locale, namespace: 'dashboard.projectHeader' });
+  const projectName = project?.name ?? tHeader('defaultProjectName');
+
   return {
-    title: `${projectName} - PDF Preview`,
+    title: `${projectName} - ${tPdf('preview')}`,
   };
 }
 

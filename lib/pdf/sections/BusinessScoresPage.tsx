@@ -7,38 +7,37 @@ interface BusinessScoresPageProps {
 }
 
 export function BusinessScoresPage({ data }: BusinessScoresPageProps) {
+  const { labels } = data;
+  const sl = labels.statusLabels;
+
   const getStatusLabel = (score: number) => {
-    if (score >= 80) return { label: 'Strong', style: pdfStyles.statusHigh };
-    if (score >= 60) return { label: 'Good', style: pdfStyles.statusMedium };
-    if (score >= 40) return { label: 'Needs Work', style: pdfStyles.statusMedium };
-    return { label: 'Critical', style: pdfStyles.statusLow };
+    if (score >= 80) return { label: sl.strong, style: pdfStyles.statusHigh };
+    if (score >= 60) return { label: sl.good, style: pdfStyles.statusMedium };
+    if (score >= 40) return { label: sl.needsWork, style: pdfStyles.statusMedium };
+    return { label: sl.critical, style: pdfStyles.statusLow };
   };
-  
+
+  const bs = labels.businessScores;
+
   return (
     <View style={pdfStyles.page}>
-      {/* Page Title */}
-      <Text style={pdfStyles.sectionTitle}>BUSINESS MODEL CANVAS SCORES</Text>
-      <Text style={pdfStyles.text}>
-        Detailed breakdown of your business model across 9 key dimensions.
-      </Text>
-      
-      {/* Scores Table */}
+      <Text style={pdfStyles.sectionTitle}>{bs.title}</Text>
+      <Text style={pdfStyles.text}>{bs.intro}</Text>
+
       <View style={{ ...pdfStyles.table, marginTop: 20 }}>
-        {/* Table Header */}
         <View style={pdfStyles.tableHeader}>
-          <Text style={{ ...pdfStyles.tableCellBold, flex: 2 }}>Block</Text>
-          <Text style={{ ...pdfStyles.tableCellBold, flex: 1, textAlign: 'center' }}>Score</Text>
-          <Text style={{ ...pdfStyles.tableCellBold, flex: 1.5 }}>Status</Text>
+          <Text style={{ ...pdfStyles.tableCellBold, flex: 2 }}>{bs.colBlock}</Text>
+          <Text style={{ ...pdfStyles.tableCellBold, flex: 1, textAlign: 'center' }}>{bs.colScore}</Text>
+          <Text style={{ ...pdfStyles.tableCellBold, flex: 1.5 }}>{bs.colStatus}</Text>
         </View>
-        
-        {/* Table Rows */}
+
         {data.blockScores.map((block, index) => {
           const status = getStatusLabel(block.score);
           return (
             <View key={index} style={pdfStyles.tableRow}>
               <Text style={{ ...pdfStyles.tableCell, flex: 2 }}>{block.name}</Text>
-              <Text style={{ 
-                ...pdfStyles.tableCellBold, 
+              <Text style={{
+                ...pdfStyles.tableCellBold,
                 flex: 1,
                 textAlign: 'center',
                 fontSize: 11,
@@ -52,50 +51,47 @@ export function BusinessScoresPage({ data }: BusinessScoresPageProps) {
           );
         })}
       </View>
-      
-      {/* Average Score */}
+
       <View style={pdfStyles.row}>
-        <Text style={pdfStyles.heading}>Average Block Score:</Text>
+        <Text style={pdfStyles.heading}>{bs.averageBlockScore}</Text>
         <Text style={pdfStyles.heading}>
           {Math.round(
             data.blockScores.reduce((sum, block) => sum + block.score, 0) / data.blockScores.length
           )}/100
         </Text>
       </View>
-      
-      {/* Legend */}
+
       <View style={{ ...pdfStyles.section, marginTop: 16 }}>
-        <Text style={pdfStyles.sectionTitle}>LEGEND</Text>
+        <Text style={pdfStyles.sectionTitle}>{bs.legend}</Text>
         <View style={pdfStyles.listItem}>
           <Text style={pdfStyles.bullet}>•</Text>
           <Text style={pdfStyles.listContent}>
-            <Text style={{ fontWeight: 700 }}>Strong (80-100):</Text> Well-developed and ready for scaling.
+            <Text style={{ fontWeight: 700 }}>{bs.strongBold}</Text> {bs.strongText}
           </Text>
         </View>
         <View style={pdfStyles.listItem}>
           <Text style={pdfStyles.bullet}>•</Text>
           <Text style={pdfStyles.listContent}>
-            <Text style={{ fontWeight: 700 }}>Good (60-79):</Text> Solid foundation, minor improvements recommended.
+            <Text style={{ fontWeight: 700 }}>{bs.goodBold}</Text> {bs.goodText}
           </Text>
         </View>
         <View style={pdfStyles.listItem}>
           <Text style={pdfStyles.bullet}>•</Text>
           <Text style={pdfStyles.listContent}>
-            <Text style={{ fontWeight: 700 }}>Needs Work (40-59):</Text> Requires significant attention.
+            <Text style={{ fontWeight: 700 }}>{bs.needsWorkBold}</Text> {bs.needsWorkText}
           </Text>
         </View>
         <View style={pdfStyles.listItem}>
           <Text style={pdfStyles.bullet}>•</Text>
           <Text style={pdfStyles.listContent}>
-            <Text style={{ fontWeight: 700 }}>Critical (&lt;40):</Text> High-priority area needing immediate action.
+            <Text style={{ fontWeight: 700 }}>{bs.criticalBold}</Text> {bs.criticalText}
           </Text>
         </View>
       </View>
-      
-      {/* Footer */}
+
       <View style={pdfStyles.footer}>
-        <Text>Generated by Project Guard AI</Text>
-        <Text>Page 2</Text>
+        <Text>{data.labels.cover.generatedBy}</Text>
+        <Text>{`${data.labels.footer.pageLabel} 2`}</Text>
       </View>
     </View>
   );

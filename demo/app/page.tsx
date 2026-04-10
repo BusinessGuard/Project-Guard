@@ -7,8 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  BarChart,
-  Bar,
+
   LineChart,
   Line,
   RadarChart,
@@ -22,23 +21,18 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Area,
-  AreaChart,
+
 } from 'recharts';
 import {
   TrendingUp,
   AlertTriangle,
   CheckCircle,
-  XCircle,
-  DollarSign,
-  Users,
+
   Target,
   Zap,
   Shield,
-  Settings,
   Download,
   RefreshCw,
-  ArrowRight,
   ArrowLeft,
   Sparkles,
   Brain,
@@ -47,14 +41,11 @@ import {
   Rocket,
   Moon,
   Sun,
-  Globe,
   Building2,
   Briefcase,
-  TrendingDown,
   ChevronDown,
   ChevronUp,
   Clock,
-  Star,
   Award,
   Flame,
 } from 'lucide-react';
@@ -65,6 +56,7 @@ const translations = {
     hero: {
       title: 'ProjectGuard AI',
       subtitle: 'AI-Powered Startup Evaluation in 30 Seconds',
+      badge: 'AI-Powered Startup Evaluation',
       description: 'Your startup analyzed by 6 expert AI evaluators. Get investor-ready with concrete action plan.',
       cta: 'Start Free Analysis',
       demo: 'View Demo Analysis',
@@ -110,11 +102,21 @@ const translations = {
       weak: 'WEAK',
       critical: 'CRITICAL',
     },
+    priorityLabels: {
+      CRITICAL: 'Critical',
+      HIGH: 'High',
+      MEDIUM: 'Medium',
+      LOW: 'Low',
+    },
+    chart: {
+      score: 'Score',
+    },
   },
   ru: {
     hero: {
       title: 'ProjectGuard AI',
       subtitle: 'AI-оценка стартапа за 30 секунд',
+      badge: 'AI-оценка стартапа',
       description: 'Ваш стартап анализируют 6 экспертов на базе AI. Станьте готовы к инвесторам с конкретным планом действий.',
       cta: 'Начать бесплатный анализ',
       demo: 'Посмотреть демо',
@@ -160,11 +162,21 @@ const translations = {
       weak: 'СЛАБО',
       critical: 'КРИТИЧНО',
     },
+    priorityLabels: {
+      CRITICAL: 'Критический',
+      HIGH: 'Высокий',
+      MEDIUM: 'Средний',
+      LOW: 'Низкий',
+    },
+    chart: {
+      score: 'Оценка',
+    },
   },
   uk: {
     hero: {
       title: 'ProjectGuard AI',
       subtitle: 'AI-оцінка стартапу за 30 секунд',
+      badge: 'AI-оцінка стартапу',
       description: 'Ваш стартап аналізують 6 експертів на базі AI. Станьте готовими до інвесторів з конкретним планом дій.',
       cta: 'Почати безкоштовний аналіз',
       demo: 'Подивитись демо',
@@ -203,12 +215,21 @@ const translations = {
     },
     scores: {
       overall: 'Загальний бал',
-      exceptional: 'ВИНЯТКОВОГО',
+      exceptional: 'ВИНЯТКОВО',
       excellent: 'ВІДМІННО',
       good: 'ДОБРЕ',
       fair: 'ЗАДОВІЛЬНО',
       weak: 'СЛАБКО',
       critical: 'КРИТИЧНО',
+    },
+    priorityLabels: {
+      CRITICAL: 'Критичний',
+      HIGH: 'Високий',
+      MEDIUM: 'Середній',
+      LOW: 'Низький',
+    },
+    chart: {
+      score: 'Оцінка',
     },
   },
 };
@@ -640,7 +661,8 @@ function ProjectGuardDemoV2() {
   const [expandedRecommendations, setExpandedRecommendations] = useState<Record<string, boolean>>({});
 
   const t = translations[language] || translations.en;
-  
+  const priorityLabels = (translations[language] ?? translations.en).priorityLabels;
+
   // Helper function for inline translations
   const tr = (en: string, ru: string, uk: string): string => {
     switch (language) {
@@ -1231,7 +1253,7 @@ function ProjectGuardDemoV2() {
                         <PolarAngleAxis dataKey="block" tick={{ fill: darkMode ? '#D1D5DB' : '#6B7280', fontSize: 12 }} />
                         <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: darkMode ? '#D1D5DB' : '#6B7280' }} />
                         <Radar
-                          name="Score"
+                          name={(translations[language] ?? translations.en).chart.score}
                           dataKey="score"
                           stroke="#3B82F6"
                           fill="#3B82F6"
@@ -1386,7 +1408,7 @@ function ProjectGuardDemoV2() {
                     <CardContent className="pt-6">
                       <div className="flex items-start gap-4">
                         <Badge className={`${getPriorityColor(rec.priority)} text-white flex-shrink-0`}>
-                          {rec.priority}
+                          {priorityLabels[rec.priority as keyof typeof priorityLabels] ?? rec.priority}
                         </Badge>
                         <div className="flex-1 space-y-3">
                           <div 
