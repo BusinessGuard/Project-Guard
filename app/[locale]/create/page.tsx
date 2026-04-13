@@ -155,9 +155,6 @@ export default function CreateProjectPage() {
   const { data: existingProject } = useProject(projectId ?? "");
   const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
 
-  const { data: existingProject } = useProject(projectId ?? "");
-  const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
-
   useEffect(() => {
     const pageTitle = isReAnalysis 
       ? (existingProject?.name 
