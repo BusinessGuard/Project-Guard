@@ -5,6 +5,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n/config';
 import { QueryProvider } from "@/lib/providers/QueryProvider";
+import { PostHogProvider } from "@/lib/providers/PostHogProvider";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -53,7 +54,9 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          <QueryProvider>{children}</QueryProvider>
+          <PostHogProvider>
+            <QueryProvider>{children}</QueryProvider>
+          </PostHogProvider>
         </NextIntlClientProvider>
       </body>
     </html>

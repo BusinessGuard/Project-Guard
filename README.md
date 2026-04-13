@@ -221,3 +221,8 @@ Increment the:
    build:, chore:, ci:, docs:, style:, refactor:, perf:, test:, and others.
 
 https://www.conventionalcommits.org/en/v1.0.0/
+
+
+
+/{locale}/debug/log/{projectVersionId}
+/demo

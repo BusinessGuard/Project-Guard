@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/lib/navigation";
 import { useSearchParams } from "next/navigation";
@@ -24,6 +24,7 @@ import { hasDemoLimit } from "@/lib/utils/demoLimit";
 import { createClient } from "@/lib/supabase/client";
 import { setAnonymousProjectId } from "@/lib/utils/anonymousProject";
 import { useProject } from "@/lib/hooks/useProjects";
+import { useAnalytics } from "@/lib/hooks/useAnalytics";
 
 const getStepFieldsCount = (step: number, data: ProjectData): { filled: number; total: number } => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
@@ -137,11 +138,13 @@ const validateStep = (step: number, data: ProjectData): boolean => {
 
 export default function CreateProjectPage() {
   const t = useTranslations('create');
+  const locale = useLocale();
   const tCommon = useTranslations('common');
   const tNav = useTranslations('nav');
   const tAuth = useTranslations('auth');
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject, setProjectData } = useProjectStore();
+  const { trackFormStep, trackAnalysisStarted } = useAnalytics();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -151,7 +154,6 @@ export default function CreateProjectPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
   const isReAnalysis = !!projectId;
-
   const { data: existingProject } = useProject(projectId ?? "");
   const projectName = existingProject?.name ?? projectData.basicInfo.projectName;
 
@@ -161,8 +163,8 @@ export default function CreateProjectPage() {
           ? t('reAnalyzeTitle', { projectName: existingProject.name }) 
           : t('reAnalyzeTitleDefault'))
       : t('title');
-    document.title = `Project Guard AI | ${pageTitle}`;
-  }, [t, isReAnalysis, existingProject?.name]);
+    document.title = `${tNav('appName')} | ${pageTitle}`;
+  }, [t, tNav, isReAnalysis, existingProject?.name]);
 
   // Load canvas_data from latest venture version when re-analyzing
   useEffect(() => {
@@ -230,7 +232,9 @@ export default function CreateProjectPage() {
 
   const handleNext = () => {
     if (currentStep < 10) {
-      setCurrentStep(currentStep + 1);
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      trackFormStep(nextStep, `step_${nextStep}`);
     }
   };
 
@@ -245,6 +249,7 @@ export default function CreateProjectPage() {
       console.log('⚠️ Submit already in progress, ignoring duplicate click');
       return;
     }
+    trackAnalysisStarted();
     setIsSubmitting(true);
 
     try {
@@ -266,6 +271,7 @@ export default function CreateProjectPage() {
         projectData,
         projectId: projectId || undefined,
         jobId,
+        language: locale,
       };
 
       // Start analysis in background (ignore connection errors - will poll instead)
@@ -385,7 +391,9 @@ export default function CreateProjectPage() {
         <div className={`w-full mx-auto space-y-8 ${currentStep === 1 ? 'max-w-[600px]' : 'max-w-[1200px]'}`}>
           <div className="space-y-2 max-w-[600px]">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">{t('step')} {currentStep} {t('of')} 10</span>
+              <span className="text-sm text-slate-600">
+                {t('progressStep', { current: currentStep, total: 10 })}
+              </span>
               <span className="text-sm text-slate-600">{Math.round((currentStep / 10) * 100)}%</span>
             </div>
             <div className="w-full bg-slate-200 h-1">
@@ -419,7 +427,7 @@ export default function CreateProjectPage() {
                   onClick={currentStep === 1 ? () => router.back() : handleBack}
                   className="text-lg px-8 py-6"
                 >
-                  ← {tCommon('back')}
+                  {t('pageBack', { label: tCommon('back') })}
                 </Button>
                 <Button 
                   onClick={currentStep === 10 ? handleSubmit : handleNext}
@@ -434,7 +442,7 @@ export default function CreateProjectPage() {
                               ? t('reAnalyzeProject', { projectName: existingProject.name }) 
                               : t('reAnalyzeProjectDefault'))
                           : t('submitProject'))
-                      : `${tCommon('next')} →`}
+                      : t('pageNext', { label: tCommon('next') })}
                 </Button>
             </div>
           </div>

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 export default function LoginPage() {
   const router = useRouter();
   const tNav = useTranslations('nav');
+  const tLogin = useTranslations('login');
   const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function LoginPage() {
           <Button 
             variant="ghost"
             onClick={handleBack}
+            aria-label={tLogin('backAriaLabel')}
             className="absolute top-8 left-8 hover:scale-110 transition-all duration-300 cursor-pointer"
           >
             <LuMoveLeft className="size-10" />
@@ -45,6 +47,7 @@ export default function LoginPage() {
           <Button
             variant="ghost"
             onClick={handleBack}
+            aria-label={tLogin('backAriaLabel')}
             className="absolute xl:hidden top-8 left-8 hover:scale-110 transition-all duration-300 cursor-pointer"
           >
             <LuMoveLeft className="size-10" />

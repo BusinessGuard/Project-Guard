@@ -9,6 +9,17 @@ import { useProjectStore } from "@/store/useProjectStore";
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 
+const INDUSTRY_OPTIONS: { value: string; label: string }[] = [
+  { value: "saas-b2b", label: "SaaS / B2B" },
+  { value: "saas-b2c", label: "SaaS / B2C" },
+  { value: "marketplace", label: "Marketplace" },
+  { value: "ecommerce", label: "E-commerce" },
+  { value: "fintech", label: "Fintech" },
+  { value: "healthtech", label: "Healthtech" },
+  { value: "edtech", label: "Edtech" },
+  { value: "other", label: "Other" },
+];
+
 export function Step1BasicInfo() {
   const t = useTranslations('create.step1');
   const { projectData, updateBasicInfo } = useProjectStore();
@@ -17,26 +28,15 @@ export function Step1BasicInfo() {
   const [customIndustry, setCustomIndustry] = useState("");
   const [touched, setTouched] = useState({ projectName: false, industry: false, stage: false });
   
-  const industries = useMemo(() => [
-    { value: "saas-b2b", label: t('industries.saasB2b') },
-    { value: "saas-b2c", label: t('industries.saasB2c') },
-    { value: "marketplace", label: t('industries.marketplace') },
-    { value: "ecommerce", label: t('industries.ecommerce') },
-    { value: "fintech", label: t('industries.fintech') },
-    { value: "healthtech", label: t('industries.healthtech') },
-    { value: "edtech", label: t('industries.edtech') },
-    { value: "other", label: t('industries.other') },
+  const stages = useMemo(() => [
+    { value: "idea", label: t('stages.idea') },
+    { value: "mvp", label: t('stages.mvp') },
+    { value: "seed", label: t('stages.seed') },
+    { value: "series-a", label: t('stages.seriesA') },
+    { value: "series-b", label: t('stages.seriesB') },
   ], [t]);
   
-  const stages = [
-    { value: "idea", label: "Idea" },
-    { value: "mvp", label: "MVP" },
-    { value: "seed", label: "Seed" },
-    { value: "series-a", label: "Series A" },
-    { value: "series-b", label: "Series B" },
-  ];
-  
-  const isOtherIndustry = industry === "other" || (industry && !industries.some(i => i.value === industry));
+  const isOtherIndustry = industry === "other" || (industry && !INDUSTRY_OPTIONS.some(i => i.value === industry));
   
   // Validation
   const errors = {
@@ -77,7 +77,7 @@ export function Step1BasicInfo() {
           </Label>
           
           {/* Show select only if no custom industry is set */}
-          {(!industry || industry === "other" || industries.some(i => i.value === industry)) && (
+          {(!industry || industry === "other" || INDUSTRY_OPTIONS.some(i => i.value === industry)) && (
             <Select 
               value={isOtherIndustry ? "other" : industry} 
               onValueChange={(value) => {
@@ -93,7 +93,7 @@ export function Step1BasicInfo() {
                 <SelectValue placeholder={t('selectIndustry')} />
               </SelectTrigger>
               <SelectContent>
-                {industries.map((item) => (
+                {INDUSTRY_OPTIONS.map((item) => (
                   <SelectItem key={item.value} value={item.value}>
                     {item.label}
                   </SelectItem>
@@ -135,12 +135,13 @@ export function Step1BasicInfo() {
           )}
           
           {/* Show custom industry value with delete button */}
-          {industry && industry !== "other" && !industries.some(i => i.value === industry) && (
+          {industry && industry !== "other" && !INDUSTRY_OPTIONS.some(i => i.value === industry) && (
             <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-md border border-slate-200">
               <span className="text-sm flex-1 font-medium">{industry}</span>
               <button
                 type="button"
                 className="text-slate-500 hover:text-red-600 text-lg font-bold"
+                aria-label={t('removeCustomIndustry')}
                 onClick={() => updateBasicInfo({ industry: "" })}
               >
                 ✕

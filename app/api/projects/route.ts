@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     
     const body = await request.json();
-    const { projectData, projectId, jobId: requestJobId } = body;
+    const { projectData, projectId, jobId: requestJobId, language = 'en' } = body;
     jobId = requestJobId;
     
     console.log('📦 Project:', projectData.basicInfo.projectName);
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     
     const analysisStartTime = Date.now();
     const results = await Promise.all(
-      audienceTypes.map((audienceType) => analyzeProject(projectData, 'ru', audienceType))
+      audienceTypes.map((audienceType) => analyzeProject(projectData, language, audienceType))
     );
     
     const analysisDuration = ((Date.now() - analysisStartTime) / 1000).toFixed(1);

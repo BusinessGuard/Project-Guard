@@ -7,39 +7,30 @@ interface GrowthPlanPageProps {
 }
 
 export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
-  const { growthPhases } = data;
-  
-  const hasGrowthPlan = growthPhases.length > 0;
-  
-  if (!hasGrowthPlan) {
-    return null; // Don't render page if no growth plan
+  const { growthPhases, labels } = data;
+  const g = labels.growthPlan;
+
+  if (growthPhases.length === 0) {
+    return null;
   }
-  
+
   return (
     <View style={pdfStyles.page}>
-      {/* Page Title */}
-      <Text style={pdfStyles.sectionTitle}>GROWTH PLAN</Text>
-      <Text style={{ ...pdfStyles.text, marginBottom: 12 }}>
-        Strategic phases to scale your business from current state to target goals.
-      </Text>
-      
-      {/* Phases */}
+      <Text style={pdfStyles.sectionTitle}>{g.title}</Text>
+      <Text style={{ ...pdfStyles.text, marginBottom: 12 }}>{g.intro}</Text>
+
       {growthPhases.map((phase, index) => (
         <View key={index} style={{ ...pdfStyles.card, marginBottom: 12 }}>
-          {/* Phase Header */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
             <Text style={pdfStyles.heading}>
-              Phase {index + 1}: {phase.name}
+              {g.phasePrefix} {index + 1}: {phase.name}
             </Text>
             <Text style={pdfStyles.textSmall}>{phase.duration}</Text>
           </View>
-          
-          {/* Goals */}
+
           {phase.goals && phase.goals.length > 0 && (
             <View style={pdfStyles.sectionSmall}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>
-                Goals:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>{g.goals}</Text>
               {phase.goals.map((goal, i) => (
                 <View key={i} style={pdfStyles.listItem}>
                   <Text style={pdfStyles.bullet}>{i + 1}.</Text>
@@ -48,13 +39,10 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
               ))}
             </View>
           )}
-          
-          {/* Key Actions */}
+
           {phase.keyActions && phase.keyActions.length > 0 && (
             <View style={pdfStyles.sectionSmall}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>
-                Key Actions:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>{g.keyActions}</Text>
               {phase.keyActions.map((action, i) => (
                 <View key={i} style={pdfStyles.listItem}>
                   <Text style={pdfStyles.bullet}>•</Text>
@@ -63,13 +51,10 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
               ))}
             </View>
           )}
-          
-          {/* Milestones */}
+
           {phase.milestones && phase.milestones.length > 0 && (
             <View style={pdfStyles.sectionSmall}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>
-                Milestones:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>{g.milestones}</Text>
               {phase.milestones.map((milestone, i) => (
                 <View key={i} style={pdfStyles.listItem}>
                   <Text style={pdfStyles.bullet}>•</Text>
@@ -78,23 +63,17 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
               ))}
             </View>
           )}
-          
-          {/* Team Size */}
+
           {phase.teamSize && (
             <View style={pdfStyles.sectionSmall}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>
-                Team Size:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>{g.teamSize}</Text>
               <Text style={pdfStyles.text}>{phase.teamSize}</Text>
             </View>
           )}
-          
-          {/* Success Metrics */}
+
           {phase.successMetrics && phase.successMetrics.length > 0 && (
             <View style={pdfStyles.sectionSmall}>
-              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>
-                Success Metrics:
-              </Text>
+              <Text style={{ ...pdfStyles.text, fontWeight: 700, marginBottom: 3 }}>{g.successMetrics}</Text>
               {phase.successMetrics.map((metric, i) => (
                 <View key={i} style={pdfStyles.listItem}>
                   <Text style={pdfStyles.bullet}>•</Text>
@@ -105,11 +84,10 @@ export function GrowthPlanPage({ data }: GrowthPlanPageProps) {
           )}
         </View>
       ))}
-      
-      {/* Footer */}
+
       <View style={pdfStyles.footer}>
-        <Text>Project Guard AI</Text>
-        <Text>Page 5</Text>
+        <Text>{labels.footer.brand}</Text>
+        <Text>{`${labels.footer.pageLabel} 6`}</Text>
       </View>
     </View>
   );

@@ -21,7 +21,7 @@ export function LandingContent() {
         <div className="relative w-full max-w-[500px] md:max-w-[700px] h-14 md:h-24 mx-auto">
           <Image
             src="/images/logo.png"
-            alt="Project Guard AI"
+            alt={t('logoAlt')}
             fill
             className="object-cover"
             priority

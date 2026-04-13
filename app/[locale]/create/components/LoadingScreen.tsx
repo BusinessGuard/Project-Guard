@@ -24,7 +24,9 @@ export function LoadingScreen({ text }: LoadingScreenProps) {
     <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
       <HashLoader color="#000000" size={60} />
       <p className="mt-8 text-xl font-semibold text-black">{text}</p>
-      <p className="mt-2 text-lg text-gray-600">{seconds}s</p>
+      <p className="mt-2 text-lg text-gray-600">
+        {tCommon('elapsedSeconds', { seconds })}
+      </p>
       <p className="mt-4 text-sm text-gray-500">{tCommon('mayTakeTime')}</p>
     </div>
   );

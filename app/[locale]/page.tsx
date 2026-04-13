@@ -130,7 +130,7 @@ export default function Home() {
           >
             <Image
               src="/images/poster.webp"
-              alt="Business Canvas"
+              alt={t('imageAlt')}
               fill
               className="object-cover"
               priority

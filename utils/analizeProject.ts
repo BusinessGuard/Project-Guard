@@ -34,7 +34,7 @@ export async function analyzeProject(
 
   const response = await openai.chat.completions.create({
     model,
-    max_completion_tokens: 6000,
+    max_completion_tokens: 5500,
     temperature: 0.1,
     response_format: { type: 'json_object' },
     messages: [

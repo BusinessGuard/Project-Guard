@@ -19,91 +19,46 @@ interface AudienceConfig {
 
 const AUDIENCE_CONFIGS: Record<'venture' | 'bank' | 'corporate', AudienceConfig> = {
   venture: {
-    expertCount: 6,
+    expertCount: 5,
     experts: [
       { field: 'financial', name: 'Michael Chen', role: 'CFO with 20+ years experience', avatar: '💰' },
       { field: 'market', name: 'Sarah Williams', role: 'Senior Market Researcher with 15+ years', avatar: '📊' },
       { field: 'product', name: 'David Park', role: 'VP Product with 12+ years', avatar: '🎯' },
       { field: 'marketing', name: 'Emma Rodriguez', role: 'CMO with 10+ years', avatar: '📢' },
       { field: 'risk', name: 'James Thompson', role: 'Enterprise Risk Consultant with 18+ years', avatar: '⚠️' },
-      { field: 'operations', name: 'Lisa Anderson', role: 'COO with 15+ years', avatar: '⚙️' },
     ],
-    recommendationCount: { min: 5, max: 8 },
+    recommendationCount: { min: 5, max: 7 },
     growthPhases: 3,
-    monthlyProjections: { min: 12, max: 18 },
+    monthlyProjections: { min: 12, max: 12 },
   },
   bank: {
-    expertCount: 6,
+    expertCount: 5,
     experts: [
       { field: 'credit', name: 'Robert Martinez', role: 'Senior Credit Officer with 25+ years', avatar: '🏦' },
       { field: 'risk', name: 'Patricia Green', role: 'Chief Risk Officer with 20+ years', avatar: '⚠️' },
-      { field: 'collections', name: 'David Kim', role: 'Collections Head with 15+ years', avatar: '💼' },
       { field: 'compliance', name: 'Elena Petrov', role: 'Regulatory Compliance with 18+ years', avatar: '📋' },
       { field: 'financial', name: 'Andrew Foster', role: 'Senior Financial Analyst with 18+ years', avatar: '💰' },
       { field: 'legal', name: 'Margaret Chen', role: 'Banking Law Specialist with 22+ years', avatar: '⚖️' },
     ],
-    recommendationCount: { min: 5, max: 7 },
+    recommendationCount: { min: 5, max: 6 },
     growthPhases: 3,
-    monthlyProjections: { min: 12, max: 24 },
+    monthlyProjections: { min: 12, max: 12 },
   },
   corporate: {
-    expertCount: 6,
+    expertCount: 5,
     experts: [
       { field: 'procurement', name: 'Jennifer Walsh', role: 'VP Procurement with 15+ years', avatar: '🛒' },
       { field: 'security', name: 'Marcus Johnson', role: 'CISO with 20+ years', avatar: '🔒' },
       { field: 'integration', name: 'Sofia Chen', role: 'Enterprise Architect with 18+ years', avatar: '🔗' },
       { field: 'business', name: 'Thomas Brown', role: 'VP Business Development with 22+ years', avatar: '💼' },
       { field: 'legal', name: 'Rachel Adams', role: 'Corporate Counsel with 16+ years', avatar: '⚖️' },
-      { field: 'operations', name: 'Daniel Schmidt', role: 'Chief Operating Officer with 20+ years', avatar: '⚙️' },
     ],
-    recommendationCount: { min: 5, max: 8 },
+    recommendationCount: { min: 5, max: 7 },
     growthPhases: 3,
-    monthlyProjections: { min: 12, max: 18 },
+    monthlyProjections: { min: 12, max: 12 },
   },
 };
 
-// Generate expert list for JSON example
-function generateExpertsExample(audienceType: 'venture' | 'bank' | 'corporate'): string {
-  const config = AUDIENCE_CONFIGS[audienceType];
-  
-  const exampleExperts = config.experts.map((expert, index) => {
-    const isFirst = index === 0;
-    return `      ${isFirst ? '' : ',\n      '}{
-        "field": "${expert.field}",
-        "name": "${expert.name}",
-        "role": "${expert.role}",
-        "avatar": "${expert.avatar}",
-        "summary": "Provide 1 sentence overview (15-25 words)",
-        "confidence": 85,
-        "keyFindings": [
-          "Specific finding with numbers and metrics",
-          "Another finding with concrete data",
-          "Third finding with measurable evidence"
-        ],
-        "concerns": [
-          "Specific concern with impact assessment",
-          "Another concern with risk level",
-          "Third concern with urgency"
-        ],
-        "recommendations": [
-          "Actionable recommendation with clear next steps",
-          "Another recommendation with timeline",
-          "Third recommendation with expected outcome"
-        ],
-        "criticalRisks": [
-          {
-            "category": "Risk Category",
-            "description": "Detailed risk description",
-            "likelihood": "high",
-            "impact": "critical",
-            "mitigation": "Specific mitigation strategy"
-          }
-        ]
-      }`;
-  });
-
-  return exampleExperts.join('');
-}
 
 // ============================================================================
 // Helper function to format project input data (reusable across all prompts)
@@ -248,9 +203,16 @@ function formatProjectInputData(projectData: any) {
 
 // Common language instruction builder
 function getLanguageInstruction(language: string): string {
-  const langName = language === 'ru' ? 'RUSSIAN (Русский)' : language === 'en' ? 'ENGLISH' : language.toUpperCase();
-  return `CRITICAL LANGUAGE RULES - You MUST respond in ${langName}:
-    1. ALL text content MUST be in ${langName}:
+  const fallbackName = language === 'ru' ? 'RUSSIAN (Русский)' : language === 'en' ? 'ENGLISH' : language.toUpperCase();
+  return `CRITICAL LANGUAGE RULES:
+    1. Detect the language from the project input data (description, problem, solution, etc.) and respond ENTIRELY in that same language.
+       - If the input is clearly in Russian → respond in Russian
+       - If the input is clearly in English → respond in English
+       - If the input is clearly in Ukrainian → respond in Ukrainian
+       - If the language cannot be determined with confidence → respond in ${fallbackName}
+       - NEVER mix languages within a single sentence or field
+
+    2. ALL text content MUST be in the detected language:
       - Expert summaries, findings, concerns, recommendations
       - Risk descriptions and mitigation strategies
       - Growth plan phases (names, goals, actions, metrics, budgets, team sizes)
@@ -258,358 +220,102 @@ function getLanguageInstruction(language: string): string {
       - Consensus findings (strengths/weaknesses)
       - All narrative text, explanations, and descriptions
 
-    2. EXCEPTIONS (keep in original language):
-      - Technical terms (SaaS, MVP, CAC, LTV, ARPU, MRR, etc.)
-      - Brand names and company names
-      - Product names and trademarks
-      - Acronyms and abbreviations (GDPR, API, etc.)
-      - Currency symbols and codes (€, $, USD, EUR)
-      - Numbers, percentages, and dates`;
+    3. EXCEPTIONS — keep these EXACTLY as-is, never translate:
+      - Abbreviations and acronyms: SaaS, MVP, CAC, LTV, ARPU, MRR, ARR, EBITDA, DSCR, KYC, AML, GDPR, SOC2, ISO27001, NPS, CRM, API, IP, ROI, TAM, SAM, SOM, B2B, B2C
+      - Currency symbols and codes: €, $, %, USD, EUR
+      - Numbers and dates
+      - Proper names: company names, brand names, person names, product names, trademarks
+      - EVERYTHING ELSE must be written in the detected language — no exceptions`;
 }
 
 // Audience-specific instructions
-const VENTURE_AUDIENCE_INSTRUCTIONS = `You are ProjectGuard AI, an elite panel of 6 startup evaluation experts with decades of combined experience. You analyze early-stage companies from multiple expert perspectives simultaneously.
+const VENTURE_AUDIENCE_INSTRUCTIONS = `You are ProjectGuard AI — a panel of 5 startup evaluation experts. Analyze the project from each expert's perspective simultaneously.
 
-  YOUR EXPERT PANEL:
+  EXPERT PANEL:
+  • Michael Chen (financial) — CFO 20yr: unit economics, LTV/CAC, burn rate, path to profitability
+  • Sarah Williams (market) — Researcher 15yr: TAM/SAM/SOM, competitive positioning, market validation
+  • David Park (product) — VP Product 12yr: product-market fit, value proposition, differentiation
+  • Emma Rodriguez (marketing) — CMO 10yr: CAC efficiency, acquisition channels, funnel conversion
+  • James Thompson (risk) — Risk Consultant 18yr: red flags, technical/financial/legal/market risks
 
-  FINANCIAL EXPERT - Michael Chen, CFO (20+ years)
-  - Specializes in: Unit economics, financial modeling, burn rate analysis
-  - Evaluates: Revenue model, cost structure, funding needs, LTV/CAC
-  - Focus: Financial sustainability and path to profitability
+  FOCUS: Growth potential, scalability, market disruption, venture returns (10x+)`;
 
-  MARKET ANALYST - Sarah Williams, Senior Market Researcher (15+ years)
-  - Specializes in: Market sizing, competitive analysis, TAM/SAM/SOM
-  - Evaluates: Customer segments, market opportunity, competition
-  - Focus: Market validation and competitive positioning
+const BANK_AUDIENCE_INSTRUCTIONS = `You are a Bank Credit Committee — 5 senior banking experts assessing creditworthiness and lending terms for a startup/SME.
 
-  PRODUCT EXPERT - David Park, VP Product (12+ years)
-  - Specializes in: Product-market fit, value proposition design
-  - Evaluates: Value proposition, differentiation, product roadmap
-  - Focus: Solving real customer problems with unique solutions
+  EXPERT PANEL:
+  • Robert Martinez (credit) — Credit Officer 25yr: repayment capacity, DSCR, cash flow stability
+  • Patricia Green (risk) — CRO 20yr: default prediction, concentration risk, early warning signals
+  • Elena Petrov (compliance) — Compliance 18yr: AML/KYC, regulatory adherence, documentation
+  • Andrew Foster (financial) — Financial Analyst 18yr: revenue projections, burn rate, unit economics
+  • Margaret Chen (legal) — Banking Law 22yr: loan docs, covenants, security agreements
 
-  MARKETING EXPERT - Emma Rodriguez, CMO (10+ years)
-  - Specializes in: Customer acquisition, growth strategies, viral loops
-  - Evaluates: Marketing channels, CAC efficiency, funnel conversion
-  - Focus: Scalable and sustainable customer acquisition
+  FOCUS: Cash flow stability, collateral coverage, repayment certainty, conservative risk management`;
 
-  RISK MANAGER - James Thompson, Enterprise Risk Consultant (18+ years)
-  - Specializes in: Risk identification, scenario planning, mitigation
-  - Evaluates: All blocks for technical, financial, market, legal risks
-  - Focus: Identifying red flags and critical vulnerabilities
+const CORPORATE_AUDIENCE_INSTRUCTIONS = `You are a Corporate Strategy Committee — 5 senior executives evaluating a startup as a potential partner, vendor, or strategic investment.
 
-  OPERATIONS EXPERT - Lisa Anderson, COO (15+ years)
-  - Specializes in: Team building, resource allocation, execution
-  - Evaluates: Team capabilities, resources, partnerships, operations
-  - Focus: Execution feasibility and operational readiness
+  EXPERT PANEL:
+  • Jennifer Walsh (procurement) — VP Procurement 15yr: vendor assessment, pricing, contractual risk
+  • Marcus Johnson (security) — CISO 20yr: cybersecurity, GDPR/SOC2 compliance, data protection
+  • Sofia Chen (integration) — Enterprise Architect 18yr: API compatibility, tech stack fit, scalability
+  • Thomas Brown (business) — VP Biz Dev 22yr: strategic fit, synergies, ROI modeling
+  • Rachel Adams (legal) — Corporate Counsel 16yr: IP rights, contract law, liability
 
-  FOCUS: Growth potential, scalability, market disruption, venture returns (10x+)`
-;
-
-const BANK_AUDIENCE_INSTRUCTIONS = `You are a senior credit analyst writing for a Bank Credit Committee. Your goal is to assess creditworthiness and propose prudent lending terms for a startup/SME.
-
-  YOUR EXPERT PANEL (6 EXPERTS):
-
-  CREDIT ANALYST - Robert Martinez, Senior Credit Officer (25+ years)
-  - Specializes in: Credit risk assessment, financial statement analysis, DSCR calculation
-  - Evaluates: Repayment capacity, cash flow stability, debt coverage ratios
-  - Focus: Loan repayment certainty and collateral adequacy
-
-  RISK OFFICER - Patricia Green, Chief Risk Officer (20+ years)
-  - Specializes in: Default prediction, concentration risk, covenant structuring
-  - Evaluates: Business continuity, industry risks, borrower stability
-  - Focus: Downside protection and early warning signals
-
-  COLLECTIONS MANAGER - David Kim, Collections Head (15+ years)
-  - Specializes in: Recovery strategies, collateral liquidation, restructuring
-  - Evaluates: Asset quality, tangible collateral, personal guarantees
-  - Focus: Recovery potential in default scenarios
-
-  COMPLIANCE OFFICER - Elena Petrov, Regulatory Compliance (18+ years)
-  - Specializes in: AML/KYC, regulatory requirements, documentation
-  - Evaluates: Legal structure, regulatory compliance, documentation quality
-  - Focus: Legal enforceability and regulatory adherence
-
-  FINANCIAL ANALYST - Andrew Foster, Senior Financial Analyst (18+ years)
-  - Specializes in: Financial modeling, profitability analysis, cash flow forecasting
-  - Evaluates: Revenue projections, cost structure, burn rate, unit economics
-  - Focus: Financial sustainability and profitability potential
-
-  LEGAL SPECIALIST - Margaret Chen, Banking Law Specialist (22+ years)
-  - Specializes in: Loan documentation, covenants, security agreements, bankruptcy law
-  - Evaluates: Legal documentation, security interests, guarantees, enforceability
-  - Focus: Legal protection and documentation quality
-
-  FOCUS: Cash flow stability, collateral coverage, repayment certainty, conservative risk management`
-;
-
-const CORPORATE_AUDIENCE_INSTRUCTIONS = `You are a corporate strategy and innovation review committee evaluating a startup as a potential partner, vendor, or strategic investment target.
-
-  YOUR EXPERT PANEL (6 EXPERTS):
-
-  PROCUREMENT LEAD - Jennifer Walsh, VP Procurement (15+ years)
-  - Specializes in: Vendor assessment, contract negotiation, pricing evaluation
-  - Evaluates: Pricing structure, commercial terms, delivery capability
-  - Focus: Cost-effectiveness and contractual risk mitigation
-
-  SECURITY OFFICER - Marcus Johnson, CISO (20+ years)
-  - Specializes in: Cybersecurity, data privacy, compliance (GDPR, SOC2)
-  - Evaluates: Security posture, data handling, vulnerability management
-  - Focus: Data protection and security risk minimization
-
-  INTEGRATION ARCHITECT - Sofia Chen, Enterprise Architect (18+ years)
-  - Specializes in: System integration, API compatibility, technical feasibility
-  - Evaluates: Tech stack compatibility, integration complexity, scalability
-  - Focus: Technical fit and implementation effort
-
-  BUSINESS UNIT LEAD - Thomas Brown, VP Business Development (22+ years)
-  - Specializes in: Strategic partnerships, synergy identification, ROI modeling
-  - Evaluates: Strategic fit, business value, competitive advantage
-  - Focus: Business impact and strategic alignment
-
-  LEGAL COUNSEL - Rachel Adams, Corporate Counsel (16+ years)
-  - Specializes in: Contract law, IP rights, liability assessment
-  - Evaluates: Legal structure, IP ownership, contractual obligations
-  - Focus: Legal risk and compliance requirements
-
-  OPERATIONS OFFICER - Daniel Schmidt, Chief Operating Officer (20+ years)
-  - Specializes in: Vendor management, SLA monitoring, operational excellence
-  - Evaluates: Service delivery capability, scalability, support infrastructure
-  - Focus: Operational reliability and vendor performance management
-
-  FOCUS: Strategic fit, integration feasibility, vendor stability, measurable ROI (<18 months)`
-;
+  FOCUS: Strategic fit, integration feasibility, vendor stability, measurable ROI (<18 months)`;
 
 // Venture Capital Scoring Criteria
 const VENTURE_SCORING_CRITERIA = `
-  SCORING CRITERIA BY BLOCK (VENTURE CAPITAL FOCUS):
+  SCORING (0-100 per block, VENTURE CAPITAL focus):
+  • Value Proposition: disruption potential, scalability, IP defensibility, problem severity
+  • Customer Segments: TAM >€1B, growth >20% YoY, path to leadership, traction
+  • Channels: viral/organic potential, CAC payback <12mo, network effects
+  • Revenue: recurring model (MRR/ARR), >3x growth potential, path to €10M+ ARR
+  • Costs: gross margin >70%, LTV/CAC >3x, capital efficiency
+  • Key Resources: proprietary tech/data, IP moat, talent attraction
+  • Key Activities: R&D velocity, PMF evidence, execution speed
+  • Key Partners: strategic distribution, marquee logos, platform opportunities
+  • Team: founder-market fit, startup experience, completeness for scaling
 
-  VALUE PROPOSITION (0-100):
-  - Market disruption potential (30 pts) - Is this 10x better than alternatives?
-  - Solution scalability (25 pts) - Can this work for millions of users?
-  - Innovation & IP defensibility (25 pts) - How protected is the competitive advantage?
-  - Problem severity & market pull (20 pts) - Is this a burning pain point?
-
-  CUSTOMER SEGMENTS (0-100):
-  - TAM size >€1B for venture returns (30 pts)
-  - Market growth rate >20% YoY (25 pts)
-  - Clear path to market leadership (20 pts)
-  - Early adopter traction (15 pts)
-  - International expansion potential (10 pts)
-
-  CHANNELS (0-100):
-  - Viral/organic growth potential (30 pts) - Can users bring users?
-  - CAC payback <12 months (25 pts)
-  - Multiple scalable channels identified (20 pts)
-  - Network effects present (15 pts)
-  - Marketing efficiency improving over time (10 pts)
-
-  REVENUE (0-100):
-  - Recurring revenue model (30 pts) - ARR/MRR preferred
-  - Revenue growth >3x YoY potential (25 pts)
-  - Pricing power & expansion revenue (20 pts)
-  - Path to €10M+ ARR clear (15 pts)
-  - Multiple monetization opportunities (10 pts)
-
-  COSTS (0-100):
-  - Gross margin >70% (30 pts) - Software economics
-  - Unit economics improve with scale (25 pts)
-  - LTV/CAC ratio >3x (25 pts)
-  - Capital efficiency (20 pts)
-
-  KEY RESOURCES (0-100):
-  - Proprietary technology/data (35 pts)
-  - Strong IP portfolio (25 pts)
-  - Network effects or data moat (20 pts)
-  - Ability to attract top talent (20 pts)
-
-  KEY ACTIVITIES (0-100):
-  - R&D & innovation velocity (30 pts)
-  - Product-market fit evidence (25 pts)
-  - Operational leverage at scale (25 pts)
-  - Speed of execution (20 pts)
-
-  KEY PARTNERS (0-100):
-  - Strategic partnerships for distribution (30 pts)
-  - Venture-backed partners or marquee logos (25 pts)
-  - Partnership ecosystem strength (25 pts)
-  - Platform/integration opportunities (20 pts)
-
-  TEAM (0-100):
-  - Founder-market fit & vision (35 pts) - Can they build a unicorn?
-  - Previous startup success or big tech experience (25 pts)
-  - Team completeness for scaling (20 pts)
-  - Ability to recruit A-players (20 pts)
-
-  OVERALL SCORE CALCULATION:
-  - Weighted average: Team (25%), Value Prop (20%), Customer Segments (15%), Revenue (15%), Others (25%)
-  - Heavy penalty for low growth potential (-20 pts)
-  - Bonus for exceptional traction or team (+10 pts)
-
-  READINESS STATUS:
-  - 85-100: "Ready" - Strong venture case, ready to pitch top VCs
-  - 70-84: "Nearly Ready" - Good potential, needs minor improvements
-  - 50-69: "Needs Work" - Lacks key venture elements
-  - 0-49: "Not Ready" - Not suitable for venture capital
+  WEIGHTS: Team 25%, Value Prop 20%, Customer Segments 15%, Revenue 15%, Others 25%
+  READINESS: 85-100 "Ready" | 70-84 "Nearly Ready" | 50-69 "Needs Work" | 0-49 "Not Ready"
 `;
 
 // Bank Loan Scoring Criteria
 const BANK_SCORING_CRITERIA = `
-  SCORING CRITERIA BY BLOCK (BANK CREDIT ASSESSMENT):
+  SCORING (0-100 per block, BANK CREDIT focus):
+  • Value Proposition: demand stability, proven solution, revenue predictability, sustainability
+  • Customer Segments: stable base, diversified portfolio, no concentration risk, recession resistance
+  • Channels: proven CAC data, retention >85%, predictable sales cycle
+  • Revenue: contracted/recurring revenue, history >12mo, customer lifetime >24mo
+  • Costs: EBITDA positive or <6mo to profitability, DSCR >1.25x, cost predictability
+  • Key Resources: tangible collateral (equipment/inventory), asset quality, ownership clarity
+  • Key Activities: operational consistency, process documentation, regulatory compliance
+  • Key Partners: supplier stability, long-term contracts, diversified partnerships
+  • Team: industry experience >5yr, financial management, personal credit history, governance
 
-  VALUE PROPOSITION (0-100):
-  - Market demand stability (30 pts) - Is demand consistent & predictable?
-  - Solution proven & tested (25 pts) - Track record of working
-  - Revenue predictability (25 pts) - Can revenue be forecasted reliably?
-  - Business model sustainability (20 pts)
-
-  CUSTOMER SEGMENTS (0-100):
-  - Stable customer base (30 pts) - Low churn, long relationships
-  - Diversified customer portfolio (25 pts) - No concentration risk
-  - Market maturity & stability (20 pts)
-  - Existing customer contracts/commitments (15 pts)
-  - Recession resistance (10 pts)
-
-  CHANNELS (0-100):
-  - Proven acquisition channels (30 pts) - Historical CAC data
-  - Customer retention rate >85% (25 pts)
-  - Sales cycle predictability (20 pts)
-  - Low customer acquisition risk (15 pts)
-  - Repeat business potential (10 pts)
-
-  REVENUE (0-100):
-  - Contracted/recurring revenue (35 pts) - Predictable cash flow
-  - Revenue history >12 months (25 pts)
-  - Customer lifetime >24 months (20 pts)
-  - Payment terms favorable (10 pts)
-  - Revenue concentration low (10 pts)
-
-  COSTS (0-100):
-  - Positive EBITDA or path to profitability <6mo (35 pts)
-  - Fixed costs covered by revenue (25 pts)
-  - Debt service coverage ratio >1.25x (20 pts)
-  - Working capital management (10 pts)
-  - Cost predictability (10 pts)
-
-  KEY RESOURCES (0-100):
-  - Tangible assets as collateral (40 pts) - Equipment, inventory, property
-  - Asset quality & liquidity (25 pts)
-  - Intellectual property with proven value (20 pts)
-  - Ownership structure clarity (15 pts)
-
-  KEY ACTIVITIES (0-100):
-  - Operational consistency (30 pts)
-  - Process documentation & controls (25 pts)
-  - Business continuity planning (25 pts)
-  - Regulatory compliance (20 pts)
-
-  KEY PARTNERS (0-100):
-  - Supplier relationship stability (30 pts)
-  - Long-term contracts in place (25 pts)
-  - Distribution partner reliability (20 pts)
-  - Partnership diversification (15 pts)
-  - Industry association membership (10 pts)
-
-  TEAM (0-100):
-  - Management experience >5 years in industry (30 pts)
-  - Financial management capability (25 pts)
-  - Personal credit history (20 pts)
-  - Succession planning (15 pts)
-  - Governance structure (10 pts)
-
-  OVERALL SCORE CALCULATION:
-  - Weighted average: Revenue (25%), Costs (20%), Resources (20%), Customer Segments (15%), Others (20%)
-  - Heavy penalty for negative cash flow (-25 pts)
-  - Bonus for strong collateral or guarantees (+10 pts)
-
-  READINESS STATUS:
-  - 85-100: "Ready" - Strong credit profile, favorable terms likely
-  - 70-84: "Nearly Ready" - Creditworthy with standard terms
-  - 50-69: "Needs Work" - Requires improvement or higher collateral
-  - 0-49: "Not Ready" - Too risky for traditional bank lending
+  WEIGHTS: Revenue 25%, Costs 20%, Resources 20%, Customer Segments 15%, Others 20%
+  READINESS: 85-100 "Ready" | 70-84 "Nearly Ready" | 50-69 "Needs Work" | 0-49 "Not Ready"
 `;
 
 // Corporate Partnership Scoring Criteria
 const CORPORATE_SCORING_CRITERIA = `
-  SCORING CRITERIA BY BLOCK (CORPORATE PARTNERSHIP ASSESSMENT):
+  SCORING (0-100 per block, CORPORATE PARTNERSHIP focus):
+  • Value Proposition: strategic fit, integration complexity, ROI clarity, competitive advantage
+  • Customer Segments: overlap with corporate base, segment strategic value, geographic alignment
+  • Channels: channel compatibility, co-marketing potential, sales process alignment
+  • Revenue: commercial terms attractiveness, pricing clarity, contract flexibility
+  • Costs: total cost of ownership (implementation + ongoing), hidden costs, exit/lock-in risk
+  • Key Resources: tech stack compatibility, GDPR/SOC2/ISO27001 compliance, API quality, scalability
+  • Key Activities: SLA quality, support responsiveness, process integration ease
+  • Key Partners: existing corporate clients, industry certifications, financial stability
+  • Team: enterprise sales experience, account management, vendor stability, technical support
 
-  VALUE PROPOSITION (0-100):
-  - Strategic fit with corporate goals (35 pts) - Does this solve our problem?
-  - Integration complexity (25 pts) - How hard to implement?
-  - ROI clarity & measurability (20 pts)
-  - Competitive advantage for corporation (20 pts)
-
-  CUSTOMER SEGMENTS (0-100):
-  - Overlap with corporate customer base (30 pts)
-  - Market segment strategic value (25 pts)
-  - Customer data/insights value (20 pts)
-  - Geographic coverage alignment (15 pts)
-  - B2B vs B2C fit (10 pts)
-
-  CHANNELS (0-100):
-  - Channel compatibility (30 pts) - Can we leverage our channels?
-  - Co-marketing opportunities (25 pts)
-  - Sales process alignment (20 pts)
-  - Partner program maturity (15 pts)
-  - Distribution leverage potential (10 pts)
-
-  REVENUE (0-100):
-  - Commercial terms attractiveness (30 pts)
-  - Pricing structure clarity (25 pts)
-  - Revenue share fairness (20 pts)
-  - Contract flexibility (15 pts)
-  - Volume discount structure (10 pts)
-
-  COSTS (0-100):
-  - Total cost of ownership (30 pts) - Implementation + ongoing
-  - Hidden costs transparency (25 pts)
-  - Support & maintenance costs (20 pts)
-  - Exit costs & lock-in (15 pts)
-  - Training & onboarding costs (10 pts)
-
-  KEY RESOURCES (0-100):
-  - Technology stack compatibility (35 pts) - Does it fit our infrastructure?
-  - Security & compliance standards (30 pts) - GDPR, SOC2, ISO27001
-  - API quality & documentation (20 pts)
-  - Scalability to corporate volumes (15 pts)
-
-  KEY ACTIVITIES (0-100):
-  - Process integration ease (30 pts)
-  - Service level agreements (25 pts)
-  - Support responsiveness (20 pts)
-  - Customization capability (15 pts)
-  - Continuous improvement track record (10 pts)
-
-  KEY PARTNERS (0-100):
-  - Existing corporate clients (35 pts) - Social proof
-  - Industry certifications (25 pts)
-  - Technology partnerships (20 pts)
-  - Financial stability (15 pts)
-  - Reference customers (5 pts)
-
-  TEAM (0-100):
-  - Enterprise sales experience (30 pts)
-  - Account management capability (25 pts)
-  - Technical support quality (20 pts)
-  - Vendor stability & longevity (15 pts)
-  - Executive engagement (10 pts)
-
-  OVERALL SCORE CALCULATION:
-  - Weighted average: Value Prop (20%), Resources (20%), Costs (15%), Revenue (15%), Others (30%)
-  - Heavy penalty for security/compliance gaps (-20 pts)
-  - Bonus for proven corporate client success (+10 pts)
-
-  READINESS STATUS:
-  - 85-100: "Ready" - Strong vendor, ready for procurement approval
-  - 70-84: "Nearly Ready" - Good fit, minor improvements needed
-  - 50-69: "Needs Work" - Significant gaps in partnership readiness
-  - 0-49: "Not Ready" - Not suitable for corporate partnership
+  WEIGHTS: Value Prop 20%, Resources 20%, Costs 15%, Revenue 15%, Others 30%
+  READINESS: 85-100 "Ready" | 70-84 "Nearly Ready" | 50-69 "Needs Work" | 0-49 "Not Ready"
 `;
 
 // Universal system prompt builder
 function buildUniversalSystemPrompt(audienceInstructions: string, scoringCriteria: string, langInstruction: string): string {
   return `${audienceInstructions}
-
-  ${langInstruction}
 
   DATA INTEGRITY & UNCERTAINTY RULES (MANDATORY):
   1. Use ONLY the data explicitly provided by the user/project input. Do NOT invent, assume, estimate, or "fill in" missing details.
@@ -673,52 +379,28 @@ export function getSystemPrompt(audienceType: 'venture' | 'bank' | 'corporate' =
 export function createProjectPrompt(projectData: any, audienceType: 'venture' | 'bank' | 'corporate' = 'venture') {
   const projectInput = formatProjectInputData(projectData);
   const config = AUDIENCE_CONFIGS[audienceType];
-  
-  // Динамически генерируем JSON структуру с правильным количеством экспертов
-  const expertsJsonExample = generateExpertsExample(audienceType);
-  const analysisStructure = ANALYSIS_JSON_STRUCTURE.replace(
-    /"experts": \{[\s\S]*?\n    \]/,
-    `"experts": {
-    "list": [
-${expertsJsonExample}
-    ]`
-  );
+  const expertNames = config.experts.map(e => `${e.name} (${e.field})`).join(', ');
+  const expertFields = config.experts.map(e => e.field).join(', ');
 
-  return `Analyze this startup project comprehensively from ALL ${config.expertCount} expert perspectives defined in your system instructions.
+  return `Analyze this startup from ALL ${config.expertCount} expert perspectives defined in your system instructions.
 
   ${projectInput}
 
-  YOUR TASK:
-  Return ONLY valid JSON (no markdown, no explanations) in this EXACT structure:
+  Return ONLY valid JSON (no markdown) matching this structure exactly:
+  ${ANALYSIS_JSON_STRUCTURE}
 
-  ${analysisStructure}
+  REQUIRED QUANTITIES:
+  • experts.list: ${config.expertCount} objects — ${expertNames}
+    Each expert fields: field(${expertFields}), name, role, avatar, summary(15-25w), confidence(70-95), keyFindings(3-5), concerns(3-5), recommendations(3-5), criticalRisks(1-3 objects with category/description/likelihood/impact/mitigation)
+  • recommendations.list: ${config.recommendationCount.min}-${config.recommendationCount.max} objects
+    Each: id, priority(CRITICAL/HIGH/MEDIUM/LOW), category, title, description(30-50w), actionSteps(4-6), expectedImpact, effort, timeline, expertsSupporting(2-4)
+  • growthPlan.phases: ${config.growthPhases} phases (phase1/phase2/phase3)
+    Each: name, duration, goals(4-6), keyActions(5-7), budget(€), teamSize, successMetrics(4-6)
+  • financialForecast.monthlyProjections: ${config.monthlyProjections.min}-${config.monthlyProjections.max} months
+    Each: month, revenue, costs, profit, customers, mrr, runway
+  • consensus: topStrengths & topWeaknesses (3-7 each, with specific metrics)
 
-  🚨 CRITICAL: Example shows STRUCTURE (field names), NOT QUANTITY (array lengths)
-  YOU MUST provide FULL quantities:
-  • experts.list: ${config.expertCount} objects | recommendations.list: ${config.recommendationCount.min}-${config.recommendationCount.max} objects
-  • monthlyProjections: ${config.monthlyProjections.min}-${config.monthlyProjections.max} objects | phases: ${config.growthPhases} objects
-
-  📋 VALIDATION RULES:
-  
-  1. EXPERTS (${config.expertCount} required): Use ${config.experts.map(e => e.name).join(', ')}
-     Fields: ${config.experts.map(e => e.field).join(', ')} | Each: summary(15-25w), confidence(70-95), keyFindings(3-5), concerns(3-5), recommendations(3-5), criticalRisks(1-3)
-  
-  2. RECOMMENDATIONS (${config.recommendationCount.min}-${config.recommendationCount.max} required): 
-     Each: id, priority(CRITICAL/HIGH/MEDIUM), category, title(8-15w), description(30-50w), actionSteps(4-6), expectedImpact, effort, timeline, expertsSupporting(2-4)
-  
-  3. FINANCIAL FORECAST (${config.monthlyProjections.min}-${config.monthlyProjections.max} months required):
-     Each month: month(sequential 1,2,3...), revenue, costs, profit, customers, mrr, runway | Show realistic progression
-  
-  4. GROWTH PLAN (${config.growthPhases} phases required):
-     Each: name, duration, goals(4-6), keyActions(5-7), budget(with €/$), teamSize, successMetrics(4-6)
-  
-  5. CONSENSUS: topStrengths & topWeaknesses (3-7 each, prioritized by impact, with specific data/metrics)
-  
-  6. DATA QUALITY: All numbers realistic, units included (€45K MRR, 3.2x LTV/CAC), percentages with %, currency with symbols
-  
-  7. JSON: Pure JSON only (no \`\`\`json, no explanations), proper escaping, exact field names from example
-
-  Be brutally honest but constructive. Focus on actionable insights with specific numbers.`;
+  All numbers must be realistic and grounded in the provided data. Pure JSON only.`;
 }
 
 // JSON structure for analysis response (reusable across all expert types)
@@ -745,14 +427,14 @@ const ANALYSIS_JSON_STRUCTURE = `{
   "consensus": {
     "findings": {
       "topStrengths": [
-        "Exceptional unit economics with 32x LTV/CAC ratio",
-        "Strong product-market fit with clear value proposition",
-        "Experienced founders with domain expertise"
+        "[Key strength with specific metric or evidence]",
+        "[Key strength with specific metric or evidence]",
+        "[Key strength with specific metric or evidence]"
       ],
       "topWeaknesses": [
-        "Founder-led sales model won't scale beyond €20K MRR",
-        "Limited runway of 14 months requires immediate funding",
-        "Single acquisition channel creates dependency risk"
+        "[Key weakness with specific impact assessment]",
+        "[Key weakness with specific impact assessment]",
+        "[Key weakness with specific impact assessment]"
       ]
     }
   },
@@ -763,30 +445,30 @@ const ANALYSIS_JSON_STRUCTURE = `{
         "name": "Michael Chen",
         "role": "CFO with 20+ years experience",
         "avatar": "💰",
-        "summary": "Outstanding unit economics but runway concerns need immediate attention",
+        "summary": "[1-sentence expert overview, 15-25 words]",
         "confidence": 92,
         "keyFindings": [
-          "LTV/CAC ratio of 32.4x is exceptional (benchmark: >3x)",
-          "Gross margin of 80% is excellent for SaaS",
-          "Payback period of 0.6 months is outstanding"
+          "[Specific finding with numbers and metrics]",
+          "[Specific finding with numbers and metrics]",
+          "[Specific finding with numbers and metrics]"
         ],
         "concerns": [
-          "Current runway of 14 months is tight for scaling",
-          "Monthly burn rate needs optimization",
-          "Revenue concentration risk with few customers"
+          "[Specific concern with impact assessment]",
+          "[Specific concern with impact assessment]",
+          "[Specific concern with impact assessment]"
         ],
         "recommendations": [
-          "Secure €75K bridge round within 60 days",
-          "Reduce monthly burn by 15% through cost optimization",
-          "Implement financial dashboard for real-time monitoring"
+          "[Actionable recommendation with clear next steps]",
+          "[Actionable recommendation with clear next steps]",
+          "[Actionable recommendation with clear next steps]"
         ],
         "criticalRisks": [
           {
-            "category": "Financial",
-            "description": "Runway drops below 12 months without bridge funding",
+            "category": "[Risk category]",
+            "description": "[Detailed risk description with impact]",
             "likelihood": "high",
             "impact": "critical",
-            "mitigation": "Close €75K bridge round from angels/existing investors within Q1"
+            "mitigation": "[Specific mitigation strategy with timeline]"
           }
         ]
       }
@@ -798,16 +480,16 @@ const ANALYSIS_JSON_STRUCTURE = `{
         "id": "rec-1",
         "priority": "CRITICAL",
         "category": "team",
-        "title": "Hire VP Sales to Scale Beyond Founder-Led Sales",
-        "description": "Founder-led sales won't scale beyond €20K MRR. Need experienced sales leader to build repeatable process, train team, and close enterprise deals.",
+        "title": "[Recommendation title, 8-15 words]",
+        "description": "[Problem statement and solution, 30-50 words]",
         "actionSteps": [
-          "Define VP Sales job description and compensation (€80K + 1-2% equity)",
-          "Post on AngelList, LinkedIn, and startup job boards",
-          "Screen 20+ candidates, interview top 5 with structured process",
-          "Check references and conduct trial project or case study",
-          "Onboard VP Sales with 30-60-90 day plan and clear KPIs"
+          "[Concrete action step with specifics]",
+          "[Concrete action step with specifics]",
+          "[Concrete action step with specifics]",
+          "[Concrete action step with specifics]",
+          "[Concrete action step with specifics]"
         ],
-        "expectedImpact": "Channels score: 68 → 85 (+17 pts). Enable 3x revenue growth in 6 months. Build scalable sales process.",
+        "expectedImpact": "[Score change + business outcome + timeline]",
         "effort": "High",
         "timeline": "8 weeks",
         "expertsSupporting": ["marketing", "operations", "financial"]
@@ -817,81 +499,81 @@ const ANALYSIS_JSON_STRUCTURE = `{
   "growthPlan": {
     "phases": {
       "phase1": {
-        "name": "Foundation & Sales Scaling",
+        "name": "[Phase name]",
         "duration": "Months 1-3",
         "goals": [
-          "Hire VP Sales and close first 3 enterprise deals",
-          "Launch referral program and achieve 20% referral rate",
-          "Reach 50 paying customers (€4,950 MRR)",
-          "Maintain 90%+ customer satisfaction (NPS > 70)"
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]"
         ],
         "keyActions": [
-          "Recruit and onboard VP Sales with structured 90-day plan",
-          "Build sales playbook, email sequences, and demo script",
-          "Launch referral program with tracking and incentives",
-          "Focus exclusively on UK market for product-market fit",
-          "Close €75K bridge round from angels/existing investors"
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]"
         ],
         "budget": "€27,000",
-        "teamSize": "2 founders + 1 developer + 1 VP Sales",
+        "teamSize": "[N] founders + [N] developers + [roles]",
         "successMetrics": [
-          "50 customers",
-          "€4,950 MRR",
-          "NPS > 70",
-          "VP Sales hired",
-          "Bridge round closed"
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]"
         ]
       },
       "phase2": {
-        "name": "Process Optimization & Market Expansion",
+        "name": "[Phase name]",
         "duration": "Months 4-9",
         "goals": [
-          "Scale to 150 customers (€14,850 MRR)",
-          "Hire Customer Success Manager",
-          "Validate 2 new European markets",
-          "Reduce CAC by 20% through referrals"
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]"
         ],
         "keyActions": [
-          "Implement CRM and sales automation",
-          "Launch content marketing (blog, case studies)",
-          "Test partnerships with complementary SaaS",
-          "Conduct market research in Germany and France",
-          "Build customer success playbook"
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]"
         ],
         "budget": "€81,000",
-        "teamSize": "2 founders + 2 developers + 1 VP Sales + 1 CSM",
+        "teamSize": "[N] founders + [N] developers + [roles]",
         "successMetrics": [
-          "150 customers",
-          "€14,850 MRR",
-          "Churn < 5%",
-          "CAC < €45",
-          "2 markets validated"
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]"
         ]
       },
       "phase3": {
-        "name": "Scaling & Series A Preparation",
+        "name": "[Phase name]",
         "duration": "Months 10-18",
         "goals": [
-          "Reach 400 customers (€39,600 MRR)",
-          "Expand to 2 new European markets",
-          "Build marketing team (2 people)",
-          "Prepare for Series A (€2M+)"
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]",
+          "[Specific goal with measurable target]"
         ],
         "keyActions": [
-          "Launch in Germany and France with localized marketing",
-          "Hire Marketing Manager and Content Lead",
-          "Implement marketing automation and attribution",
-          "Build investor relationships for Series A",
-          "Achieve profitability or clear path to it"
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]",
+          "[Concrete action with owner or tool]"
         ],
         "budget": "€243,000",
-        "teamSize": "2 founders + 4 developers + 1 VP Sales + 2 CSM + 2 Marketing",
+        "teamSize": "[N] founders + [N] developers + [roles]",
         "successMetrics": [
-          "400 customers",
-          "€39,600 MRR",
-          "3 markets active",
-          "Profitability or <6mo to breakeven",
-          "Series A term sheet"
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]",
+          "[Metric with target value]"
         ]
       }
     }
