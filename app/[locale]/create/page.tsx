@@ -24,6 +24,7 @@ import { hasDemoLimit } from "@/lib/utils/demoLimit";
 import { createClient } from "@/lib/supabase/client";
 import { setAnonymousProjectId } from "@/lib/utils/anonymousProject";
 import { useProject } from "@/lib/hooks/useProjects";
+import { useAnalytics } from "@/lib/hooks/useAnalytics";
 
 const getStepFieldsCount = (step: number, data: ProjectData): { filled: number; total: number } => {
   const { basicInfo, valueProposition, customerSegments, channels, economics, team, resources, competition, risks, growth } = data;
@@ -143,6 +144,7 @@ export default function CreateProjectPage() {
   const tAuth = useTranslations('auth');
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject, setProjectData } = useProjectStore();
+  const { trackFormStep, trackAnalysisStarted } = useAnalytics();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -230,7 +232,9 @@ export default function CreateProjectPage() {
 
   const handleNext = () => {
     if (currentStep < 10) {
-      setCurrentStep(currentStep + 1);
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      trackFormStep(nextStep, `step_${nextStep}`);
     }
   };
 
@@ -245,6 +249,7 @@ export default function CreateProjectPage() {
       console.log('⚠️ Submit already in progress, ignoring duplicate click');
       return;
     }
+    trackAnalysisStarted();
     setIsSubmitting(true);
 
     try {
