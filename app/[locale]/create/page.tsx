@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/lib/navigation";
 import { useSearchParams } from "next/navigation";
@@ -137,6 +137,7 @@ const validateStep = (step: number, data: ProjectData): boolean => {
 
 export default function CreateProjectPage() {
   const t = useTranslations('create');
+  const locale = useLocale();
   const tCommon = useTranslations('common');
   const tNav = useTranslations('nav');
   const tAuth = useTranslations('auth');
@@ -268,6 +269,7 @@ export default function CreateProjectPage() {
         projectData,
         projectId: projectId || undefined,
         jobId,
+        language: locale,
       };
 
       // Start analysis in background (ignore connection errors - will poll instead)
