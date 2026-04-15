@@ -1,4 +1,5 @@
 export interface AnalysisApiResponse {
+  detectedLanguage: string;
   scores: {
     overall: number;
     readiness: string;
@@ -26,7 +27,7 @@ export interface AnalysisApiResponse {
   };
   experts: {
     list: Array<{
-      field: 'financial' | 'market' | 'product' | 'marketing' | 'risk' | 'operations';
+      field: 'financial' | 'market' | 'product' | 'marketing' | 'risk' | 'operations' | 'credit' | 'compliance' | 'legal' | 'procurement' | 'security' | 'integration' | 'business';
       name: string;
       role: string;
       avatar: string;
