@@ -1,0 +1,87 @@
+PayGuard — QA Fill Sheet (English)
+
+Step 1 — Basic Info
+Project Name: PayGuard
+Industry: fintech
+Current Stage: seed
+One-line Description: A compliance assistant for SMBs that automates KYB/KYC checks, monitors transactions for fraud/AML risk, and generates audit-ready reports to reduce manual review time.
+
+Step 2 — Value Proposition
+1.1. Main customer problem: SMB fintechs and online businesses that handle payments (marketplaces, neobanks, PSP sub-merchants, crypto on-ramps, remittance, high-risk e-commerce) struggle with compliance. Manual reviews are slow and inconsistent, false positives waste time, and missing documentation creates audit risk. Teams can’t scale onboarding and monitoring without hiring expensive compliance analysts.
+1.2. Your solution: PayGuard automates onboarding and ongoing monitoring: collects KYB/KYC data, runs sanctions/PEP/adverse media checks, scores risk, and monitors transactions for suspicious patterns. It provides case management workflows, SAR/STR drafting support, and produces audit-ready evidence packs and periodic compliance reports.
+1.3. Uniqueness of your solution: PayGuard is designed for SMBs: fast setup, sensible defaults, and explainable risk scoring. We unify onboarding + monitoring + audit evidence in one place and support “human-in-the-loop” decisions with clear reasons, playbooks, and configurable rules—without needing a full enterprise GRC stack.
+1.4. Key advantages over competitors: All-in-one onboarding + monitoring + audit packs; explainable risk decisions; quick integrations via API/webhooks; lower total cost than enterprise tools; strong case management with templates and role-based access.
+1.5. Measurable value for customer: Reduce manual review time by 40–70%, cut onboarding time from days to minutes for low-risk customers, lower false positives by 20–35% via tuned rules, and improve audit readiness (fewer missing documents, faster evidence retrieval). Typical payback in 2–4 months by avoiding headcount growth.
+
+Step 3 — Customer Segments
+2.1. Primary customer segment: Primary customers are SMB fintechs and payment-enabled platforms (10–200 employees) operating in the EU/UK with growing transaction volume and a small compliance team (1–5 people). Key buyer: Head of Compliance / COO. Users: compliance analysts and risk ops.
+TAM (Total Addressable Market): €10,500M
+TAM calculation description: TAM €10.5B: global compliance software spend for fintech/payments (transaction monitoring + onboarding) estimated €35B × 30% SMB/mid-market segment
+SAM (Serviceable Available Market): €2,100M
+SAM calculation description: SAM €2.1B: EU + UK SMB fintech/payments compliance spend (~€7B) × 30% SMB/mid-market segment
+SOM (Serviceable Obtainable Market): €48M
+SOM calculation description: SOM €48M in 3 years: 800 customers × €5,000 ARR average (tiered pricing based on volume)
+2.3. Geographic features: Launch in EU/UK (strong AML regulation, high demand for audit evidence). English-first. Expand to MENA and APAC in Year 2 with localized screening sources and regional regulatory templates.
+Customer Validation Evidence: 18 interviews with compliance leads (PSPs, marketplaces, crypto on-ramps). 4 design partners agreed to pilot; 2 provided anonymized historical cases to benchmark false positives. Buyers confirmed willingness to pay if implementation is <2 weeks and measurable reduction in review workload is demonstrated.
+Average Deal Size: €450 per month
+
+Step 4 — Channels
+3.1. Main customer acquisition channels: Partnership / Affiliate; Cold Outreach; Content Marketing / Blog; Events / Conferences; SEO / Organic Search.
+3.2. Main sales channel: Sales-assisted B2B. Process: compliance discovery → data mapping + integration plan → 2–6 week pilot (shadow mode) → production rollout → annual contract. Initial founder-led sales, then hire a compliance-focused AE and solutions engineer.
+3.3. Customer Acquisition Cost (CAC): €4,000
+CAC Breakdown & Calculation: CAC €4,000 (early estimate): outbound SDR + AE time (€2,200), pilot support/solutions engineering (€1,200), tools and events allocation (€600). Target CAC payback <6 months via annual contracts.
+3.4. Marketing tools: HubSpot CRM, Apollo/LinkedIn Sales Navigator, Webinars (Zoom), Google Analytics, PostHog, content CMS, customer support chat, security/compliance docs portal (e.g., Vanta/Drata for trust center).
+3.5. Marketing funnel: Content/outbound → demo → technical + compliance evaluation → pilot in shadow mode → paid rollout. Example: 200 targeted accounts → 20 demos → 8 pilots → 4 paid customers. Bottleneck: security review; fix via trust center, SOC2-ready controls, and standard DPA templates.
+
+Step 5 — Economics
+4.1. Projected revenue for 12 months: €360,000
+4.2. Revenue Streams: Subscription (platform fee) 75%, usage-based (screening checks/alerts) 20%, professional services (implementation) 5%.
+4.3. Pricing Strategy: Tiered by monthly screened entities + transaction volume. Starter €299/mo (low volume), Growth €799/mo, Pro €1,999/mo, Enterprise custom. Usage-based fees for additional checks and high alert volume. Annual contracts with 10–15% discount for prepay.
+4.4. Main cost categories: Engineering salaries, compliance data providers (sanctions/PEP/adverse media), hosting and security tooling, customer success + pilot support, sales & marketing, and legal (DPAs, ToS, regulatory counsel).
+Gross Margin (%): 68%
+Average Revenue Per User (ARPU): €450 per month
+Customer Lifetime (months): 28 months
+Contribution Margin per Customer: €220
+Amount Already Raised: €200,000
+Funding Sources: Bootstrapped (€50K), Angel investors (€150K).
+Amount Seeking: €1,200,000
+Use of Funds: Engineering (product + integrations), compliance data costs for pilots, security/compliance (SOC2-ready), sales hires (AE + SE), and runway extension.
+Current Runway (months): 10 months
+
+Step 6 — Team
+5.1. Key roles and current team: 2 founders (CEO/BD and CTO), 2 engineers, 1 part-time compliance consultant (former AML analyst), and 1 part-time designer.
+5.2. Founder experience: CEO previously worked in payments operations and sold B2B SaaS to regulated customers. CTO built risk and data pipeline systems (event streaming, scoring, alerting) at a fintech and has experience with security and compliance requirements.
+5.3. Domain specialists: Advisors include a former MLRO (Money Laundering Reporting Officer) and an ex-risk lead from a PSP, helping with policy templates and regulator/audit expectations.
+5.4. Competency gaps: Need dedicated sales (compliance SaaS), solutions engineering for integrations, and customer success to manage pilots and renewals. Plan: hire solutions engineer first, then AE, then CSM after 10 paying customers.
+
+Step 7 — Resources & Activities
+6.1. Existing resources: Initial rules engine, case management UI, screening provider integrations (sanctions/PEP), and design partner relationships with access to anonymized historical alerts.
+6.2. Resources needed: More data sources (adverse media, device/IP risk), robust audit evidence export, security controls (SSO, audit logs), and standardized integration connectors (webhooks/SDKs). Budget for pilots and compliance/legal templates.
+6.3. Technology stack: TypeScript services, Postgres, Redis/queue, event streaming (Kafka/SQS), rule engine + scoring service, AWS hosting, SIEM/logging, and encryption at rest/in transit. Integrations via REST + webhooks.
+6.4. Vendor dependencies: Dependence on third-party screening and data providers. Risk: price changes or coverage gaps. Mitigation: abstraction layer for multiple providers and caching/deduping checks to reduce costs.
+6.5. Key Activities: Building and maintaining risk models and rules, monitoring system performance, onboarding customers (data mapping), maintaining compliance documentation and audit evidence workflows, and continuously tuning false positive rates.
+6.6. Key Partners: Data providers (sanctions/PEP/adverse media), compliance consultancies (referrals), and integration partners (payment processors, KYC vendors).
+
+Step 8 — Competition
+7.1. Direct competitors: Enterprise monitoring tools (expensive, complex), mid-market AML platforms, and KYC vendors that are strong at onboarding but weaker in end-to-end monitoring + audit evidence.
+7.2. Indirect competitors/alternatives: Manual reviews in spreadsheets, basic rule checks inside a payment processor dashboard, hiring more compliance analysts, or outsourcing monitoring to a consultancy.
+7.3. Why choose you over competitors: PayGuard gives SMBs enterprise-grade workflows (cases, evidence, reporting) with fast implementation and explainable decisions at a price and complexity level that matches smaller teams.
+7.4. Competitive defensibility: Defensibility through workflow lock-in (cases, evidence, policies), integrations, and continuous tuning based on customer feedback. Over time, anonymized patterns and rule libraries improve performance and reduce false positives.
+
+Step 9 — Risks
+8.1. Technical risks: Data quality and integration complexity (many payment events, edge cases) can create missed alerts or noisy output. Mitigation: staged rollout (shadow mode), robust testing with historical data, and clear monitoring/alerting of the monitoring system itself.
+8.2. Financial risks: Sales cycles in regulated markets can be long, and data providers are costly. Mitigation: focus on design partners, standardize integration, price pilots appropriately, and secure annual prepay contracts to improve cash flow.
+8.3. Legal/regulatory risks: Handling sensitive customer and transaction data creates GDPR and security obligations; wrong guidance must avoid being “legal advice.” Mitigation: strong data controls, DPAs, security reviews, and positioning as a tooling platform with configurable policies (customer remains responsible for reporting).
+8.4. Market risks: Incumbents may bundle monitoring features, and buyers may be cautious about switching. Mitigation: prove ROI quickly, integrate with existing KYC/processor tools, and offer migration support plus audit packs.
+8.5. Team risks: High domain complexity requires experienced compliance talent; hiring can be slow. Mitigation: advisors + part-time MLRO support early, documented playbooks, and hiring a senior compliance engineer after product fit.
+8.6. Risk mitigation plan: Next 90 days: 1) ship audit log + evidence export v1, 2) add a second screening provider as fallback, 3) complete 2 pilots with measured false-positive reduction, 4) finalize security baseline (SSO, RBAC), 5) publish trust center and standard DPA.
+
+Step 10 — Growth
+9.1. Current Traction: MVP used by 2 design partners in shadow mode. Processing ~1.2M events/month with alert volume reduced by 22% after tuning. One partner committed to converting to €799/mo after pilot if audit export meets requirements.
+9.2. Scaling plan: Build repeatable integrations (SDK + connectors), expand data sources, and hire solutions engineering to shorten onboarding. Grow via compliance consultancy partnerships, targeted outbound to regulated SMBs, and content on AML best practices with practical templates.
+9.3. New market potential: Adjacent markets include chargeback/fraud tooling for e-commerce, KYB automation for B2B marketplaces, and compliance reporting for crypto VASPs. Geographic expansion to MENA/APAC with localized screening sources and regulatory report templates.
+9.4. Payback period: Target CAC payback in 6 months on annual plans. Company break-even target around month 18–22 once implementation effort decreases and gross margin improves through provider cost optimization.
+12 Months: 40 paying customers, €40K MRR, onboarding time <2 weeks, false positives down 30% vs baseline, team size 10.
+24 Months: 160 paying customers, €200K MRR, NRR >120%, enterprise features (SSO/audit logs) mature, team size 22, operating margin positive.
+36 Months: 450 paying customers, €600K MRR, partner channel drives 50% of new deals, automated evidence packs standard, EBITDA margin 15–20%.
+

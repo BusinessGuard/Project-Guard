@@ -1,0 +1,175 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useVersionsStore } from '@/store/useVersionsStore';
+import { useScoreboardState } from '@/store/useState';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+export function Recommendations() {
+  const t = useTranslations('dashboard.recommendations');
+  const { currentProject } = useVersionsStore();
+  const { recommendationsProgress, setRecommendationsProgress } = useScoreboardState();
+  const [expandedRecommendations, setExpandedRecommendations] = useState<Record<string, boolean>>({});
+  const [checkedSteps, setCheckedSteps] = useState<Record<string, Set<number>>>({});
+  
+  if (!currentProject?.analysis) return null;
+  
+  const analysis = currentProject.analysis;
+  
+  useEffect(() => {
+    const restored: Record<string, Set<number>> = {};
+    Object.keys(recommendationsProgress).forEach(key => {
+      restored[key] = new Set(recommendationsProgress[key]);
+    });
+    setCheckedSteps(restored);
+  }, [recommendationsProgress]);
+  
+  if (!analysis) return null;
+  
+  const toggleRecommendation = (recId: string): void => {
+    setExpandedRecommendations(prev => ({
+      ...prev,
+      [recId]: !prev[recId]
+    }));
+  };
+  
+  const toggleStep = (recId: string, stepIdx: number): void => {
+    setCheckedSteps(prev => {
+      const current = prev[recId] || new Set<number>();
+      const updated = new Set(current);
+      if (updated.has(stepIdx)) {
+        updated.delete(stepIdx);
+      } else {
+        updated.add(stepIdx);
+      }
+      const newState = { ...prev, [recId]: updated };
+      
+      const toSave: Record<string, number[]> = {};
+      Object.keys(newState).forEach(key => {
+        toSave[key] = Array.from(newState[key]);
+      });
+      setRecommendationsProgress(toSave);
+      
+      return newState;
+    });
+  };
+  
+  const getPriorityColor = (priority: string): string => {
+    switch (priority) {
+      case 'CRITICAL': return 'bg-red-600';
+      case 'HIGH': return 'bg-orange-500';
+      case 'MEDIUM': return 'bg-yellow-500';
+      default: return 'bg-gray-400';
+    }
+  };
+  
+  const getPriorityBorderColor = (priority: string): string => {
+    switch (priority) {
+      case 'CRITICAL': return 'border-l-red-600';
+      case 'HIGH': return 'border-l-orange-500';
+      case 'MEDIUM': return 'border-l-yellow-500';
+      default: return 'border-l-gray-400';
+    }
+  };
+
+  const getPriorityLabel = (priority: string): string => {
+    switch (priority) {
+      case 'CRITICAL':
+        return t('priorityLabel.CRITICAL');
+      case 'HIGH':
+        return t('priorityLabel.HIGH');
+      case 'MEDIUM':
+        return t('priorityLabel.MEDIUM');
+      case 'LOW':
+        return t('priorityLabel.LOW');
+      default:
+        return priority;
+    }
+  };
+
+  const recommendations = analysis.recommendations.list;
+  const totalExperts = analysis.experts.list.length; // Dynamic expert count
+  
+  const getProgress = (recId: string, totalSteps: number) => {
+    const completed = checkedSteps[recId]?.size || 0;
+    return { completed, total: totalSteps };
+  };
+  
+  return (
+    <div className="space-y-4">
+      {recommendations.map((rec) => {
+        const progress = getProgress(rec.id, rec.actionSteps.length);
+        return (
+          <div key={rec.id} className="space-y-2">
+            <div className="text-xs md:text-sm text-gray-500 px-2">
+              {t('progress')}: {progress.completed}/{progress.total} {t('completed')}
+            </div>
+            <Card className={`border-l-4 md:border-l-8 relative shadow-none ${getPriorityBorderColor(rec.priority)}`}>
+              <CardContent className="p-3 md:p-6">
+                <Badge className={`${getPriorityColor(rec.priority)} text-white !text-[10px] md:!text-xs flex-shrink-0 absolute -top-[1px] rounded-none rounded-tr-lg rounded-bl-lg -right-0`}>
+                  {getPriorityLabel(rec.priority)}
+                </Badge>
+                <div className="flex items-start gap-2 md:gap-4">
+                  <div className="flex-1 space-y-2 md:space-y-3">
+                    <div 
+                      className="cursor-pointer"
+                      onClick={() => toggleRecommendation(rec.id)}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-semibold text-sm md:text-lg pr-2">{rec.title}</h3>
+                        {expandedRecommendations[rec.id] ? <ChevronUp className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />}
+                      </div>
+                      <p className="text-xs md:text-sm text-gray-600 mt-1">{rec.description}</p>
+                    </div>
+
+                    {expandedRecommendations[rec.id] && (
+                      <>
+                        <div>
+                          <h4 className="font-medium text-xs md:text-sm mb-2">{t('actionSteps')}:</h4>
+                          <div className=" md:pl-10 py-2 md:py-4 pb-4 md:pb-8">
+                            {rec.actionSteps.map((step, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-xs md:text-sm cursor-pointer hover:bg-gray-50 p-2 md:p-4 rounded">
+                                <Checkbox
+                                  className="size-4 md:size-5 flex-shrink-0"
+                                  checked={checkedSteps[rec.id]?.has(idx) || false}
+                                  onCheckedChange={() => toggleStep(rec.id, idx)}
+                                />
+                                <span className="font-[500] text-xs md:text-base">{step}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                         <div className="flex flex-col gap-2 bg-gray-100 p-2 md:p-4 rounded-lg">
+                            <div className="flex flex-wrap gap-2 md:gap-4 text-xs md:text-sm">
+                              {[
+                                { label: t('expectedImpact'), value: rec.expectedImpact },
+                                { label: t('effort'), value: rec.effort },
+                                { label: t('timeline'), value: rec.timeline },
+                              ].map((item, idx) => (
+                                <div key={idx}>
+                                  <span className="font-medium">{item.label}:</span>
+                                  <span className="text-gray-600 ml-1 md:ml-2">{item.value}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="text-[10px] md:text-xs text-gray-500">
+                              {t('supportedBy', { count: rec.expertsSupporting.length, total: totalExperts })}
+                            </div>
+                          </div>   
+                      </>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

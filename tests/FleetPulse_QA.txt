@@ -1,0 +1,87 @@
+FleetPulse — QA Fill Sheet (English)
+
+Step 1 — Basic Info
+Project Name: FleetPulse
+Industry: saas-b2b
+Current Stage: mvp
+One-line Description: Real-time dispatch optimization for mid-sized logistics fleets to cut empty miles, fuel costs, and late deliveries.
+
+Step 2 — Value Proposition
+1.1. Main customer problem: Mid-sized logistics operators lose margin due to inefficient dispatching: manual route planning, poor visibility into vehicle status, last-minute order changes, and empty backhauls. Dispatch teams spend hours re-planning daily, drivers waste time waiting, and service levels drop when ETAs are wrong.
+1.2. Your solution: FleetPulse connects to telematics + TMS/ERP data and recommends optimized daily dispatch plans in minutes. It continuously re-optimizes routes based on real-time traffic, vehicle location, driver hours, and new orders, and provides ETA updates + exception alerts to dispatchers and customers.
+1.3. Uniqueness of your solution: Unlike static route planners, FleetPulse is built for dynamic dispatch (same-day changes) and uses live telematics + constraints (HOS, capacity, dock time windows). We provide explainable recommendations (why a stop was moved) and a backhaul-matching module that proactively suggests profitable return loads.
+1.4. Key advantages over competitors: Dynamic re-optimization; backhaul recommendation engine; fast integrations; dispatcher-friendly UI; customer ETA portal.
+1.5. Measurable value for customer: Reduce empty miles by 8-15% and fuel spend by 5-10%. Save 1-2 dispatcher hours per day per depot. Improve on-time delivery by 3-7 pp and reduce detention/late fees. Typical ROI target: pay back subscription in under 3 months for fleets of 30-150 vehicles.
+
+Step 3 — Customer Segments
+2.1. Primary customer segment: Primary customers are mid-sized road freight and last-mile logistics companies (30-150 vehicles) operating regional routes with time-window constraints. Key buyer: Operations Director / Head of Dispatch. Key users: dispatchers and fleet supervisors. Industries: retail distribution, manufacturing inbound/outbound, parcel and 3PL.
+TAM (Total Addressable Market): €12,000M
+TAM calculation description: TAM €12B: ~600K commercial fleets globally with 20-200 vehicles × €1,600/year average software spend on routing/dispatch optimization
+SAM (Serviceable Available Market): €2,200M
+SAM calculation description: SAM €2.2B: EU + UK + US mid-sized fleets in sectors with high route complexity (~140K fleets) × €1,600/year
+SOM (Serviceable Obtainable Market): €55M
+SOM calculation description: SOM €55M in 3 years: 1,100 customers × €4,200 ARR (avg €350/mo) across EU/UK initial focus
+2.3. Geographic features: Germany, Poland, USA. Launch focus Germany/Poland; expand to USA in Year 2; English + German first.
+Customer Validation Evidence: 12 discovery calls; 3 pilot LOIs signed contingent on integration success; confirmed willingness to pay €300-800/month if KPI targets are achieved.
+Average Deal Size: €550 per month
+
+Step 4 — Channels
+3.1. Main customer acquisition channels: Cold Outreach; Partnership/Affiliate; Events/Conferences; Content Marketing/Blog; SEO/Organic Search.
+3.2. Main sales channel: Sales-assisted B2B: discovery → pilot → annual contract; start founder-led, then hire AE.
+3.3. Customer Acquisition Cost (CAC): €1,200
+CAC Breakdown & Calculation: Blended CAC €1,200 forecast; outbound higher, inbound lower; weighted average at early stage.
+3.4. Marketing tools: HubSpot, Apollo, Google Analytics, PostHog, Webflow, LinkedIn Ads, Loom, Intercom.
+3.5. Marketing funnel: Traffic → lead → qualified meeting → pilot → paid; early example: 2,500 visitors → 50 leads → 15 qualified → 6 pilots → 3 paid.
+
+Step 5 — Economics
+4.1. Projected revenue for 12 months: €240,000
+4.2. Revenue Streams: Subscription (85%), onboarding fees (10%), usage-based add-ons (5%).
+4.3. Pricing Strategy: Tiered by fleet size (€199–€699/mo) + optional onboarding fee; annual prepay discount 15%.
+4.4. Main cost categories: Personnel, cloud + maps/traffic APIs, sales & marketing tools, travel/events, legal/accounting; variable compute/API with usage.
+Gross Margin (%): 78%
+Average Revenue Per User (ARPU): €550 per month
+Customer Lifetime (months): 30 months
+Contribution Margin per Customer: €400
+Amount Already Raised: €150,000
+Funding Sources: Bootstrapped (€60K), Angels (€90K).
+Amount Seeking: €750,000
+Use of Funds: Runway, engineering, sales & marketing, security/legal, buffer.
+Current Runway (months): 9 months
+
+Step 6 — Team
+5.1. Key roles and current team: 2 founders (ops + engineering) plus part-time data engineer and freelance designer.
+5.2. Founder experience: Operations founder ran dispatch teams; technical founder built routing/optimization systems.
+5.3. Domain specialists: Advisors in telematics/HOS and logistics SaaS enterprise sales.
+5.4. Competency gaps: Need solutions engineer, AE/SDR, customer success, DevOps/security support; phased hiring plan.
+
+Step 7 — Resources & Activities
+6.1. Existing resources: Domain knowledge, early pilot relationships, optimization prototypes, constraint library.
+6.2. Resources needed: Production integrations, infrastructure, and pilot historical data to validate ROI.
+6.3. Technology stack: Next.js, Node.js, Postgres, Redis, Python (OR-Tools), AWS, Mapbox, OpenTelemetry.
+6.4. Vendor dependencies: Map/traffic APIs and telematics providers; mitigate with abstraction layer + caching.
+6.5. Key Activities: Production, R&D, platform reliability, marketing, and operations focused on pilots and onboarding.
+6.6. Key Partners: Telematics integration partner; TMS consultant network for distribution.
+
+Step 8 — Competition
+7.1. Direct competitors: Route planners, enterprise optimization suites, and telematics vendor add-ons.
+7.2. Indirect competitors/alternatives: Excel/manual dispatch, basic GPS tracking, and hiring more dispatch staff.
+7.3. Why choose you over competitors: Dynamic dispatch + backhaul recommendations with fast onboarding and clear ROI.
+7.4. Competitive defensibility: Data moat from dispatch outcomes, integrations, workflow embedding, and fleet-specific tuning.
+
+Step 9 — Risks
+8.1. Technical risks: Integration complexity and data quality; mitigate via limited supported providers and validation layer.
+8.2. Financial risks: Long sales cycles and slow pilot-to-paid conversion; mitigate via KPI-driven pilots and lean burn.
+8.3. Legal/regulatory risks: GDPR and location data handling; mitigate via minimizing PII, RBAC, retention policies, DPAs.
+8.4. Market risks: Bundled incumbent offerings; mitigate via overlay positioning and 30-day ROI proof.
+8.5. Team risks: Key-person dependency; mitigate via documentation and early solutions engineer hire.
+8.6. Risk mitigation plan: Quarterly plan to ship integrations, standardize pilots, hire key roles, and maintain buffer.
+
+Step 10 — Growth
+9.1. Current Traction: 2 pilot fleets onboarding; 3 LOIs; historical replays show 9-11% empty-mile reduction on selected lanes.
+9.2. Scaling plan: Win 10 fleets in DE/PL, then expand to UK, then US via 3PL partnerships; add enterprise features.
+9.3. New market potential: Field service routing, waste collection, construction logistics; UK/NL expansion then US; predictive maintenance add-on.
+9.4. Payback period: Break-even around month 18; investor payback target 30-36 months via profitable growth or strategic acquisition.
+12 Months: 25 paying fleets, ~€18K MRR, >75% GM, onboarding <2 weeks, churn <2%/mo, team 6.
+24 Months: 90 paying fleets, ~€70K MRR, 3 countries, NRR >115%, team 14, operating margin positive.
+36 Months: 250 paying fleets, ~€200K MRR, US launch, partner channel 40% of new deals, team 28, EBITDA 20%+.
+

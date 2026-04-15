@@ -1,0 +1,87 @@
+GreenCart — QA Fill Sheet (English)
+
+Step 1 — Basic Info
+Project Name: GreenCart
+Industry: ecommerce
+Current Stage: mvp
+One-line Description: An e-commerce subscription for everyday household essentials with low-waste packaging and local fulfillment to make sustainable shopping affordable and convenient.
+
+Step 2 — Value Proposition
+1.1. Main customer problem: People who want to buy eco-friendly household essentials face higher prices, inconvenient shopping, and unclear claims (“greenwashing”). Most options require visiting niche stores, buying in bulk with high upfront cost, or accepting slow delivery and limited selection. As a result, many customers revert to cheaper mainstream products with excessive plastic.
+1.2. Your solution: GreenCart is an online store + subscription that delivers curated household essentials (cleaners, paper goods, personal care, kitchen basics) in low-waste packaging. Customers can choose bundles, set delivery frequency, and add one-off items. We use local micro-fulfillment to keep delivery fast and reduce shipping emissions, and we provide transparent product impact info.
+1.3. Uniqueness of your solution: Unlike typical eco-stores, GreenCart focuses on “everyday replacements” at mainstream-like prices by optimizing bundling, local fulfillment, and repeat purchasing. We combine subscriptions, low-waste packaging standards, and a simple “swap score” (plastic reduction + ingredient safety) so customers can switch gradually without complexity.
+1.4. Key advantages over competitors: Affordable bundles and subscriptions; fast local delivery; strict low-waste packaging policy; clear impact labeling (plastic saved, refill/return options); high retention via replenishment reminders and household planning.
+1.5. Measurable value for customer: Save time (no store trips, fewer decisions), reduce household plastic waste by an estimated 30–60% on covered categories, and reduce per-item cost versus boutique eco-stores through bundle pricing. Convenience: deliveries in 1–2 days and predictable replenishment.
+
+Step 3 — Customer Segments
+2.1. Primary customer segment: Urban households and young families (ages 25–45) with mid income who already buy online and care about sustainability but are price-sensitive. Secondary segment: environmentally conscious professionals and students in dense cities. Buyer and user are usually the same person in the household.
+TAM (Total Addressable Market): €18,000M
+TAM calculation description: TAM €18B: EU household essentials e-commerce spend (~€180B) × 10% customers willing to switch to low-waste alternatives over time
+SAM (Serviceable Available Market): €2,400M
+SAM calculation description: SAM €2.4B: Target launch geographies (Germany + Poland + Netherlands) online household essentials spend (~€24B) × 10% addressable eco-switch segment
+SOM (Serviceable Obtainable Market): €36M
+SOM calculation description: SOM €36M in 3 years: 50,000 active subscribers × €60/month average basket × 12 months = €36M annual revenue
+2.3. Geographic features: Launch in Germany and Poland with a single warehouse per country (dense urban areas first). English-only site at launch, then German and Polish localization. Focus on short delivery distances and local carriers to reduce emissions.
+Customer Validation Evidence: 35 customer interviews + 2 landing pages tested. 1,800 waitlist signups with a 6.5% email-to-waitlist conversion. 120 preorders for a starter bundle (€39) and 40 customers indicated willingness to subscribe monthly if pricing is within 10–15% of mainstream products.
+Average Deal Size: €60 per month
+
+Step 4 — Channels
+3.1. Main customer acquisition channels: Social Media (Facebook, Instagram, LinkedIn); Referral Program; Content Marketing / Blog; SEO / Organic Search; Partnership / Affiliate.
+3.2. Main sales channel: Self-serve e-commerce via website with subscription checkout (Stripe). Upsell via email flows (replenishment, bundles) and seasonal promos. Customer support chat helps with first order and subscription setup.
+3.3. Customer Acquisition Cost (CAC): €18
+CAC Breakdown & Calculation: CAC €18 (early estimate): paid social blended CPA €22, referral CPA €10, SEO/content CPA €6 over time. Weighted early-stage CAC ~€18 with a goal to reduce below €15 by increasing organic and referrals.
+3.4. Marketing tools: Shopify (or custom storefront), Klaviyo for email flows, Meta Ads Manager, Google Analytics, PostHog, Hotjar for UX, referral tool (e.g., Friendbuy), customer support chat (Intercom/Zendesk).
+3.5. Marketing funnel: Awareness → product page → add to cart → checkout → subscription opt-in → repeat purchase. Example targets: 50,000 visitors → 2.5% add-to-cart (1,250) → 40% checkout start (500) → 55% purchase (275) → 35% subscription (96). Improve with better bundles, reviews, and faster delivery promise.
+
+Step 5 — Economics
+4.1. Projected revenue for 12 months: €420,000
+4.2. Revenue Streams: Product sales (one-off and bundles) 70%, subscription replenishment 25%, shipping fees and add-ons 5%.
+4.3. Pricing Strategy: Price within 10–15% of mainstream brands by using private-label and bundle discounts. Subscription discount 8% + free delivery above €49. Starter bundles (€29–€59) to reduce friction. Transparent pricing: no “premium” just for being eco.
+4.4. Main cost categories: COGS (products and packaging), fulfillment labor, warehouse rent, shipping, payment fees, customer support, marketing spend, returns/waste, and software/tools. Track contribution margin per order after shipping and packaging.
+Gross Margin (%): 42%
+Average Revenue Per User (ARPU): €60 per month
+Customer Lifetime (months): 14 months
+Contribution Margin per Customer: €18
+Amount Already Raised: €80,000
+Funding Sources: Bootstrapped (€50K), Angel investors (€30K).
+Amount Seeking: €400,000
+Use of Funds: Inventory and packaging (working capital), local fulfillment setup, marketing to reach scale, hiring (ops + growth), and compliance/quality control.
+Current Runway (months): 7 months
+
+Step 6 — Team
+5.1. Key roles and current team: Founders (2): CEO (brand + growth) and COO (supply chain + operations). Team: 1 part-time designer, 1 part-time customer support. Manufacturing partners handle production; fulfillment is outsourced initially.
+5.2. Founder experience: CEO previously ran paid social and retention for a DTC brand (€3M ARR). COO has 6 years in logistics and procurement (supplier negotiations, inventory planning, 3PL management).
+5.3. Domain specialists: Advisors: sustainability consultant (packaging and certifications) and ex-Head of Ops from an e-commerce fulfillment company (warehouse and shipping optimization).
+5.4. Competency gaps: Need stronger data/analytics and a dedicated performance marketer. Also need quality/compliance support for ingredient claims and labeling. Plan: hire growth marketer at month 4 and ops analyst at month 7.
+
+Step 7 — Resources & Activities
+6.1. Existing resources: Brand assets, supplier shortlist for low-waste products, packaging standards, a small private-label pipeline, and early waitlist community.
+6.2. Resources needed: Working capital for inventory, stable 3PL contract(s), packaging suppliers with consistent lead times, and processes for returns and quality control. Need certification/claim review for key categories.
+6.3. Technology stack: E-commerce storefront, subscription billing, inventory + order management, warehouse integrations, analytics stack (GA/PostHog), email automation, and customer support system.
+6.4. Vendor dependencies: Dependence on packaging suppliers and carriers; risk of price increases and delays. Mitigation: dual-source packaging, maintain safety stock for top SKUs, and diversify carriers.
+6.5. Key Activities: Product sourcing and QA, bundle design and merchandising, fulfillment operations, lifecycle marketing (email/referrals), customer support, and continuous cost optimization (shipping + packaging).
+6.6. Key Partners: 3PL fulfillment partner; packaging supplier; affiliate partners (eco influencers) and local sustainability communities.
+
+Step 8 — Competition
+7.1. Direct competitors: Eco-focused online stores and marketplaces; DTC “refill” brands; subscription household goods providers; large retailers’ “green” product lines.
+7.2. Indirect competitors/alternatives: Buying mainstream products at supermarkets, bulk buying at discount stores, DIY solutions, and occasional purchases from niche zero-waste shops.
+7.3. Why choose you over competitors: GreenCart offers eco-friendly essentials without the “eco tax” and without complicated refill logistics—fast delivery, simple bundles, transparent impact info, and a subscription that fits real household usage.
+7.4. Competitive defensibility: Defensibility via supply chain optimization (private label + bundling), local fulfillment economics, strong retention loops (replenishment + subscriptions), and community/referral-driven acquisition.
+
+Step 9 — Risks
+8.1. Technical risks: Inventory and fulfillment integration issues can cause stockouts and late deliveries. Mitigation: conservative SKU count at launch, strong forecasting, and clear substitution rules.
+8.2. Financial risks: Low margins and upfront inventory needs can strain cash flow. Mitigation: tight working capital management, subscription prepay options, and focusing on high-repeat SKUs with better contribution margin.
+8.3. Legal/regulatory risks: Product labeling and sustainability claims can create compliance risk. Mitigation: claim review process, supplier documentation, and avoiding unverifiable marketing statements.
+8.4. Market risks: Customer skepticism about sustainability and price sensitivity during downturns. Mitigation: emphasize value and convenience, offer starter bundles, and prove impact with transparent metrics.
+8.5. Team risks: Operational complexity (inventory, returns, multiple suppliers) can overwhelm a small team. Mitigation: outsource 3PL, automate tools, and hire ops support early.
+8.6. Risk mitigation plan: Next 90 days: finalize 3PL contract, lock packaging dual suppliers, launch with 50–80 SKUs, implement forecasting and reorder points, set up claim-compliance checklist, and run 3 acquisition experiments (paid social, affiliate, referral).
+
+Step 10 — Growth
+9.1. Current Traction: Waitlist of 1,800 users, 120 preorders for a starter bundle, and early repeat intent from the first cohort. Initial CAC tests show €20–€25 on paid social with improving conversion after bundle page updates.
+9.2. Scaling plan: Start in 1–2 cities per country, optimize unit economics (shipping + packaging), then expand SKU range and add private-label bestsellers. Grow via referrals and partnerships, reduce CAC through SEO/content, and add a subscription planner to increase retention.
+9.3. New market potential: Expand from household essentials into baby products, pet care, and office supplies. B2B opportunity: sustainable office supply subscriptions for small companies. Geographic expansion to the UK and Nordics after proving local fulfillment model.
+9.4. Payback period: Target customer payback in 2–3 months via subscription retention and repeat purchases. Business break-even target around month 16–20 once fulfillment costs and CAC stabilize.
+12 Months: 7,000 active customers, 2,000 subscribers, €35K MRR, repeat rate >45%, on-time delivery >96%, team size 8.
+24 Months: 25,000 active customers, 9,000 subscribers, €150K MRR, NRR >115% (subscription cohort), 3 countries fully operational, team size 18.
+36 Months: 70,000 active customers, 25,000 subscribers, €450K MRR, private label 40% of revenue, partner/referral channels 55% of new customers, EBITDA margin 10–15%.
+
