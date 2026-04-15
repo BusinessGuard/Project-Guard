@@ -144,7 +144,7 @@ export default function CreateProjectPage() {
   const tAuth = useTranslations('auth');
   const router = useRouter();
   const { projectData, currentStep, setCurrentStep, resetProject, setProjectData } = useProjectStore();
-  const { trackFormStep, trackAnalysisStarted } = useAnalytics();
+  const { trackFormStep, trackStepCompleted, trackFormAbandoned, trackAnalysisStarted } = useAnalytics();
   const [showDemoLimitModal, setShowDemoLimitModal] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -230,8 +230,16 @@ export default function CreateProjectPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentStep]);
 
+  // Track form abandonment when user leaves the page
+  useEffect(() => {
+    const handleBeforeUnload = () => trackFormAbandoned(currentStep);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [currentStep, trackFormAbandoned]);
+
   const handleNext = () => {
     if (currentStep < 10) {
+      trackStepCompleted(currentStep);
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       trackFormStep(nextStep, `step_${nextStep}`);

@@ -2,35 +2,48 @@
 
 import { Link, usePathname } from '@/lib/navigation';
 import { useTranslations } from 'next-intl';
+import { FolderOpen, BarChart2, Shield } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface NavigationMenuProps {
   isAuthenticated: boolean;
+  isAdmin?: boolean;
   onItemClick?: () => void;
 }
 
-export function NavigationMenu({ isAuthenticated, onItemClick }: NavigationMenuProps) {
+interface MenuItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  authRequired: boolean;
+  adminOnly: boolean;
+}
+
+export function NavigationMenu({ isAuthenticated, isAdmin, onItemClick }: NavigationMenuProps) {
   const pathname = usePathname();
   const t = useTranslations('nav');
+  const tAdmin = useTranslations('admin');
+  const tStats = useTranslations('stats');
 
-  const menuItems = [
-    { href: '/dashboard/projects', label: t('projects'), icon: '📁', authRequired: false },
-    // Temporarily hidden
-    // { href: '/dashboard/settings', label: t('settings'), icon: '⚙️', authRequired: true },
-    // { href: '/dashboard/billing', label: t('billing'), icon: '💳', authRequired: true },
+  const menuItems: MenuItem[] = [
+    { href: '/dashboard/projects', label: t('projects'), icon: FolderOpen, authRequired: false, adminOnly: false },
+    { href: '/dashboard/stats', label: tStats('navLabel'), icon: BarChart2, authRequired: false, adminOnly: false },
+    { href: '/dashboard/admin/users', label: tAdmin('title'), icon: Shield, authRequired: true, adminOnly: true },
   ];
 
-  const isActive = (href: string) => {
-    if (href === '/dashboard/projects') {
-      return pathname?.startsWith('/dashboard/projects');
-    }
-    return pathname === href;
-  };
+  const isActive = (href: string) => pathname?.startsWith(href) ?? false;
+
+  const visibleItems = menuItems.filter(item => {
+    if (item.authRequired && !isAuthenticated) return false;
+    if (item.adminOnly && !isAdmin) return false;
+    return true;
+  });
 
   return (
     <nav className="flex-1 space-y-2">
-      {menuItems
-        .filter(item => !item.authRequired || isAuthenticated)
-        .map((item) => (
+      {visibleItems.map((item) => {
+        const Icon = item.icon;
+        return (
           <Link
             key={item.href}
             href={item.href}
@@ -41,10 +54,11 @@ export function NavigationMenu({ isAuthenticated, onItemClick }: NavigationMenuP
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            <span className="text-xl">{item.icon}</span>
+            <Icon className="size-5 shrink-0" />
             <span className="font-medium">{item.label}</span>
           </Link>
-        ))}
+        );
+      })}
     </nav>
   );
 }
