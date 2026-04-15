@@ -91,7 +91,8 @@ function formatProjectInputData(projectData: any) {
     ? (economics.fundingRaised / economics.currentRunway).toFixed(0)
     : 0;
 
-  return `PROJECT OVERVIEW:
+  return `=== USER INPUT DATA ===
+  PROJECT OVERVIEW:
   Name: ${basicInfo.projectName}
   Industry: ${basicInfo.industry}
   Stage: ${basicInfo.stage}
@@ -198,34 +199,38 @@ function formatProjectInputData(projectData: any) {
   Targets:
     • 12 months: ${growth.targets12Months}
     • 24 months: ${growth.targets24Months}
-    • 36 months: ${growth.targets36Months}`;
+    • 36 months: ${growth.targets36Months}
+=== END USER INPUT DATA ===`;
 }
 
-// Common language instruction builder
-function getLanguageInstruction(language: string): string {
-  const fallbackName = language === 'ru' ? 'RUSSIAN (Русский)' : language === 'en' ? 'ENGLISH' : language.toUpperCase();
-  return `CRITICAL LANGUAGE RULES:
-    1. Detect the language from the project input data (description, problem, solution, etc.) and respond ENTIRELY in that same language.
-       - If the input is clearly in Russian → respond in Russian
-       - If the input is clearly in English → respond in English
-       - If the input is clearly in Ukrainian → respond in Ukrainian
-       - If the language cannot be determined with confidence → respond in ${fallbackName}
-       - NEVER mix languages within a single sentence or field
+// Language instruction — placed FIRST in system prompt
+function getLanguageInstruction(fallbackLanguage: string): string {
+  const fallbackName =
+    fallbackLanguage === 'ru' ? 'RUSSIAN (Русский)' :
+    fallbackLanguage === 'uk' ? 'UKRAINIAN (Українська)' :
+    'ENGLISH';
 
-    2. ALL text content MUST be in the detected language:
-      - Expert summaries, findings, concerns, recommendations
-      - Risk descriptions and mitigation strategies
-      - Growth plan phases (names, goals, actions, metrics, budgets, team sizes)
-      - Recommendation titles, descriptions, action steps, expected impact
-      - Consensus findings (strengths/weaknesses)
-      - All narrative text, explanations, and descriptions
+  return `=== LANGUAGE RULE (highest priority, overrides everything else) ===
+The user message contains two sections: USER INPUT DATA and analysis tasks.
 
-    3. EXCEPTIONS — keep these EXACTLY as-is, never translate:
-      - Abbreviations and acronyms: SaaS, MVP, CAC, LTV, ARPU, MRR, ARR, EBITDA, DSCR, KYC, AML, GDPR, SOC2, ISO27001, NPS, CRM, API, IP, ROI, TAM, SAM, SOM, B2B, B2C
-      - Currency symbols and codes: €, $, %, USD, EUR
-      - Numbers and dates
-      - Proper names: company names, brand names, person names, product names, trademarks
-      - EVERYTHING ELSE must be written in the detected language — no exceptions`;
+YOUR FIRST ACTION before any analysis:
+  1. Read the text values inside === USER INPUT DATA === section
+  2. Identify which language those values are written in:
+       - RUSSIAN (ru): если текст на русском языке
+       - UKRAINIAN (uk): якщо текст написаний українською мовою
+       - ENGLISH (en): if text is written in English
+       - UKRAINIAN ≠ RUSSIAN — never confuse them, they are different languages
+       - If uncertain → use ${fallbackName} as fallback
+  3. Write "detectedLanguage" as the VERY FIRST field of your JSON output
+  4. Every text field you generate after that MUST be in the detected language — no exceptions
+
+NEVER translate or change:
+  - JSON key names
+  - Enum values: readiness, priority, likelihood, impact, effort
+  - Acronyms: SaaS, MVP, CAC, LTV, ARPU, MRR, ARR, EBITDA, DSCR, KYC, AML, GDPR, SOC2, NPS, CRM, API, ROI, TAM, SAM, SOM, B2B, B2C
+  - Currency: €, $, %, USD, EUR — numbers and dates
+  - Proper names: company names, brands, person names, trademarks
+=== END LANGUAGE RULE ===`;
 }
 
 // Audience-specific instructions
@@ -315,7 +320,9 @@ const CORPORATE_SCORING_CRITERIA = `
 
 // Universal system prompt builder
 function buildUniversalSystemPrompt(audienceInstructions: string, scoringCriteria: string, langInstruction: string): string {
-  return `${audienceInstructions}
+  return `${langInstruction}
+
+${audienceInstructions}
 
   DATA INTEGRITY & UNCERTAINTY RULES (MANDATORY):
   1. Use ONLY the data explicitly provided by the user/project input. Do NOT invent, assume, estimate, or "fill in" missing details.
@@ -342,9 +349,7 @@ function buildUniversalSystemPrompt(audienceInstructions: string, scoringCriteri
 
   ${scoringCriteria}
 
-  Be brutally honest but constructive. Focus on actionable insights with specific numbers.
-
-  ${langInstruction}`;
+  Be brutally honest but constructive. Focus on actionable insights with specific numbers.`;
 }
 
 // Main system prompt selector
@@ -382,11 +387,16 @@ export function createProjectPrompt(projectData: any, audienceType: 'venture' | 
   const expertNames = config.experts.map(e => `${e.name} (${e.field})`).join(', ');
   const expertFields = config.experts.map(e => e.field).join(', ');
 
-  return `Analyze this startup from ALL ${config.expertCount} expert perspectives defined in your system instructions.
+  return `${projectInput}
 
-  ${projectInput}
+--- TASK 1: DETECT LANGUAGE ---
+Read the text values inside === USER INPUT DATA === above (description, problem, solution, team, etc.).
+Identify the language of those values. This becomes your output language for the entire response.
+You will write "detectedLanguage" as the VERY FIRST field in your JSON — before scores, before experts, before everything.
 
-  Return ONLY valid JSON (no markdown) matching this structure exactly:
+--- TASK 2: ANALYZE ---
+Analyze this startup from ALL ${config.expertCount} expert perspectives defined in your system instructions.
+Return ONLY valid JSON (no markdown) matching this structure exactly — starting with detectedLanguage:
   ${ANALYSIS_JSON_STRUCTURE}
 
   REQUIRED QUANTITIES:
@@ -400,11 +410,12 @@ export function createProjectPrompt(projectData: any, audienceType: 'venture' | 
     Each: month, revenue, costs, profit, customers, mrr, runway
   • consensus: topStrengths & topWeaknesses (3-7 each, with specific metrics)
 
-  All numbers must be realistic and grounded in the provided data. Pure JSON only.`;
+  All text fields must be in the detectedLanguage. All numbers grounded in USER INPUT DATA. Pure JSON only.`;
 }
 
 // JSON structure for analysis response (reusable across all expert types)
 const ANALYSIS_JSON_STRUCTURE = `{
+  "detectedLanguage": "ru",
   "scores": {
     "overall": 82,
     "readiness": "Nearly Ready",
