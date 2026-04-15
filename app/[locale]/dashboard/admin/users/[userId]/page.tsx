@@ -37,7 +37,7 @@ export default async function AdminUserProjectsPage({
     .order('created_at', { ascending: false })
 
   return (
-    <div className="p-6 pt-25">
+    <div className="p-4 sm:p-6 pt-20 sm:pt-25">
       <div className="max-w-7xl mx-auto">
         <div className="mb-2">
           <Link
