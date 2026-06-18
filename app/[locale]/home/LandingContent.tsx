@@ -118,7 +118,6 @@ export function LandingContent() {
             ))}
           </div>
 
-          <p className="text-sm text-gray-500 text-center">{t('trusted')}</p>
         </div>
       </div>
   );
