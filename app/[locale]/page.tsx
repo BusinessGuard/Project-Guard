@@ -149,7 +149,7 @@ export default function Home() {
               </a>
               <a
                 href="https://projectguard-demo.vercel.app?utm_source=main_site&utm_medium=demo_link"
-                className="text-[14px] text-white/85 hover:text-white hover:underline pl-1"
+                className="text-base text-white/80 hover:text-white hover:underline pl-1"
               >
                 or view demo analysis →
               </a>
