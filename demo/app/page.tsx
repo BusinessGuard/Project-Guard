@@ -832,14 +832,13 @@ function ProjectGuardDemoV2() {
             </p>
 
             <div className="flex gap-4 justify-center pt-6">
-              <Button
-                onClick={() => setCurrentView('form')}
-                size="lg"
-                className="gap-2 text-lg px-8 py-6"
+              <a
+                href="https://project-guard-quick-score-v2.netlify.app?utm_source=demo&utm_medium=back_button"
+                className="inline-flex items-center gap-2 text-lg px-8 py-6 border border-gray-300 dark:border-gray-600 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
-                <Rocket className="w-6 h-6" />
-                {t.hero.cta}
-              </Button>
+                <ArrowLeft className="w-6 h-6" />
+                {language === 'en' ? '← Back to Quick Score' : language === 'ru' ? '← Назад к Quick Score' : '← Назад до Quick Score'}
+              </a>
               <Button
                 onClick={startAnalysis}
                 size="lg"
@@ -850,10 +849,6 @@ function ProjectGuardDemoV2() {
                 {t.hero.demo}
               </Button>
             </div>
-
-            <p className="text-sm text-gray-500 dark:text-gray-400 pt-4">
-              {t.hero.trusted}
-            </p>
           </div>
 
           {/* Features Grid */}

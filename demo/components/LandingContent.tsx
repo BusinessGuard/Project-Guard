@@ -1,10 +1,8 @@
 'use client';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
   Sparkles,
-  Rocket,
-  Zap,
+  ArrowLeft,
   Brain,
   BarChart3,
   Target,
@@ -20,7 +18,6 @@ interface LandingContentProps {
   investorProfile: string;
   onInvestorProfileChange: (profile: string) => void;
   onStartAnalysis: () => void;
-  onStartForm: () => void;
 }
 
 // Helper function for inline translations
@@ -40,7 +37,6 @@ export function LandingContent({
   investorProfile,
   onInvestorProfileChange,
   onStartAnalysis,
-  onStartForm,
 }: LandingContentProps) {
   const t = translations;
 
@@ -67,19 +63,14 @@ export function LandingContent({
           </p>
 
           <div className="flex gap-4 justify-center pt-6">
-            <Button
-              onClick={onStartForm}
-              size="lg"
-              className="gap-2 text-lg px-8 py-6"
+            <a
+              href="https://project-guard-quick-score-v2.netlify.app?utm_source=demo&utm_medium=back_button"
+              className="inline-flex items-center gap-2 text-lg px-8 py-6 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition-colors"
             >
-              <Rocket className="w-6 h-6" />
-              {t.hero.cta}
-            </Button>
+              <ArrowLeft className="w-6 h-6" />
+              {tr('← Back to Quick Score', '← Назад к Quick Score', '← Назад до Quick Score', language)}
+            </a>
           </div>
-
-          <p className="text-sm text-gray-500 dark:text-gray-400 pt-4">
-            {t.hero.trusted}
-          </p>
         </div>
 
         {/* Features Grid */}
