@@ -151,14 +151,13 @@ export default function Home() {
             <p className="text-md md:text-2xl text-white/90 mb-10">{t('subtitle')}</p>
 
             <div className="flex gap-4 pt-2 ">
-              <Button
-                onClick={handleTryNow}
-                size="lg"
-                className="gap-2 text-lg px-8 py-6 bg-white text-gray-900 hover:bg-white/90 cursor-pointer"
+              <a
+                href="https://project-guard-quick-score-v2.netlify.app?utm_source=main_site&utm_medium=hero_cta"
+                className="inline-flex items-center gap-2 text-lg px-8 py-6 bg-white text-gray-900 hover:bg-white/90 rounded-md font-medium"
               >
                 <Rocket className="w-6 h-6" />
                 {t('ctaButton')}
-              </Button>
+              </a>
             </div>
           </div>
         </div>
