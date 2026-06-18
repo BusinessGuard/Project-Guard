@@ -27,7 +27,6 @@ export function LandingContent() {
             priority
           />
         </div>
-        <p className="md:text-xl w-4/5 self-center text-gray-600 text-center xl:mb-10">{t('description')}</p>
 
 
         <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-12 items-end w-full">
