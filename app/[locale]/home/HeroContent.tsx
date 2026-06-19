@@ -15,7 +15,7 @@ export function HeroContent() {
             {t('quickScore')} <RxExternalLink className="size-4" />
           </a>
           <Separator orientation="vertical" className="!h-4 bg-black" />
-          <a href="https://projectguard-demo.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-2">
+          <a href="https://project-guard-demo.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-2">
             {t('demo')} <RxExternalLink className="size-4" />
           </a>
         </div>
