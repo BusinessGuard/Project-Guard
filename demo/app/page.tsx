@@ -659,6 +659,8 @@ function ProjectGuardDemoV2() {
   const [language, setLanguage] = useState<'en' | 'ru' | 'uk'>('en');
   const [expandedExperts, setExpandedExperts] = useState<Record<string, boolean>>({});
   const [expandedRecommendations, setExpandedRecommendations] = useState<Record<string, boolean>>({});
+  const [leadEmail, setLeadEmail] = useState('');
+  const [leadStatus, setLeadStatus] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle');
 
   const t = translations[language] || translations.en;
   const priorityLabels = (translations[language] ?? translations.en).priorityLabels;
@@ -713,6 +715,36 @@ function ProjectGuardDemoV2() {
         return prev + 3;
       });
     }, 120);
+  };
+
+  const handleLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = leadEmail.trim();
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailValid) {
+      setLeadStatus('error');
+      return;
+    }
+    const endpoint = process.env.NEXT_PUBLIC_LEAD_ENDPOINT;
+    if (!endpoint) {
+      console.warn('NEXT_PUBLIC_LEAD_ENDPOINT is not set — lead not submitted');
+      setLeadStatus('error');
+      return;
+    }
+    setLeadStatus('submitting');
+    try {
+      // Google Apps Script web app: no-cors POST, script reads e.postData.contents (JSON)
+      await fetch(endpoint, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ email, source: 'demo', timestamp: new Date().toISOString() }),
+      });
+      setLeadStatus('done');
+      setLeadEmail('');
+    } catch {
+      setLeadStatus('error');
+    }
   };
 
   const getScoreColor = (score: number): string => {
@@ -832,13 +864,6 @@ function ProjectGuardDemoV2() {
             </p>
 
             <div className="flex gap-4 justify-center pt-6">
-              <a
-                href="https://project-guard-quick-score-v2.netlify.app?utm_source=demo&utm_medium=back_button"
-                className="inline-flex items-center gap-2 text-lg px-8 py-6 border border-gray-300 dark:border-gray-600 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                <ArrowLeft className="w-6 h-6" />
-                {language === 'en' ? '← Back to Quick Score' : language === 'ru' ? '← Назад к Quick Score' : '← Назад до Quick Score'}
-              </a>
               <Button
                 onClick={startAnalysis}
                 size="lg"
@@ -1711,6 +1736,51 @@ function ProjectGuardDemoV2() {
                   </Button>
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Lead Capture - Want this for your startup? */}
+        <Card className="border-2 border-blue-200 dark:border-blue-700 shadow-lg">
+          <CardContent className="pt-6">
+            <div className="max-w-xl mx-auto text-center space-y-4">
+              <h3 className="font-bold text-2xl dark:text-white">
+                {tr('Want this for your startup?', 'Хотите такой анализ для своего стартапа?', 'Хочете такий аналіз для свого стартапу?')}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {tr(
+                  'Leave your email and we\'ll send your personal AI analysis.',
+                  'Оставьте email — и мы пришлём ваш персональный AI-анализ.',
+                  'Залиште email — і ми надішлемо ваш персональний AI-аналіз.'
+                )}
+              </p>
+              {leadStatus === 'done' ? (
+                <p className="text-green-600 dark:text-green-400 font-medium flex items-center justify-center gap-2">
+                  <CheckCircle className="w-5 h-5" />
+                  {tr('Thanks! We\'ll be in touch.', 'Спасибо! Мы свяжемся с вами.', 'Дякуємо! Ми зв\'яжемося з вами.')}
+                </p>
+              ) : (
+                <form onSubmit={handleLeadSubmit} className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <input
+                    type="email"
+                    required
+                    value={leadEmail}
+                    onChange={(e) => { setLeadEmail(e.target.value); if (leadStatus === 'error') setLeadStatus('idle'); }}
+                    placeholder="your@email.com"
+                    className="flex-1 max-w-sm px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <Button type="submit" disabled={leadStatus === 'submitting'} className="gap-2">
+                    {leadStatus === 'submitting'
+                      ? tr('Sending...', 'Отправка...', 'Надсилання...')
+                      : tr('Get my analysis', 'Получить анализ', 'Отримати аналіз')}
+                  </Button>
+                </form>
+              )}
+              {leadStatus === 'error' && (
+                <p className="text-red-600 dark:text-red-400 text-sm">
+                  {tr('Please enter a valid email.', 'Введите корректный email.', 'Введіть коректний email.')}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
