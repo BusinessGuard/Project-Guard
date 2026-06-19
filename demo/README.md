@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment variables
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_LEAD_ENDPOINT` | Google Apps Script web-app URL that the "Want this for your startup?" form (bottom of the results dashboard) POSTs leads to. Same endpoint/Sheet as Quick Score. Payload: `{ email, source: "demo", timestamp }` (sent as `text/plain`; read `e.postData.contents` and `JSON.parse` in the Apps Script). If unset, the form renders but submissions are skipped. |
+
+Set it in the Vercel project env and in `demo/.env.local` for local dev.
+
 ## Getting Started
 
 First, run the development server:

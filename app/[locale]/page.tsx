@@ -1,10 +1,12 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "@/lib/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 import { LuMoveLeft } from "react-icons/lu";
-import { Sparkles, Rocket } from "lucide-react";
+import { Sparkles, Rocket, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HeroContent } from "./home/HeroContent";
 import { createClient } from "@/lib/supabase/client";
@@ -13,6 +15,7 @@ import { HashLoader } from "react-spinners";
 
 export default function Home() {
   const t = useTranslations('home');
+  const tNav = useTranslations('nav');
   const [showAuth, setShowAuth] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isFading, setIsFading] = useState(false);
@@ -20,6 +23,7 @@ export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -54,6 +58,13 @@ export default function Home() {
       }
     };
   }, []);
+
+  const handleTryNow = () => {
+    setIsFading(true);
+    setTimeout(() => {
+      router.push("/create");
+    }, 700);
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!imageContainerRef.current) return;
@@ -139,32 +150,54 @@ export default function Home() {
             <h1 className="text-4xl xl:text-7xl font-bold text-white mb-2">{t('title')}</h1>
             <p className="text-md md:text-2xl text-white/90 mb-10">{t('subtitle')}</p>
 
-            <div className="flex flex-col items-start gap-2 pt-2">
-              <a
-                href="https://project-guard-quick-score-v2.netlify.app?utm_source=main_site&utm_medium=hero_cta"
-                className="inline-flex items-center gap-2 text-lg px-8 py-6 bg-white text-gray-900 hover:bg-white/90 rounded-md font-medium"
+            <div className="flex gap-4 pt-2 ">
+              <Button
+                onClick={handleTryNow}
+                size="lg"
+                className="gap-2 text-lg px-8 py-6 bg-white text-gray-900 hover:bg-white/90 cursor-pointer"
               >
                 <Rocket className="w-6 h-6" />
                 {t('ctaButton')}
-              </a>
-              <a
-                href="https://projectguard-demo.vercel.app?utm_source=main_site&utm_medium=demo_link"
-                className="text-base text-white/80 hover:text-white hover:underline pl-1"
-              >
-                or view demo analysis →
-              </a>
+              </Button>
             </div>
           </div>
         </div>
       
       <div className="flex lg:hidden items-center justify-between w-full  my-10 px-8 gap-4">
         <LanguageSwitcher />
+        <Button className="active:bg-black/60 w-full max-w-40 cursor-pointer text-lg flex-1 py-6 " onClick={() => {
+          setIsNavigating(true);
+          setTimeout(() => {
+            router.push(isAuthenticated ? "/dashboard" : "/login");
+          }, 700);
+        }}>
+          {isAuthenticated ? tNav('dashboard') : tNav('login')}
+        </Button>
       </div>
         <div className={`relative flex items-center justify-center px-8 bg-white transition-all duration-700 ease-in-out ${showAuth ? "w-full lg:w-1/2" : "w-full lg:w-1/2" }`}>
           <LuMoveLeft onClick={() => setShowAuth(false)} className={cn("hidden lg:block size-10 absolute hover:scale-110 transition-all duration-300 top-8 left-8 cursor-pointer", showAuth ? "opacity-100" : "opacity-0")} />
 
           <div className={cn("absolute hidden lg:flex items-center left-8 justify-between  top-8 right-8", showAuth ? "opacity-0" : "opacity-100")}>
             <LanguageSwitcher />
+            <Button 
+              variant="ghost"
+              className="hover:scale-110 transition-all duration-300 hover:bg-white cursor-pointer text-lg flex items-center gap-2"
+              onClick={() => {
+                setIsNavigating(true);
+                setTimeout(() => {
+                  router.push(isAuthenticated ? "/dashboard" : "/login");
+                }, 700);
+              }}
+            >
+              {isAuthenticated ? (
+                <>
+                  <LayoutDashboard className="w-5 h-5" />
+                  {tNav('dashboard')}
+                </>
+              ) : (
+                tNav('login')
+              )}
+            </Button>
           </div>
 
           <HeroContent />  
